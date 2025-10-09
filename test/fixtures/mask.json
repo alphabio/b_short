@@ -1,0 +1,282 @@
+{
+  "inherit": {
+    "mask-image": "inherit",
+    "mask-mode": "inherit",
+    "mask-position": "inherit",
+    "mask-size": "inherit",
+    "mask-repeat": "inherit",
+    "mask-origin": "inherit",
+    "mask-clip": "inherit",
+    "mask-composite": "inherit"
+  },
+  "initial": {
+    "mask-image": "initial",
+    "mask-mode": "initial",
+    "mask-position": "initial",
+    "mask-size": "initial",
+    "mask-repeat": "initial",
+    "mask-origin": "initial",
+    "mask-clip": "initial",
+    "mask-composite": "initial"
+  },
+  "unset": {
+    "mask-image": "unset",
+    "mask-mode": "unset",
+    "mask-position": "unset",
+    "mask-size": "unset",
+    "mask-repeat": "unset",
+    "mask-origin": "unset",
+    "mask-clip": "unset",
+    "mask-composite": "unset"
+  },
+  "revert": {
+    "mask-image": "revert",
+    "mask-mode": "revert",
+    "mask-position": "revert",
+    "mask-size": "revert",
+    "mask-repeat": "revert",
+    "mask-origin": "revert",
+    "mask-clip": "revert",
+    "mask-composite": "revert"
+  },
+  "url(mask.png)": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "none": {
+    "mask-image": "none",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "linear-gradient(black, transparent)": {
+    "mask-image": "linear-gradient(black, transparent)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) center": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "center",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) 10px 20px": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "10px 20px",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) left top": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "left top",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) center / cover": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "center",
+    "mask-size": "cover",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) 0% 0% / 100px 200px": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "100px 200px",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) / contain": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "contain",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) no-repeat": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "no-repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) repeat-x": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat-x",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) repeat space": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat space",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) alpha": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "alpha",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) luminance": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "luminance",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) match-source": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) add": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) subtract": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "subtract"
+  },
+  "url(mask.png) intersect": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "intersect"
+  },
+  "url(mask.png) exclude": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "exclude"
+  },
+  "url(mask.png) border-box": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) padding-box content-box": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "padding-box",
+    "mask-clip": "content-box",
+    "mask-composite": "add"
+  },
+  "url(mask.png) content-box no-clip": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "match-source",
+    "mask-position": "0% 0%",
+    "mask-size": "auto",
+    "mask-repeat": "repeat",
+    "mask-origin": "content-box",
+    "mask-clip": "no-clip",
+    "mask-composite": "add"
+  },
+  "url(mask.png) luminance 10px 20px / cover no-repeat add border-box": {
+    "mask-image": "url(mask.png)",
+    "mask-mode": "luminance",
+    "mask-position": "10px 20px",
+    "mask-size": "cover",
+    "mask-repeat": "no-repeat",
+    "mask-origin": "border-box",
+    "mask-clip": "border-box",
+    "mask-composite": "add"
+  },
+  "linear-gradient(black, transparent) alpha center / contain repeat-x padding-box content-box subtract": {
+    "mask-image": "linear-gradient(black, transparent)",
+    "mask-mode": "alpha",
+    "mask-position": "center",
+    "mask-size": "contain",
+    "mask-repeat": "repeat-x",
+    "mask-origin": "padding-box",
+    "mask-clip": "content-box",
+    "mask-composite": "subtract"
+  }
+}

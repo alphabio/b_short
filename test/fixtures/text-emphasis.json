@@ -1,0 +1,82 @@
+{
+  "none": {
+    "text-emphasis-style": "none"
+  },
+  "filled": {
+    "text-emphasis-style": "filled"
+  },
+  "open": {
+    "text-emphasis-style": "open"
+  },
+  "red": {
+    "text-emphasis-color": "red"
+  },
+  "#ff0000": {
+    "text-emphasis-color": "#ff0000"
+  },
+  "filled dot": {
+    "text-emphasis-style": "filled dot"
+  },
+  "open circle": {
+    "text-emphasis-style": "open circle"
+  },
+  "filled triangle": {
+    "text-emphasis-style": "filled triangle"
+  },
+  "open sesame": {
+    "text-emphasis-style": "open sesame"
+  },
+  "filled red": {
+    "text-emphasis-style": "filled",
+    "text-emphasis-color": "red"
+  },
+  "red filled": {
+    "text-emphasis-style": "filled",
+    "text-emphasis-color": "red"
+  },
+  "filled dot #555": {
+    "text-emphasis-style": "filled dot",
+    "text-emphasis-color": "#555"
+  },
+  "#555 filled dot": {
+    "text-emphasis-style": "filled dot",
+    "text-emphasis-color": "#555"
+  },
+  "triangle rgb(255, 0, 0)": {
+    "text-emphasis-style": "triangle",
+    "text-emphasis-color": "rgb(255,0,0)"
+  },
+  "\"*\"": {
+    "text-emphasis-style": "\"*\""
+  },
+  "'※'": {
+    "text-emphasis-style": "'※'"
+  },
+  "\"※\" red": {
+    "text-emphasis-style": "\"※\"",
+    "text-emphasis-color": "red"
+  },
+  "inherit": {
+    "text-emphasis-style": "inherit",
+    "text-emphasis-color": "inherit"
+  },
+  "initial": {
+    "text-emphasis-style": "initial",
+    "text-emphasis-color": "initial"
+  },
+  "unset": {
+    "text-emphasis-style": "unset",
+    "text-emphasis-color": "unset"
+  },
+  "revert": {
+    "text-emphasis-style": "revert",
+    "text-emphasis-color": "revert"
+  },
+  "var(--my-color)": {
+    "text-emphasis-color": "var(--my-color)"
+  },
+  "filled var(--my-color)": {
+    "text-emphasis-style": "filled",
+    "text-emphasis-color": "var(--my-color)"
+  }
+}

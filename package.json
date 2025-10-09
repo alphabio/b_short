@@ -1,0 +1,87 @@
+{
+  "name": "b_short",
+  "version": "2.0.0",
+  "description": "Lightning-fast CSS shorthand property expansion to longhand equivalents. Supports 35+ shorthands including flex, grid, animation, transition, mask, and more. TypeScript-first, minimal dependencies, perfect for CSS-in-JS and build tools.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "module": "lib/index.js",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js",
+      "require": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build && pnpm run test",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alphabio/b_short.git"
+  },
+  "keywords": [
+    "alignment",
+    "animation",
+    "build-tool",
+    "columns",
+    "css",
+    "css-animation",
+    "css-grid",
+    "css-in-js",
+    "expand",
+    "flexbox",
+    "grid",
+    "grid-layout",
+    "inset",
+    "layout",
+    "longhand",
+    "mask",
+    "masking",
+    "motion-path",
+    "multi-column",
+    "offset",
+    "place-content",
+    "place-items",
+    "postcss",
+    "properties",
+    "shorthand",
+    "transition",
+    "typescript"
+  ],
+  "author": "alphabio",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/alphabio/b_short/issues"
+  },
+  "homepage": "https://github.com/alphabio/b_short#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/alphabio"
+  },
+  "dependencies": {
+    "css-tree": "^3.1.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.5",
+    "@types/css-tree": "^2.3.11",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^2.0.0"
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "none": {
+    "text-decoration-line": "none"
+  },
+  "underline": {
+    "text-decoration-line": "underline"
+  },
+  "overline": {
+    "text-decoration-line": "overline"
+  },
+  "line-through": {
+    "text-decoration-line": "line-through"
+  },
+  "underline overline": {
+    "text-decoration-line": "underline overline"
+  },
+  "underline line-through": {
+    "text-decoration-line": "underline line-through"
+  },
+  "overline line-through": {
+    "text-decoration-line": "overline line-through"
+  },
+  "solid": {
+    "text-decoration-style": "solid"
+  },
+  "double": {
+    "text-decoration-style": "double"
+  },
+  "dotted": {
+    "text-decoration-style": "dotted"
+  },
+  "dashed": {
+    "text-decoration-style": "dashed"
+  },
+  "wavy": {
+    "text-decoration-style": "wavy"
+  },
+  "red": {
+    "text-decoration-color": "red"
+  },
+  "#ff0000": {
+    "text-decoration-color": "#ff0000"
+  },
+  "rgb(255, 0, 0)": {
+    "text-decoration-color": "rgb(255,0,0)"
+  },
+  "auto": {
+    "text-decoration-thickness": "auto"
+  },
+  "from-font": {
+    "text-decoration-thickness": "from-font"
+  },
+  "2px": {
+    "text-decoration-thickness": "2px"
+  },
+  "0.1em": {
+    "text-decoration-thickness": "0.1em"
+  },
+  "10%": {
+    "text-decoration-thickness": "10%"
+  },
+  "underline solid": {
+    "text-decoration-line": "underline",
+    "text-decoration-style": "solid"
+  },
+  "underline red": {
+    "text-decoration-line": "underline",
+    "text-decoration-color": "red"
+  },
+  "underline 2px": {
+    "text-decoration-line": "underline",
+    "text-decoration-thickness": "2px"
+  },
+  "solid red": {
+    "text-decoration-style": "solid",
+    "text-decoration-color": "red"
+  },
+  "red solid": {
+    "text-decoration-style": "solid",
+    "text-decoration-color": "red"
+  },
+  "underline dotted red": {
+    "text-decoration-line": "underline",
+    "text-decoration-style": "dotted",
+    "text-decoration-color": "red"
+  },
+  "red dotted underline": {
+    "text-decoration-line": "underline",
+    "text-decoration-style": "dotted",
+    "text-decoration-color": "red"
+  },
+  "underline wavy #ff3028": {
+    "text-decoration-line": "underline",
+    "text-decoration-style": "wavy",
+    "text-decoration-color": "#ff3028"
+  },
+  "underline solid red 5px": {
+    "text-decoration-line": "underline",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "red",
+    "text-decoration-thickness": "5px"
+  },
+  "5px red solid underline": {
+    "text-decoration-line": "underline",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "red",
+    "text-decoration-thickness": "5px"
+  },
+  "underline overline dotted": {
+    "text-decoration-line": "underline overline",
+    "text-decoration-style": "dotted"
+  },
+  "underline overline red": {
+    "text-decoration-line": "underline overline",
+    "text-decoration-color": "red"
+  },
+  "underline overline wavy red 2px": {
+    "text-decoration-line": "underline overline",
+    "text-decoration-style": "wavy",
+    "text-decoration-color": "red",
+    "text-decoration-thickness": "2px"
+  },
+  "inherit": {
+    "text-decoration-line": "inherit",
+    "text-decoration-style": "inherit",
+    "text-decoration-color": "inherit",
+    "text-decoration-thickness": "inherit"
+  },
+  "initial": {
+    "text-decoration-line": "initial",
+    "text-decoration-style": "initial",
+    "text-decoration-color": "initial",
+    "text-decoration-thickness": "initial"
+  },
+  "unset": {
+    "text-decoration-line": "unset",
+    "text-decoration-style": "unset",
+    "text-decoration-color": "unset",
+    "text-decoration-thickness": "unset"
+  },
+  "revert": {
+    "text-decoration-line": "revert",
+    "text-decoration-style": "revert",
+    "text-decoration-color": "revert",
+    "text-decoration-thickness": "revert"
+  },
+  "var(--my-color)": {
+    "text-decoration-color": "var(--my-color)"
+  },
+  "underline var(--my-color)": {
+    "text-decoration-line": "underline",
+    "text-decoration-color": "var(--my-color)"
+  }
+}

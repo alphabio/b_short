@@ -1,0 +1,22 @@
+{
+  "row": { "flex-direction": "row" },
+  "row-reverse": { "flex-direction": "row-reverse" },
+  "column": { "flex-direction": "column" },
+  "column-reverse": { "flex-direction": "column-reverse" },
+  "nowrap": { "flex-wrap": "nowrap" },
+  "wrap": { "flex-wrap": "wrap" },
+  "wrap-reverse": { "flex-wrap": "wrap-reverse" },
+  "row nowrap": { "flex-direction": "row", "flex-wrap": "nowrap" },
+  "nowrap row": { "flex-direction": "row", "flex-wrap": "nowrap" },
+  "column wrap": { "flex-direction": "column", "flex-wrap": "wrap" },
+  "wrap column": { "flex-direction": "column", "flex-wrap": "wrap" },
+  "row-reverse wrap-reverse": { "flex-direction": "row-reverse", "flex-wrap": "wrap-reverse" },
+  "wrap-reverse column-reverse": {
+    "flex-direction": "column-reverse",
+    "flex-wrap": "wrap-reverse"
+  },
+  "inherit": { "flex-direction": "inherit", "flex-wrap": "inherit" },
+  "initial": { "flex-direction": "initial", "flex-wrap": "initial" },
+  "unset": { "flex-direction": "unset", "flex-wrap": "unset" },
+  "revert": { "flex-direction": "revert", "flex-wrap": "revert" }
+}

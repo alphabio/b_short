@@ -1,0 +1,21 @@
+# Source files
+src/
+test/
+docs.internal/
+.github/
+
+# Development files
+.travis.yml
+.markdownlint.json
+cspell.config.yaml
+biome.json
+tsconfig.json
+justfile
+pnpm-lock.yaml
+
+# Documentation (keep README and LICENSE)
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Git
+.gitignore

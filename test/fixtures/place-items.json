@@ -1,0 +1,126 @@
+{
+  "normal": {
+    "align-items": "normal",
+    "justify-items": "normal"
+  },
+  "stretch": {
+    "align-items": "stretch",
+    "justify-items": "stretch"
+  },
+  "center": {
+    "align-items": "center",
+    "justify-items": "center"
+  },
+  "start": {
+    "align-items": "start",
+    "justify-items": "start"
+  },
+  "end": {
+    "align-items": "end",
+    "justify-items": "end"
+  },
+  "self-start": {
+    "align-items": "self-start",
+    "justify-items": "self-start"
+  },
+  "self-end": {
+    "align-items": "self-end",
+    "justify-items": "self-end"
+  },
+  "flex-start": {
+    "align-items": "flex-start",
+    "justify-items": "flex-start"
+  },
+  "flex-end": {
+    "align-items": "flex-end",
+    "justify-items": "flex-end"
+  },
+  "baseline": {
+    "align-items": "baseline",
+    "justify-items": "baseline"
+  },
+  "first baseline": {
+    "align-items": "first baseline",
+    "justify-items": "first baseline"
+  },
+  "last baseline": {
+    "align-items": "last baseline",
+    "justify-items": "last baseline"
+  },
+  "center start": {
+    "align-items": "center",
+    "justify-items": "start"
+  },
+  "stretch center": {
+    "align-items": "stretch",
+    "justify-items": "center"
+  },
+  "self-start self-end": {
+    "align-items": "self-start",
+    "justify-items": "self-end"
+  },
+  "baseline center": {
+    "align-items": "baseline",
+    "justify-items": "center"
+  },
+  "first baseline end": {
+    "align-items": "first baseline",
+    "justify-items": "end"
+  },
+  "normal normal": {
+    "align-items": "normal",
+    "justify-items": "normal"
+  },
+  "center left": {
+    "align-items": "center",
+    "justify-items": "left"
+  },
+  "stretch right": {
+    "align-items": "stretch",
+    "justify-items": "right"
+  },
+  "start left": {
+    "align-items": "start",
+    "justify-items": "left"
+  },
+  "safe center": {
+    "align-items": "safe center",
+    "justify-items": "safe center"
+  },
+  "unsafe self-start": {
+    "align-items": "unsafe self-start",
+    "justify-items": "unsafe self-start"
+  },
+  "safe center end": {
+    "align-items": "safe center",
+    "justify-items": "end"
+  },
+  "inherit": {
+    "align-items": "inherit",
+    "justify-items": "inherit"
+  },
+  "initial": {
+    "align-items": "initial",
+    "justify-items": "initial"
+  },
+  "unset": {
+    "align-items": "unset",
+    "justify-items": "unset"
+  },
+  "revert": {
+    "align-items": "revert",
+    "justify-items": "revert"
+  },
+  "First Baseline": {
+    "align-items": "First Baseline",
+    "justify-items": "First Baseline"
+  },
+  "SAFE center": {
+    "align-items": "SAFE center",
+    "justify-items": "SAFE center"
+  },
+  "SAFE Center End": {
+    "align-items": "SAFE Center",
+    "justify-items": "End"
+  }
+}

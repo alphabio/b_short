@@ -1,0 +1,98 @@
+{
+  "10px": {
+    "top": "10px",
+    "right": "10px",
+    "bottom": "10px",
+    "left": "10px"
+  },
+  "0": {
+    "top": "0",
+    "right": "0",
+    "bottom": "0",
+    "left": "0"
+  },
+  "auto": {
+    "top": "auto",
+    "right": "auto",
+    "bottom": "auto",
+    "left": "auto"
+  },
+  "5em": {
+    "top": "5em",
+    "right": "5em",
+    "bottom": "5em",
+    "left": "5em"
+  },
+  "10px 20px": {
+    "top": "10px",
+    "right": "20px",
+    "bottom": "10px",
+    "left": "20px"
+  },
+  "0 auto": {
+    "top": "0",
+    "right": "auto",
+    "bottom": "0",
+    "left": "auto"
+  },
+  "5% 10%": {
+    "top": "5%",
+    "right": "10%",
+    "bottom": "5%",
+    "left": "10%"
+  },
+  "10px 20px 30px": {
+    "top": "10px",
+    "right": "20px",
+    "bottom": "30px",
+    "left": "20px"
+  },
+  "0 auto 5px": {
+    "top": "0",
+    "right": "auto",
+    "bottom": "5px",
+    "left": "auto"
+  },
+  "1em 2em 3em": {
+    "top": "1em",
+    "right": "2em",
+    "bottom": "3em",
+    "left": "2em"
+  },
+  "10px 20px 30px 40px": {
+    "top": "10px",
+    "right": "20px",
+    "bottom": "30px",
+    "left": "40px"
+  },
+  "0 5px 10px 15px": {
+    "top": "0",
+    "right": "5px",
+    "bottom": "10px",
+    "left": "15px"
+  },
+  "1em 2em 3em 4em": {
+    "top": "1em",
+    "right": "2em",
+    "bottom": "3em",
+    "left": "4em"
+  },
+  "inherit": {
+    "top": "inherit",
+    "right": "inherit",
+    "bottom": "inherit",
+    "left": "inherit"
+  },
+  "initial": {
+    "top": "initial",
+    "right": "initial",
+    "bottom": "initial",
+    "left": "initial"
+  },
+  "10px 5% 20px 2em": {
+    "top": "10px",
+    "right": "5%",
+    "bottom": "20px",
+    "left": "2em"
+  }
+}

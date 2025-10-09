@@ -1,0 +1,58 @@
+{
+  "visible": {
+    "overflow-x": "visible",
+    "overflow-y": "visible"
+  },
+  "hidden": {
+    "overflow-x": "hidden",
+    "overflow-y": "hidden"
+  },
+  "scroll": {
+    "overflow-x": "scroll",
+    "overflow-y": "scroll"
+  },
+  "auto": {
+    "overflow-x": "auto",
+    "overflow-y": "auto"
+  },
+  "clip": {
+    "overflow-x": "clip",
+    "overflow-y": "clip"
+  },
+  "visible hidden": {
+    "overflow-x": "visible",
+    "overflow-y": "hidden"
+  },
+  "hidden scroll": {
+    "overflow-x": "hidden",
+    "overflow-y": "scroll"
+  },
+  "scroll auto": {
+    "overflow-x": "scroll",
+    "overflow-y": "auto"
+  },
+  "auto visible": {
+    "overflow-x": "auto",
+    "overflow-y": "visible"
+  },
+  "clip hidden": {
+    "overflow-x": "clip",
+    "overflow-y": "hidden"
+  },
+  "inherit": {
+    "overflow-x": "inherit",
+    "overflow-y": "inherit"
+  },
+  "initial": {
+    "overflow-x": "initial",
+    "overflow-y": "initial"
+  },
+  "unset": {
+    "overflow-x": "unset",
+    "overflow-y": "unset"
+  },
+  "revert": {
+    "overflow-x": "revert",
+    "overflow-y": "revert"
+  }
+}

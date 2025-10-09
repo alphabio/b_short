@@ -1,0 +1,130 @@
+{
+  "normal": {
+    "align-content": "normal",
+    "justify-content": "normal"
+  },
+  "center": {
+    "align-content": "center",
+    "justify-content": "center"
+  },
+  "start": {
+    "align-content": "start",
+    "justify-content": "start"
+  },
+  "end": {
+    "align-content": "end",
+    "justify-content": "end"
+  },
+  "flex-start": {
+    "align-content": "flex-start",
+    "justify-content": "flex-start"
+  },
+  "flex-end": {
+    "align-content": "flex-end",
+    "justify-content": "flex-end"
+  },
+  "space-between": {
+    "align-content": "space-between",
+    "justify-content": "space-between"
+  },
+  "space-around": {
+    "align-content": "space-around",
+    "justify-content": "space-around"
+  },
+  "space-evenly": {
+    "align-content": "space-evenly",
+    "justify-content": "space-evenly"
+  },
+  "stretch": {
+    "align-content": "stretch",
+    "justify-content": "stretch"
+  },
+  "baseline": {
+    "align-content": "baseline",
+    "justify-content": "baseline"
+  },
+  "first baseline": {
+    "align-content": "first baseline",
+    "justify-content": "first baseline"
+  },
+  "last baseline": {
+    "align-content": "last baseline",
+    "justify-content": "last baseline"
+  },
+  "center start": {
+    "align-content": "center",
+    "justify-content": "start"
+  },
+  "start center": {
+    "align-content": "start",
+    "justify-content": "center"
+  },
+  "space-between center": {
+    "align-content": "space-between",
+    "justify-content": "center"
+  },
+  "flex-start flex-end": {
+    "align-content": "flex-start",
+    "justify-content": "flex-end"
+  },
+  "baseline center": {
+    "align-content": "baseline",
+    "justify-content": "center"
+  },
+  "first baseline end": {
+    "align-content": "first baseline",
+    "justify-content": "end"
+  },
+  "stretch space-evenly": {
+    "align-content": "stretch",
+    "justify-content": "space-evenly"
+  },
+  "normal normal": {
+    "align-content": "normal",
+    "justify-content": "normal"
+  },
+  "safe center": {
+    "align-content": "safe center",
+    "justify-content": "safe center"
+  },
+  "unsafe start": {
+    "align-content": "unsafe start",
+    "justify-content": "unsafe start"
+  },
+  "safe center end": {
+    "align-content": "safe center",
+    "justify-content": "end"
+  },
+  "start unsafe flex-end": {
+    "align-content": "start",
+    "justify-content": "unsafe flex-end"
+  },
+  "inherit": {
+    "align-content": "inherit",
+    "justify-content": "inherit"
+  },
+  "initial": {
+    "align-content": "initial",
+    "justify-content": "initial"
+  },
+  "unset": {
+    "align-content": "unset",
+    "justify-content": "unset"
+  },
+  "revert": {
+    "align-content": "revert",
+    "justify-content": "revert"
+  },
+  "First Baseline": {
+    "align-content": "First Baseline",
+    "justify-content": "First Baseline"
+  },
+  "SAFE center": {
+    "align-content": "SAFE center",
+    "justify-content": "SAFE center"
+  },
+  "SAFE Center End": {
+    "align-content": "SAFE Center",
+    "justify-content": "End"
+  }
+}
