@@ -19,10 +19,12 @@ We welcome contributions from everyone. This document provides guidelines and in
 ## 🛠️ Development Setup
 
 ### Prerequisites
+
 - Node.js 14+
 - pnpm (recommended) or npm/yarn
 
 ### Commands
+
 ```bash
 # Install dependencies
 pnpm install
@@ -49,11 +51,13 @@ just fix
 ## 📝 Code Style
 
 This project uses:
+
 - **Biome** for linting and formatting
 - **TypeScript** with strict settings
 - **Conventional commits** for commit messages
 
 ### Key Principles
+
 - **Zero dependencies** for runtime (dev dependencies are OK)
 - **TypeScript first** - all code must be typed
 - **Performance focused** - optimize for speed and bundle size
@@ -62,6 +66,7 @@ This project uses:
 ## 🧪 Testing
 
 ### Running Tests
+
 ```bash
 # Run all tests
 just test
@@ -74,12 +79,14 @@ pnpm test src/some-file.test.ts
 ```
 
 ### Writing Tests
+
 - Tests are located in `test/` directory
 - Use Vitest framework
 - Follow existing patterns for fixture-based testing
 - Test fixtures are in `test/fixtures/` as JSON files
 
 ### Test Coverage
+
 - Aim for high test coverage
 - Test both success and failure cases
 - Include edge cases and invalid inputs
@@ -93,7 +100,9 @@ pnpm test src/some-file.test.ts
 5. **Squash commits** if needed for clean history
 
 ### PR Title Format
+
 Follow [Conventional Commits](https://conventionalcommits.org/):
+
 - `feat:` - New features
 - `fix:` - Bug fixes
 - `docs:` - Documentation changes
