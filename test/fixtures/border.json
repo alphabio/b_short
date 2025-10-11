@@ -136,5 +136,75 @@
     "border-right-color": "var(--my-color)",
     "border-bottom-color": "var(--my-color)",
     "border-left-color": "var(--my-color)"
+  },
+  "1px solid red; border-width: 2px": {
+    "border-top-width": "2px",
+    "border-right-width": "2px",
+    "border-bottom-width": "2px",
+    "border-left-width": "2px",
+    "border-top-style": "solid",
+    "border-right-style": "solid",
+    "border-bottom-style": "solid",
+    "border-left-style": "solid",
+    "border-top-color": "red",
+    "border-right-color": "red",
+    "border-bottom-color": "red",
+    "border-left-color": "red"
+  },
+  "1px solid red; border-top-color: blue": {
+    "border-top-width": "1px",
+    "border-right-width": "1px",
+    "border-bottom-width": "1px",
+    "border-left-width": "1px",
+    "border-top-style": "solid",
+    "border-right-style": "solid",
+    "border-bottom-style": "solid",
+    "border-left-style": "solid",
+    "border-top-color": "blue",
+    "border-right-color": "red",
+    "border-bottom-color": "red",
+    "border-left-color": "red"
+  },
+  "2px dashed; border-style: solid": {
+    "border-top-width": "2px",
+    "border-right-width": "2px",
+    "border-bottom-width": "2px",
+    "border-left-width": "2px",
+    "border-top-style": "solid",
+    "border-right-style": "solid",
+    "border-bottom-style": "solid",
+    "border-left-style": "solid"
+  },
+  "thin dotted hsl(120, 100%, 50%); border-left-width: thick; border-right-style: solid": {
+    "border-top-width": "thin",
+    "border-right-width": "thin",
+    "border-bottom-width": "thin",
+    "border-left-width": "thick",
+    "border-top-style": "dotted",
+    "border-right-style": "solid",
+    "border-bottom-style": "dotted",
+    "border-left-style": "dotted",
+    "border-top-color": "hsl(120,100%,50%)",
+    "border-right-color": "hsl(120,100%,50%)",
+    "border-bottom-color": "hsl(120,100%,50%)",
+    "border-left-color": "hsl(120,100%,50%)"
+  },
+  "5px double #333 border-box": {
+    "border-top-width": "5px",
+    "border-right-width": "5px",
+    "border-bottom-width": "5px",
+    "border-left-width": "5px",
+    "border-top-style": "double",
+    "border-right-style": "double",
+    "border-bottom-style": "double",
+    "border-left-style": "double",
+    "border-top-color": "#333",
+    "border-right-color": "#333",
+    "border-bottom-color": "#333",
+    "border-left-color": "#333",
+    "box-sizing": "border-box"
+  },
+  "5px double #333 border-box, 1px dashed red padding-box": {
+    "border": "5px double #333 border-box, 1px dashed red padding-box"
   }
 }

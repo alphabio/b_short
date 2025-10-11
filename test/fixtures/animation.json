@@ -458,5 +458,35 @@
     "animation-direction": "normal",
     "animation-fill-mode": "none",
     "animation-play-state": "running"
+  },
+  "spin 1s ease-in; animation-duration: 2s": {
+    "animation-name": "spin",
+    "animation-duration": "2s",
+    "animation-timing-function": "ease-in",
+    "animation-delay": "0s",
+    "animation-iteration-count": "1",
+    "animation-direction": "normal",
+    "animation-fill-mode": "none",
+    "animation-play-state": "running"
+  },
+  "spin 1s; animation-iteration-count: infinite": {
+    "animation-name": "spin",
+    "animation-duration": "1s",
+    "animation-timing-function": "ease",
+    "animation-delay": "0s",
+    "animation-iteration-count": "infinite",
+    "animation-direction": "normal",
+    "animation-fill-mode": "none",
+    "animation-play-state": "running"
+  },
+  "spin 1s, fadeIn 2s; animation-name: rotate, pulse": {
+    "animation-name": "rotate, pulse",
+    "animation-duration": "1s, 2s",
+    "animation-timing-function": "ease, ease",
+    "animation-delay": "0s, 0s",
+    "animation-iteration-count": "1, 1",
+    "animation-direction": "normal, normal",
+    "animation-fill-mode": "none, none",
+    "animation-play-state": "running, running"
   }
 }

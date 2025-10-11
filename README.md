@@ -200,7 +200,7 @@ const results = expand(`
   padding: 5px;
 `, {
   format: 'css',
-  indent: '',
+  indent: 2,
   separator: ' '
 });
 ```
@@ -209,8 +209,8 @@ const results = expand(`
 
 The `expand` function accepts an optional second parameter with formatting options:
 
-- `format`: `'js' | 'css'` - Output format (default: `'js'`)
-- `indent`: `string` - Indentation for CSS output (default: `'  '`)
+- `format`: `'js' | 'css'` - Output format (default: `'css'`)
+- `indent`: `number` - Indentation for CSS output (default: `0`)
 - `separator`: `string` - Separator between CSS declarations (default: `'\n'`)
 
 ## Output Formats
@@ -244,8 +244,79 @@ const results = expand(`
 
 // Output string expanded results
 // margin-top: 10px;
-// margin-right: 10px;...;
-// padding-top: 5px;..."
+// margin-right: 10px;
+// margin-bottom: 10px;
+// margin-left: 10px;
+// padding-top: 5px;
+// padding-right: 5px;
+// padding-bottom: 5px;
+// padding-left: 5px;
+```
+
+```javascript
+// Multiple declarations with JS format
+const result = expand(`
+  margin: 10px;
+  padding: 5px;
+`, { format: 'js' });
+// Returns single merged object (properties are merged, later declarations override earlier ones):
+{
+  'margin-top': '10px',
+  'margin-right': '10px',
+  'margin-bottom': '10px',
+  'margin-left': '10px',
+  'padding-top': '5px',
+  'padding-right': '5px',
+  'padding-bottom': '5px',
+  'padding-left': '5px'
+}
+```
+
+> **Note**: When using `format: 'js'` with multiple declarations, properties are merged into a single object. Later declarations override earlier ones following standard CSS cascade rules. The `!important` flag is stripped and ignored (with a warning issued).
+
+## ⚠️ Limitations
+
+### !important Flag Handling
+
+The `!important` flag is detected and stripped during shorthand expansion. A warning is added to the `issues` array, but processing continues normally:
+
+```javascript
+const result = expand('margin: 10px !important; margin-top: 5px;', { format: 'js' });
+// result.ok: true
+// result.result: {
+//   'margin-top': '5px',      // Later declaration wins
+//   'margin-right': '10px',
+//   'margin-bottom': '10px',
+//   'margin-left': '10px'
+// }
+// result.issues: [{ property: 'margin', name: 'important-detected', ... }]
+```
+
+**Rationale**: Shorthand expansion is typically used in build-time transformations where `!important` context is not meaningful. The flag is stripped to allow normal cascade behavior.
+
+### Unparseable Shorthands
+
+If a shorthand property cannot be parsed (invalid syntax or unsupported pattern), the original shorthand is returned as-is with a warning:
+
+```javascript
+const result = expand('background: invalid-value;', { format: 'js' });
+// result.ok: true (no syntax errors from css-tree)
+// result.result: { background: 'invalid-value' }
+// result.issues: [{ property: 'background', name: 'expansion-failed', ... }]
+```
+
+This allows the CSS to pass through while alerting you to potential issues:
+
+```javascript
+const result = expand('background: invalid; margin: 10px;', { format: 'js' });
+// result.result: {
+//   background: 'invalid',
+//   'margin-top': '10px',
+//   'margin-right': '10px',
+//   'margin-bottom': '10px',
+//   'margin-left': '10px'
+// }
+// result.issues: [{ property: 'background', name: 'expansion-failed', ... }]
 ```
 
 ## 🎯 Supported Properties
@@ -393,8 +464,8 @@ interface ExpandOptions {
 
 #### Returns
 
-- **CSS format** (default): Formatted CSS string or `Array<string>` for multiple declarations
-- **JS format**: `{ [property: string]: string }` or `Array` for multiple declarations
+- **CSS format** (default): Formatted CSS string (multiple declarations are joined)
+- **JS format**: `{ [property: string]: string }` (multiple declarations are merged into a single object, with later properties overriding earlier ones and `!important` values taking precedence)
 
 #### Examples
 
@@ -403,13 +474,22 @@ interface ExpandOptions {
 expand('margin: 10px;');
 // → "margin-top: 10px;\nmargin-right: 10px;\nmargin-bottom: 10px;\nmargin-left: 10px;"
 
-// Multiple declarations - CSS strings array
+// Multiple declarations - CSS string (joined)
 expand('margin: 10px; padding: 5px;');
-// → ["margin-top: 10px;\n...", "padding-top: 5px;\n..."]
+// → "margin-top: 10px;\nmargin-right: 10px;\nmargin-bottom: 10px;\nmargin-left: 10px;\npadding-top: 5px;\npadding-right: 5px;\npadding-bottom: 5px;\npadding-left: 5px;"
 
-// JavaScript object output
+// JavaScript object output (single declaration)
 expand('margin: 10px;', { format: 'js' });
-// → { 'margin-top': '10px', 'margin-right': '10px', ... }
+// → { 'margin-top': '10px', 'margin-right': '10px', 'margin-bottom': '10px', 'margin-left': '10px' }
+
+// JavaScript object output (multiple declarations - merged)
+expand('margin: 10px; padding: 5px;', { format: 'js' });
+// → { 'margin-top': '10px', 'margin-right': '10px', 'margin-bottom': '10px', 'margin-left': '10px', 'padding-top': '5px', 'padding-right': '5px', 'padding-bottom': '5px', 'padding-left': '5px' }
+
+// Property override example
+expand('background: url(a.png); background-size: cover;', { format: 'js' });
+// The explicit background-size overrides the default from background expansion
+// → { 'background-image': 'url(a.png)', 'background-size': 'cover' }
 ```
 
 ## 🤝 Contributing

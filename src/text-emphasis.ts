@@ -37,7 +37,12 @@ export default function textEmphasis(value: string): Record<string, string> | un
       }
     } else if (SHAPE.test(v)) {
       if (result["text-emphasis-style"]) return;
-      result["text-emphasis-style"] = v;
+      if (i + 1 < values.length && FILL.test(values[i + 1])) {
+        result["text-emphasis-style"] = `${values[i + 1]} ${v}`;
+        i++;
+      } else {
+        result["text-emphasis-style"] = v;
+      }
     } else if (isColor(v)) {
       if (result["text-emphasis-color"]) return;
       result["text-emphasis-color"] = v;

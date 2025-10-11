@@ -93,6 +93,12 @@ export default function (value: string): Record<string, string> | undefined {
         "flex-shrink": "1",
         "flex-basis": second.value,
       };
+    } else if (first.type === "basis" && second.type === "number") {
+      return {
+        "flex-grow": second.value,
+        "flex-shrink": "1",
+        "flex-basis": first.value,
+      };
     } else {
       return undefined;
     }

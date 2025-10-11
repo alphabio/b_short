@@ -31,10 +31,10 @@ export default (value: string): Record<string, string> | undefined => {
   for (const val of values) {
     if (KEYWORD.test(val)) {
       autoValues.push(val);
-    } else if (INTEGER.test(val)) {
-      specificValues.push({ value: val, type: "count" });
     } else if (isLength(val)) {
       specificValues.push({ value: val, type: "width" });
+    } else if (INTEGER.test(val)) {
+      specificValues.push({ value: val, type: "count" });
     } else {
       return undefined; // Invalid value
     }
@@ -50,9 +50,6 @@ export default (value: string): Record<string, string> | undefined => {
 
   // Assign specific values first
   for (const { value, type } of specificValues) {
-    if (type === "count" && value === "0") {
-      return undefined; // column-count cannot be 0
-    }
     result[`column-${type}`] = value;
   }
 

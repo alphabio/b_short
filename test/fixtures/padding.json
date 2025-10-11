@@ -28,5 +28,23 @@
     "padding-right": "inherit",
     "padding-bottom": "inherit",
     "padding-left": "inherit"
+  },
+  "5px; padding-right: 15px": {
+    "padding-top": "5px",
+    "padding-right": "15px",
+    "padding-bottom": "5px",
+    "padding-left": "5px"
+  },
+  "5px 10px; padding-top: 20px": {
+    "padding-top": "20px",
+    "padding-right": "10px",
+    "padding-bottom": "5px",
+    "padding-left": "10px"
+  },
+  "1px 2px 3px 4px; padding-left: 10px; padding-right: 20px": {
+    "padding-top": "1px",
+    "padding-right": "20px",
+    "padding-bottom": "3px",
+    "padding-left": "10px"
   }
 }

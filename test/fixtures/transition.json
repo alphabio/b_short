@@ -214,5 +214,23 @@
     "transition-duration": "var(--d)",
     "transition-timing-function": "ease",
     "transition-delay": "var(--delay)"
+  },
+  "opacity 400ms; transition-duration: 600ms": {
+    "transition-property": "opacity",
+    "transition-duration": "600ms",
+    "transition-timing-function": "ease",
+    "transition-delay": "0s"
+  },
+  "all 0.5s ease; transition-timing-function: linear": {
+    "transition-property": "all",
+    "transition-duration": "0.5s",
+    "transition-timing-function": "linear",
+    "transition-delay": "0s"
+  },
+  "opacity 400ms, transform 300ms; transition-property: width, height": {
+    "transition-property": "width, height",
+    "transition-duration": "400ms, 300ms",
+    "transition-timing-function": "ease, ease",
+    "transition-delay": "0s, 0s"
   }
 }

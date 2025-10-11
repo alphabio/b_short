@@ -2,30 +2,75 @@
   "url(/testSite/wp-content/themes/BareBones/images/bg3.png) no-repeat center center fixed": {
     "background-image": "url(/testSite/wp-content/themes/BareBones/images/bg3.png)",
     "background-position": "center center",
+    "background-size": "auto auto",
     "background-repeat": "no-repeat",
-    "background-attachment": "fixed"
+    "background-attachment": "fixed",
+    "background-origin": "padding-box",
+    "background-clip": "border-box"
   },
   "scroll": {
-    "background-attachment": "scroll"
+    "background-image": "none",
+    "background-position": "0% 0%",
+    "background-size": "auto auto",
+    "background-repeat": "repeat",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box"
   },
   "content-box": {
+    "background-image": "none",
+    "background-position": "0% 0%",
+    "background-size": "auto auto",
+    "background-repeat": "repeat",
+    "background-attachment": "scroll",
+    "background-origin": "content-box",
     "background-clip": "content-box"
   },
   "url( image.png )": {
-    "background-image": "url(image.png)"
+    "background-image": "url(image.png)",
+    "background-position": "0% 0%",
+    "background-size": "auto auto",
+    "background-repeat": "repeat",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box"
   },
   "no-repeat repeat": {
-    "background-repeat": "no-repeat repeat"
+    "background-image": "none",
+    "background-position": "0% 0%",
+    "background-size": "auto auto",
+    "background-repeat": "no-repeat repeat",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box"
   },
   "rgba(128, 64, 128, 1)": {
+    "background-image": "none",
+    "background-position": "0% 0%",
+    "background-size": "auto auto",
+    "background-repeat": "repeat",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box",
     "background-color": "rgba(128,64,128,1)"
   },
   "left 10px": {
-    "background-position": "left 10px"
+    "background-image": "none",
+    "background-position": "left 10px",
+    "background-size": "auto auto",
+    "background-repeat": "repeat",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box"
   },
   "10% / auto 10px": {
+    "background-image": "none",
     "background-position": "10%",
-    "background-size": "auto 10px"
+    "background-size": "auto 10px",
+    "background-repeat": "repeat",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box"
   },
   "fixed padding-box url(image.png) rgb(255, 255, 0) 10px top / cover repeat-x": {
     "background-attachment": "fixed",
@@ -34,15 +79,80 @@
     "background-repeat": "repeat-x",
     "background-color": "rgb(255,255,0)",
     "background-position": "10px top",
-    "background-size": "cover"
+    "background-size": "cover",
+    "background-origin": "padding-box"
   },
   "inherit": {
-    "background-attachment": "inherit",
-    "background-clip": "inherit",
-    "background-image": "inherit",
-    "background-repeat": "inherit",
-    "background-color": "inherit",
-    "background-position": "inherit",
-    "background-size": "inherit"
+    "background-attachment": "scroll",
+    "background-clip": "border-box",
+    "background-image": "none",
+    "background-repeat": "repeat",
+    "background-position": "0% 0%",
+    "background-size": "auto auto",
+    "background-origin": "padding-box"
+  },
+  "conic-gradient(at 83.333333% 33.333333%, #999999 0 120deg, #0000 0), conic-gradient(from -120deg at 16.666667% 33.333333%, #cdcbcc 0 120deg, #0000 0), conic-gradient(from 120deg at 33.333333% 83.333333%, #f2f2f2 0 120deg, #0000 0), conic-gradient(from 120deg at 66.666667% 83.333333%, #f2f2f2 0 120deg, #0000 0), conic-gradient(from -180deg at 33.333333% 50%, #cdcbcc 60deg, #f2f2f2 0 120deg, #0000 0), conic-gradient(from 60deg at 66.666667% 50%, #f2f2f2 60deg, #999999 0 120deg, #0000 0), conic-gradient(from -60deg at 50% 33.333333%, #f2f2f2 120deg, #cdcbcc 0 240deg, #999999 0)": {
+    "background-image": "conic-gradient(at 83.333333% 33.333333%,#999999 0 120deg,#0000 0), conic-gradient(from -120deg at 16.666667% 33.333333%,#cdcbcc 0 120deg,#0000 0), conic-gradient(from 120deg at 33.333333% 83.333333%,#f2f2f2 0 120deg,#0000 0), conic-gradient(from 120deg at 66.666667% 83.333333%,#f2f2f2 0 120deg,#0000 0), conic-gradient(from -180deg at 33.333333% 50%,#cdcbcc 60deg,#f2f2f2 0 120deg,#0000 0), conic-gradient(from 60deg at 66.666667% 50%,#f2f2f2 60deg,#999999 0 120deg,#0000 0), conic-gradient(from -60deg at 50% 33.333333%,#f2f2f2 120deg,#cdcbcc 0 240deg,#999999 0)",
+    "background-position": "0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%",
+    "background-size": "auto auto, auto auto, auto auto, auto auto, auto auto, auto auto, auto auto",
+    "background-repeat": "repeat, repeat, repeat, repeat, repeat, repeat, repeat",
+    "background-attachment": "scroll, scroll, scroll, scroll, scroll, scroll, scroll",
+    "background-origin": "padding-box, padding-box, padding-box, padding-box, padding-box, padding-box, padding-box",
+    "background-clip": "border-box, border-box, border-box, border-box, border-box, border-box, border-box"
+  },
+  "conic-gradient(at 83.333333% 33.333333%, #999999 0 120deg, #0000 0), conic-gradient(from -120deg at 16.666667% 33.333333%, #cdcbcc 0 120deg, #0000 0), conic-gradient(from 120deg at 33.333333% 83.333333%, #f2f2f2 0 120deg, #0000 0), conic-gradient(from 120deg at 66.666667% 83.333333%, #f2f2f2 0 120deg, #0000 0), conic-gradient(from -180deg at 33.333333% 50%, #cdcbcc 60deg, #f2f2f2 0 120deg, #0000 0), conic-gradient(from 60deg at 66.666667% 50%, #f2f2f2 60deg, #999999 0 120deg, #0000 0), conic-gradient(from -60deg at 50% 33.333333%, #f2f2f2 120deg, #cdcbcc 0 240deg, #999999 0); background-size: 145.492268px 84px": {
+    "background-image": "conic-gradient(at 83.333333% 33.333333%,#999999 0 120deg,#0000 0), conic-gradient(from -120deg at 16.666667% 33.333333%,#cdcbcc 0 120deg,#0000 0), conic-gradient(from 120deg at 33.333333% 83.333333%,#f2f2f2 0 120deg,#0000 0), conic-gradient(from 120deg at 66.666667% 83.333333%,#f2f2f2 0 120deg,#0000 0), conic-gradient(from -180deg at 33.333333% 50%,#cdcbcc 60deg,#f2f2f2 0 120deg,#0000 0), conic-gradient(from 60deg at 66.666667% 50%,#f2f2f2 60deg,#999999 0 120deg,#0000 0), conic-gradient(from -60deg at 50% 33.333333%,#f2f2f2 120deg,#cdcbcc 0 240deg,#999999 0)",
+    "background-position": "0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%",
+    "background-size": "145.492268px 84px",
+    "background-repeat": "repeat, repeat, repeat, repeat, repeat, repeat, repeat",
+    "background-attachment": "scroll, scroll, scroll, scroll, scroll, scroll, scroll",
+    "background-origin": "padding-box, padding-box, padding-box, padding-box, padding-box, padding-box, padding-box",
+    "background-clip": "border-box, border-box, border-box, border-box, border-box, border-box, border-box"
+  },
+  "url(image.png) no-repeat; background-position: center": {
+    "background-image": "url(image.png)",
+    "background-position": "center",
+    "background-size": "auto auto",
+    "background-repeat": "no-repeat",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box"
+  },
+  "url(image.png); background-repeat: repeat-x": {
+    "background-image": "url(image.png)",
+    "background-position": "0% 0%",
+    "background-size": "auto auto",
+    "background-repeat": "repeat-x",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box"
+  },
+  "url(image.png) red; background-color: blue": {
+    "background-image": "url(image.png)",
+    "background-position": "0% 0%",
+    "background-size": "auto auto",
+    "background-repeat": "repeat",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box",
+    "background-color": "blue"
+  },
+  "linear-gradient(red, blue) center / cover; background-size: contain": {
+    "background-image": "linear-gradient(red,blue)",
+    "background-position": "center",
+    "background-size": "contain",
+    "background-repeat": "repeat",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box"
+  },
+  "url('https://example.com/image1.png') top left / 50% auto no-repeat fixed content-box padding-box": {
+    "background-image": "url(https://example.com/image1.png)",
+    "background-position": "top left",
+    "background-size": "50% auto",
+    "background-repeat": "no-repeat",
+    "background-attachment": "fixed",
+    "background-origin": "content-box",
+    "background-clip": "padding-box"
   }
 }

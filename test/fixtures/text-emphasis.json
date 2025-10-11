@@ -26,6 +26,21 @@
   "open sesame": {
     "text-emphasis-style": "open sesame"
   },
+  "dot filled": {
+    "text-emphasis-style": "filled dot"
+  },
+  "circle open": {
+    "text-emphasis-style": "open circle"
+  },
+  "triangle filled": {
+    "text-emphasis-style": "filled triangle"
+  },
+  "sesame open": {
+    "text-emphasis-style": "open sesame"
+  },
+  "double-circle filled": {
+    "text-emphasis-style": "filled double-circle"
+  },
   "filled red": {
     "text-emphasis-style": "filled",
     "text-emphasis-color": "red"
@@ -39,6 +54,14 @@
     "text-emphasis-color": "#555"
   },
   "#555 filled dot": {
+    "text-emphasis-style": "filled dot",
+    "text-emphasis-color": "#555"
+  },
+  "dot filled #555": {
+    "text-emphasis-style": "filled dot",
+    "text-emphasis-color": "#555"
+  },
+  "#555 dot filled": {
     "text-emphasis-style": "filled dot",
     "text-emphasis-color": "#555"
   },
