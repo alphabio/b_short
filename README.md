@@ -105,7 +105,7 @@ yarn add b_short
 ## 🚀 Quick Start
 
 ```typescript
-import expand from 'b_short';
+import { expand } from 'b_short';
 
 // Basic expansion
 const { result } = expand('margin: 10px 20px;');
@@ -275,7 +275,7 @@ console.log(warning.warnings);  // [{ property: 'color', name: 'invalid-value', 
 ### Basic Usage
 
 ```typescript
-import expand from 'b_short';
+import { expand } from 'b_short';
 
 // Margin expansion
 expand('margin: 10px 20px 30px 40px;');
@@ -290,6 +290,8 @@ expand('padding: 1rem;', { format: 'js' });
 
 ```typescript
 // Multi-layer backgrounds
+import { expand } from 'b_short';
+
 expand('background: url(img1.png) top left no-repeat, linear-gradient(to bottom, #000, #fff);', {
   format: 'js'
 });
@@ -303,6 +305,8 @@ expand('background: url(img1.png) top left no-repeat, linear-gradient(to bottom,
 ### Flexbox & Grid
 
 ```typescript
+import { expand } from 'b_short';
+
 // Flexbox
 expand('flex: 1 1 auto; flex-flow: row wrap;', { format: 'js' });
 // → { 'flex-grow': '1', 'flex-shrink': '1', 'flex-basis': 'auto', 'flex-direction': 'row', 'flex-wrap': 'wrap' }
@@ -315,6 +319,8 @@ expand('grid: repeat(3, 1fr) / auto-flow 100px;', { format: 'js' });
 ### Animation & Transitions
 
 ```typescript
+import { expand } from 'b_short';
+
 // Multi-layer animations
 expand('animation: spin 1s linear infinite, fade 2s ease-in-out;', { format: 'js' });
 // → {
@@ -331,6 +337,8 @@ expand('transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 
 ### Modern CSS Features
 
 ```typescript
+import { expand } from 'b_short';
+
 // CSS Motion Path (offset)
 expand('offset: path("M 0 0 L 100 100") 50% / center;', { format: 'js' });
 // → { 'offset-path': 'path("M 0 0 L 100 100")', 'offset-distance': '50%', 'offset-anchor': 'center' }
@@ -342,6 +350,8 @@ expand('mask: url(mask.svg) center / contain, linear-gradient(black, transparent
 ### Property Overrides
 
 ```typescript
+import { expand } from 'b_short';
+
 // Later properties override earlier ones (CSS cascade)
 expand('margin: 10px; margin-top: 20px;', { format: 'js' });
 // → { 'margin-top': '20px', 'margin-right': '10px', 'margin-bottom': '10px', 'margin-left': '10px' }
@@ -354,6 +364,8 @@ expand('margin-top: 20px; margin: 10px;', { format: 'js' });
 ### Error Handling
 
 ```typescript
+import { expand } from 'b_short';
+
 // Validation errors
 const { ok, result, issues } = expand('margin: ;');
 console.log(ok);  // false
@@ -371,6 +383,8 @@ console.log(issues);  // [{ name: 'important-detected', property: 'margin' }]
 ### CSS-in-JS Libraries
 
 ```typescript
+import { expand } from 'b_short';
+
 // Perfect for styled-components, emotion, etc.
 const styles = expand('margin: 1rem; padding: 0.5rem; border: 1px solid #ccc;', { format: 'js' });
 // Use expanded styles in your CSS-in-JS library
@@ -379,6 +393,8 @@ const styles = expand('margin: 1rem; padding: 0.5rem; border: 1px solid #ccc;', 
 ### Build Tools & Bundlers
 
 ```typescript
+import { expand } from 'b_short';
+
 // PostCSS plugin, webpack loader, or vite plugin
 function processCss(css) {
   const { result } = expand(css, { format: 'css' });
@@ -389,6 +405,8 @@ function processCss(css) {
 ### Static Analysis Tools
 
 ```typescript
+import { expand } from 'b_short';
+
 // Analyze CSS for linting, optimization, or documentation
 const { result } = expand(rawCSS, { format: 'js' });
 const properties = Object.keys(result);
@@ -398,6 +416,8 @@ const properties = Object.keys(result);
 ### Design Systems
 
 ```typescript
+import { expand } from 'b_short';
+
 // Normalize and validate design tokens
 const tokens = {
   spacing: expand('margin: var(--spacing-md);', { format: 'js' }),
@@ -407,10 +427,10 @@ const tokens = {
 
 ## ⚡ Performance
 
-- **Fast**: Optimized TypeScript with minimal overhead
+- **Fast**: Optimized TypeScript with memoization for repeated calls
 - **Small**: ~15KB minified, ~5KB gzipped
-- **Efficient**: No runtime allocations for repeated calls
-- **Tested**: 738 comprehensive tests ensuring correctness
+- **Efficient**: LRU caching for frequently-used values
+- **Tested**: 750 comprehensive tests ensuring correctness
 
 ## 🔧 Development
 
@@ -424,17 +444,44 @@ pnpm test
 # Run tests in watch mode
 pnpm test:watch
 
+# Run tests with coverage
+pnpm test:coverage
+
 # Type check
 pnpm type-check
 
 # Lint
 pnpm lint
 
+# Fix linting issues
+pnpm lint:fix
+
 # Format code
 pnpm format
 
 # Build
 pnpm build
+
+# Build in watch mode
+pnpm dev
+
+# Run benchmarks
+pnpm bench
+
+# Check bundle size
+pnpm size
+
+# Check for outdated dependencies
+pnpm outdated
+
+# Update dependencies
+pnpm update
+
+# Audit dependencies for vulnerabilities
+pnpm audit
+
+# Fix audit issues automatically
+pnpm audit:fix
 ```
 
 ## 🤝 Contributing

@@ -1,6 +1,6 @@
 // b_path:: test/invalid-cases.test.ts
 import { describe, expect, it } from "vitest";
-import expand from "../src/index";
+import { expand } from "../src/index";
 import { assertNoDuplicateProperties } from "./helpers/assertions";
 
 describe("grid (invalid cases)", () => {

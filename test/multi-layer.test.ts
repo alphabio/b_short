@@ -1,6 +1,6 @@
 // b_path:: test/multi-layer.test.ts
 import { describe, expect, it } from "vitest";
-import expand from "../src/index";
+import { expand } from "../src/index";
 import { backgroundLayerTestFixtures, maskLayerTestFixtures } from "./fixtures/layers";
 import { assertNoDuplicateProperties } from "./helpers/assertions";
 

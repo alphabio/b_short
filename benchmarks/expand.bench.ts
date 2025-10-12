@@ -1,7 +1,17 @@
 // b_path:: benchmarks/expand.bench.ts
 import { Bench } from "tinybench";
-import expand from "../src/index";
+import { expand } from "../src/index";
 
+/**
+ * Performance benchmark suite for b_short CSS expansion.
+ *
+ * Tests various CSS shorthands to track performance regressions:
+ * - Simple shorthands (margin, padding, border)
+ * - Complex shorthands (background, font, animation)
+ * - Multi-layer properties (backgrounds, animations)
+ * - Property grouping strategies
+ * - Output format variations
+ */
 async function runBenchmarks() {
   const bench = new Bench({ time: 1000 });
 

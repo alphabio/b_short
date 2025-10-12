@@ -1,6 +1,6 @@
 // b_path:: test/property-grouping.test.ts
 import { describe, expect, it } from "vitest";
-import expand from "../src/index";
+import { expand } from "../src/index";
 
 describe("propertyGrouping option", () => {
   describe("by-property (default)", () => {

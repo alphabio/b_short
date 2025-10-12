@@ -1,6 +1,6 @@
 // b_path:: test/valid-expansions.test.ts
 import { describe, expect, it } from "vitest";
-import expand from "../src/index";
+import { expand } from "../src/index";
 import animation from "./fixtures/animation.json";
 import background from "./fixtures/background.json";
 import border from "./fixtures/border.json";

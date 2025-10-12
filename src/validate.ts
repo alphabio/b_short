@@ -35,7 +35,7 @@ import {
 // Constants
 const DEFAULT_MAX_LINE_WIDTH = 80;
 const LINE_NUMBER_PADDING = 4;
-const CONTEXT_WINDOW_SIZE = 2; // Lines before and after error
+const DEFAULT_CONTEXT_WINDOW_SIZE = 2; // Lines before and after error
 
 export interface BStyleMatchError extends csstree.SyntaxMatchError {
   property: string;
@@ -50,8 +50,9 @@ export interface Declaration {
   node: csstree.CssNode;
 }
 
-interface ErrorFormatOptions {
+export interface ErrorFormatOptions {
   maxLineWidth: number;
+  contextWindowSize?: number;
 }
 
 interface TruncationBounds {
@@ -189,12 +190,22 @@ export function validateDeclaration(value: string, prop: string): StylesheetVali
 }
 
 // Helper functions
+/**
+ * Calculates the line window to display around an error line.
+ * Shows contextWindowSize lines before and after the error for better context.
+ *
+ * @param errorLine - The line number where the error occurred
+ * @param totalLines - Total number of lines in the CSS
+ * @param contextWindowSize - Number of lines to show before and after error (default: 2)
+ * @returns Object with start and end line numbers for the context window
+ */
 function calculateLineWindow(
   errorLine: number,
-  totalLines: number
+  totalLines: number,
+  contextWindowSize: number = DEFAULT_CONTEXT_WINDOW_SIZE
 ): { start: number; end: number } {
-  const start = Math.max(1, errorLine - CONTEXT_WINDOW_SIZE);
-  const end = Math.min(totalLines, errorLine + CONTEXT_WINDOW_SIZE);
+  const start = Math.max(1, errorLine - contextWindowSize);
+  const end = Math.min(totalLines, errorLine + contextWindowSize);
   return { start, end };
 }
 
@@ -336,10 +347,30 @@ function createPointerLine(prefixLength: number, column: number, length: number)
   return pointerPrefix + dashes + carets;
 }
 
+/**
+ * Formats and displays CSS validation errors with visual context.
+ * Shows the error line with surrounding context, line numbers, and pointer indicators.
+ *
+ * @param cssLines - Array of CSS source lines
+ * @param warning - The validation error/warning to format
+ * @param options - Formatting options (maxLineWidth, contextWindowSize)
+ * @returns Array of formatted strings representing the error display
+ *
+ * @example
+ * // Error at line 5, column 10:
+ * //   3 | .class {
+ * //   4 |   margin: 10px;
+ * //   5 |   color: notacolor;
+ * //       ---------^^^^^^^^^^^
+ * //   6 | }
+ */
 function formatErrorDisplay(
   cssLines: string[],
   warning: BStyleMatchError,
-  options: ErrorFormatOptions = { maxLineWidth: DEFAULT_MAX_LINE_WIDTH }
+  options: ErrorFormatOptions = {
+    maxLineWidth: DEFAULT_MAX_LINE_WIDTH,
+    contextWindowSize: DEFAULT_CONTEXT_WINDOW_SIZE,
+  }
 ): string[] {
   // Input validation
   if (!cssLines.length || warning.line < 1 || warning.line > cssLines.length) {
@@ -348,8 +379,9 @@ function formatErrorDisplay(
   const errorLine = warning.line;
   const errorColumn = warning.column;
   const mismatchLength = warning.mismatchLength ?? 1;
+  const contextWindowSize = options.contextWindowSize ?? DEFAULT_CONTEXT_WINDOW_SIZE;
 
-  const { start, end } = calculateLineWindow(errorLine, cssLines.length);
+  const { start, end } = calculateLineWindow(errorLine, cssLines.length, contextWindowSize);
   const maxLineNum = end;
   const linePrefix = formatLineNumber(1, maxLineNum);
   const prefixLength = linePrefix.length;

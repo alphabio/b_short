@@ -5,6 +5,69 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-10-12
+
+### 💥 BREAKING CHANGES
+
+- **Removed default export in favor of named exports only**
+  - All imports must now use named imports: `import { expand } from 'b_short'`
+  - This eliminates the Rollup warning about mixed exports and improves CJS/ESM interoperability
+  - **Migration:** Change `import expand from 'b_short'` to `import { expand } from 'b_short'`
+
+### ✨ New Features
+
+- **Performance optimization with memoization**
+  - Added caching to `directional()` function (1000-entry LRU cache)
+  - Added caching to `isColor()` function (500-entry LRU cache)
+  - Repeated calls with identical values are significantly faster
+  - Particularly beneficial for design systems and build tools processing similar CSS
+
+- **Configurable error context window**
+  - Added `contextWindowSize` option to `ErrorFormatOptions` interface
+  - Allows customizing the number of lines shown before/after errors
+  - Default remains 2 lines for backward compatibility
+
+- **Enhanced API exports**
+  - Now exports `sortProperties` utility function
+  - Now exports `PROPERTY_ORDER_MAP` for advanced use cases
+  - All TypeScript types exported from main package
+
+### 📚 Documentation
+
+- **Comprehensive JSDoc comments added**
+  - Detailed documentation for `expand()` with usage examples
+  - Documented conflict resolution algorithm in `removeConflictingProperties()`
+  - Enhanced documentation for sorting utilities
+  - Added JSDoc to validation and formatting functions
+  - Better IDE autocomplete and inline help
+
+### 🧪 Testing
+
+- **Performance regression test suite**
+  - Added 5 new performance tests to track regressions
+  - Tests ensure operations stay under 10ms threshold
+  - Cache effectiveness validation included
+  - Total: 750 tests passing (745 existing + 5 new)
+
+### 🛠️ Developer Experience
+
+- **New npm scripts for common tasks**
+  - `pnpm outdated` - Check for outdated dependencies
+  - `pnpm update` - Update dependencies
+  - `pnpm audit` - Audit dependencies for vulnerabilities
+  - `pnpm audit:fix` - Automatically fix audit issues
+
+- **Git hooks with Husky**
+  - Pre-commit hook runs linting, type checking, and tests
+  - Ensures code quality and prevents broken commits
+  - Automatically installed with `pnpm install`
+
+### 📝 Updated
+
+- All README examples now use named imports
+- Benchmark suite improved with better documentation
+- All test files updated to use named imports
+
 ## [1.2.3] - 2025-10-12
 
 ### 🐛 Bug Fixes
