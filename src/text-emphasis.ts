@@ -1,4 +1,5 @@
 // b_path:: src/text-emphasis.ts
+import { sortProperties } from "./index";
 import isColor from "./is-color";
 import normalizeColor from "./normalize-color";
 
@@ -11,10 +12,10 @@ export default function textEmphasis(value: string): Record<string, string> | un
   const values = normalizeColor(value).split(/\s+/);
 
   if (values.length === 1 && KEYWORD.test(values[0])) {
-    return {
+    return sortProperties({
       "text-emphasis-style": values[0],
       "text-emphasis-color": values[0],
-    };
+    });
   }
 
   const result: Record<string, string> = {};
@@ -51,5 +52,5 @@ export default function textEmphasis(value: string): Record<string, string> | un
     }
   }
 
-  return result;
+  return sortProperties(result);
 }

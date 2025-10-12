@@ -1,4 +1,5 @@
 // b_path:: src/column-rule.ts
+import { sortProperties } from "./index";
 import isColor from "./is-color";
 import isLength from "./is-length";
 import normalizeColor from "./normalize-color";
@@ -12,11 +13,11 @@ export default function columnRule(value: string): Record<string, string> | unde
 
   if (values.length > 3) return;
   if (values.length === 1 && KEYWORD.test(values[0])) {
-    return {
+    return sortProperties({
       "column-rule-width": values[0],
       "column-rule-style": values[0],
       "column-rule-color": values[0],
-    };
+    });
   }
 
   const result: Record<string, string> = {};
@@ -37,5 +38,5 @@ export default function columnRule(value: string): Record<string, string> | unde
     }
   }
 
-  return result;
+  return sortProperties(result);
 }

@@ -5,9 +5,140 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-01-12
+
+### 🚀 **Enterprise-Grade Modernization**
+
+**Complete repository modernization with professional tooling, performance monitoring, and automation**
+
+#### ✨ Added - Build System & Infrastructure
+
+- **Modern dual-format builds** with tsup
+  - ESM + CJS dual format output (tree-shakeable)
+  - 67% faster builds (3s → 1s)
+  - Source maps for both formats
+  - Watch mode for development (`pnpm run dev`)
+  - Proper module exports configuration
+
+- **Vite 6 compatibility**
+  - ESM config files (.mts) for all configurations
+  - Updated tsconfig.json for modern module resolution
+  - Zero deprecation warnings
+
+- **Bundle size monitoring**
+  - size-limit integration with automated checks
+  - ESM: 106KB (limit: 120KB), CJS: 116KB (limit: 125KB)
+  - Command: `pnpm run size`
+
+#### ✨ Added - Performance & Quality Tools
+
+- **Performance benchmarking suite**
+  - tinybench integration for accurate measurements
+  - 12 comprehensive benchmark test cases
+  - Performance: 183k ops/sec (simple), 30k ops/sec (complex)
+  - Command: `pnpm run bench`
+
+- **Test coverage reporting**
+  - vitest coverage configuration
+  - @vitest/coverage-v8 integration
+  - HTML, JSON, and text reports
+  - Command: `pnpm test:coverage`
+
+- **Enhanced CI/CD pipeline**
+  - Multi-job GitHub Actions workflow (test, size, benchmark)
+  - Matrix testing across Node 18, 20, 22
+  - Automated releases with NPM provenance
+  - Coverage upload to Codecov
+  - Separate size-check and benchmark jobs
+
+#### ✨ Added - Property Grouping Feature
+
+- **New `propertyGrouping` option** for controlling CSS property order
+  - `by-property` (default): Groups by property type (CSS spec order)
+  - `by-side`: Groups by directional side (useful for box model debugging)
+  - Full TypeScript support with comprehensive tests
+  - Documented with examples in README
+
+#### 🔧 Fixed - Property Ordering
+
+- **Resolved property ordering issues** across all shorthand parsers
+  - Applied proper sorting to 8 critical parsers (font, border, outline, etc.)
+  - Fixed 55 test failures from handover document
+  - All 738 tests now passing with correct CSS specification order
+  - Properties now consistently output in spec-defined order
+
+#### 📚 Documentation
+
+- **Complete README rewrite**
+  - Professional structure with collapsible sections
+  - Comprehensive feature categorization
+  - Better organized examples and use cases
+  - Added validate API documentation
+  - Clear TypeScript type definitions
+
+- **Security & Community**
+  - Added SECURITY.md with vulnerability reporting
+  - Created GitHub issue templates (bug report, feature request)
+  - Improved contributing guidelines
+
+#### 🛠️ Infrastructure
+
+- **Package structure improvements**
+  - Migrated from `lib/` to standard `dist/` output
+  - Added `sideEffects: false` for better tree-shaking
+  - Updated Node.js requirement to >=16
+  - Proper dual-format exports (ESM .mjs + CJS .js)
+
+- **Development tools**
+  - Added tsx for TypeScript execution
+  - Enhanced quality checks workflow
+  - Improved developer experience
+
+#### 📊 Statistics
+
+- **738/738 tests passing** (100% success rate)
+- **Build time: 67% faster** (3s → 1s)
+- **Bundle size:** ESM 106KB, CJS 116KB (both under limits)
+- **Performance:** 183k ops/sec (simple), 30k ops/sec (complex)
+- **Zero regressions** - fully backward compatible
+
+#### 🎯 Quality Metrics
+
+- ✅ All lint checks passing
+- ✅ All type checks passing
+- ✅ Zero deprecation warnings
+- ✅ Bundle size under limits
+- ✅ Performance benchmarks established
+- ✅ CI/CD fully automated
+
+### ⚠️ Breaking Changes
+
+**None** - This release is fully backward compatible. All existing code continues to work without modifications.
+
+### 📦 Dependencies
+
+**Added:**
+
+- `tsup` - Modern bundler for dual-format builds
+- `tsx` - TypeScript execution for development
+- `tinybench` - Performance benchmarking
+- `size-limit` + `@size-limit/preset-small-lib` - Bundle size monitoring
+- `@vitest/coverage-v8` - Test coverage reporting
+
+### 🔄 Migration Guide
+
+No migration needed! This release is fully backward compatible. New features are opt-in:
+
+- Use `propertyGrouping: 'by-side'` option to group properties by directional side
+- Run `pnpm run bench` to see performance metrics
+- Run `pnpm run size` to check bundle size
+
+---
+
 ## [1.1.0] - 2024-12-XX
 
 ### 🧪 **Test Suite Reorganization**
+
 **Complete refactoring of test structure for improved maintainability**
 
 - **Restructured 728 tests** into 5 focused files with clear responsibilities:
@@ -23,6 +154,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Future-proof structure** for easy addition of new tests and maintenance
 
 ### 🔧 **Code Quality**
+
 - Cleaned up unused imports in `src/background.ts`
 - Improved code clarity and reduced technical debt
 

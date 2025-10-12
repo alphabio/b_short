@@ -110,9 +110,11 @@ words:
   - slateblue
   - slategray
   - slategrey
+  - softprops
   - springgreen
   - steelblue
   - tsconfig
+  - Unparseable
   - url
   - vitest
   - whitesmoke

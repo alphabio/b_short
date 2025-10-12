@@ -12,6 +12,13 @@ export const ExpandOptionsSchema = z
     format: z.enum(["js", "css"]).default("css").optional().describe("Output format"),
     indent: z.number().min(0).default(0).optional().describe("Indentation for CSS output"),
     separator: z.string().default("\n").optional().describe("Separator between CSS declarations"),
+    propertyGrouping: z
+      .enum(["by-property", "by-side"])
+      .default("by-property")
+      .optional()
+      .describe(
+        "Property grouping strategy: 'by-property' groups by property type (e.g., all margins, then all borders), 'by-side' groups by directional side (e.g., all top properties, then all right properties)"
+      ),
   })
   .describe("Options for CSS expansion");
 

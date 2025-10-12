@@ -1,0 +1,93 @@
+name: Bug Report
+description: File a bug report to help us improve
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please provide as much detail as possible.
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Call expand with '...'
+        2. Use options { ... }
+        3. See error
+    validations:
+      required: true
+  
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: A clear description of what you expected to happen
+      placeholder: What should have happened?
+    validations:
+      required: true
+  
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened
+      placeholder: What actually happened?
+    validations:
+      required: true
+  
+  - type: textarea
+    id: code
+    attributes:
+      label: Minimal Reproduction
+      description: If possible, provide a minimal code example that reproduces the issue
+      render: typescript
+      placeholder: |
+        import expand from 'b_short';
+        
+        const result = expand('...');
+        console.log(result);
+  
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version of b_short are you using?
+      placeholder: e.g., 1.1.2
+    validations:
+      required: true
+  
+  - type: input
+    id: node
+    attributes:
+      label: Node Version
+      description: What version of Node.js are you using?
+      placeholder: e.g., 20.10.0
+  
+  - type: dropdown
+    id: package-manager
+    attributes:
+      label: Package Manager
+      description: Which package manager are you using?
+      options:
+        - npm
+        - pnpm
+        - yarn
+        - bun
+  
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: Screenshots, related issues, etc.

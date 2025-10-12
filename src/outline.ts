@@ -1,4 +1,5 @@
 // b_path:: src/outline.ts
+import { sortProperties } from "./index";
 import isColor from "./is-color";
 import isLength from "./is-length";
 import normalizeColor from "./normalize-color";
@@ -12,11 +13,11 @@ export default function outline(value: string): Record<string, string> | undefin
 
   if (values.length > 3) return;
   if (values.length === 1 && KEYWORD.test(values[0])) {
-    return {
+    return sortProperties({
       "outline-width": values[0],
       "outline-style": values[0],
       "outline-color": values[0],
-    };
+    });
   }
 
   const result: Record<string, string> = {};
@@ -37,5 +38,5 @@ export default function outline(value: string): Record<string, string> | undefin
     }
   }
 
-  return result;
+  return sortProperties(result);
 }

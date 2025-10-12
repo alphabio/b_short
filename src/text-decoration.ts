@@ -1,4 +1,5 @@
 // b_path:: src/text-decoration.ts
+import { sortProperties } from "./index";
 import isColor from "./is-color";
 import isLength from "./is-length";
 import normalizeColor from "./normalize-color";
@@ -12,12 +13,12 @@ export default function textDecoration(value: string): Record<string, string> | 
   const values = normalizeColor(value).split(/\s+/);
 
   if (values.length === 1 && KEYWORD.test(values[0])) {
-    return {
+    return sortProperties({
       "text-decoration-line": values[0],
       "text-decoration-style": values[0],
       "text-decoration-color": values[0],
       "text-decoration-thickness": values[0],
-    };
+    });
   }
 
   const result: Record<string, string> = {};
@@ -49,5 +50,5 @@ export default function textDecoration(value: string): Record<string, string> | 
     result["text-decoration-line"] = lines.join(" ");
   }
 
-  return result;
+  return sortProperties(result);
 }
