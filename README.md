@@ -272,27 +272,25 @@ const result = expand(`
 }
 ```
 
-> **Note**: When using `format: 'js'` with multiple declarations, properties are merged into a single object. Later declarations override earlier ones following standard CSS cascade rules. The `!important` flag is stripped and ignored (with a warning issued).
+> **Note**: When using `format: 'js'` with multiple declarations, properties are merged into a single object. Later declarations override earlier ones following standard CSS cascade rules. Declarations with `!important` are preserved as-is with appropriate warnings.
 
 ## ⚠️ Limitations
 
 ### !important Flag Handling
 
-The `!important` flag is detected and stripped during shorthand expansion. A warning is added to the `issues` array, but processing continues normally:
+The `!important` flag is detected and preserved. A warning is added to the `issues` array, but the declaration is left untouched:
 
 ```javascript
 const result = expand('margin: 10px !important; margin-top: 5px;', { format: 'js' });
 // result.ok: true
 // result.result: {
-//   'margin-top': '5px',      // Later declaration wins
-//   'margin-right': '10px',
-//   'margin-bottom': '10px',
-//   'margin-left': '10px'
+//   'margin': '10px !important',    // Shorthand preserved with !important
+//   'margin-top': '5px'             // Longhand declarations still processed
 // }
 // result.issues: [{ property: 'margin', name: 'important-detected', ... }]
 ```
 
-**Rationale**: Shorthand expansion is typically used in build-time transformations where `!important` context is not meaningful. The flag is stripped to allow normal cascade behavior.
+**Rationale**: The `!important` flag indicates a deliberate authoring choice that should be preserved. Shorthand properties with `!important` are left as-is to maintain the author's intent, while allowing normal processing of other declarations.
 
 ### Unparseable Shorthands
 
@@ -465,7 +463,7 @@ interface ExpandOptions {
 #### Returns
 
 - **CSS format** (default): Formatted CSS string (multiple declarations are joined)
-- **JS format**: `{ [property: string]: string }` (multiple declarations are merged into a single object, with later properties overriding earlier ones and `!important` values taking precedence)
+- **JS format**: `{ [property: string]: string }` (multiple declarations are merged into a single object, with later properties overriding earlier ones following standard CSS cascade rules)
 
 #### Examples
 
