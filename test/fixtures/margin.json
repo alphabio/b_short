@@ -1,50 +1,50 @@
 {
   "1px": {
-    "margin-top": "1px",
-    "margin-right": "1px",
-    "margin-bottom": "1px",
-    "margin-left": "1px"
+    "marginTop": "1px",
+    "marginRight": "1px",
+    "marginBottom": "1px",
+    "marginLeft": "1px"
   },
   "1px 2px": {
-    "margin-top": "1px",
-    "margin-right": "2px",
-    "margin-bottom": "1px",
-    "margin-left": "2px"
+    "marginTop": "1px",
+    "marginRight": "2px",
+    "marginBottom": "1px",
+    "marginLeft": "2px"
   },
   "1px 2px 3px": {
-    "margin-top": "1px",
-    "margin-right": "2px",
-    "margin-bottom": "3px",
-    "margin-left": "2px"
+    "marginTop": "1px",
+    "marginRight": "2px",
+    "marginBottom": "3px",
+    "marginLeft": "2px"
   },
   "1px 2px 3px 4px": {
-    "margin-top": "1px",
-    "margin-right": "2px",
-    "margin-bottom": "3px",
-    "margin-left": "4px"
+    "marginTop": "1px",
+    "marginRight": "2px",
+    "marginBottom": "3px",
+    "marginLeft": "4px"
   },
   "inherit": {
-    "margin-top": "inherit",
-    "margin-right": "inherit",
-    "margin-bottom": "inherit",
-    "margin-left": "inherit"
+    "marginTop": "inherit",
+    "marginRight": "inherit",
+    "marginBottom": "inherit",
+    "marginLeft": "inherit"
   },
   "10px; margin-top: 20px": {
-    "margin-top": "20px",
-    "margin-right": "10px",
-    "margin-bottom": "10px",
-    "margin-left": "10px"
+    "marginTop": "20px",
+    "marginRight": "10px",
+    "marginBottom": "10px",
+    "marginLeft": "10px"
   },
   "10px 20px; margin-left: 5px": {
-    "margin-top": "10px",
-    "margin-right": "20px",
-    "margin-bottom": "10px",
-    "margin-left": "5px"
+    "marginTop": "10px",
+    "marginRight": "20px",
+    "marginBottom": "10px",
+    "marginLeft": "5px"
   },
   "10px 20px 30px 40px; margin-bottom: 50px": {
-    "margin-top": "10px",
-    "margin-right": "20px",
-    "margin-bottom": "50px",
-    "margin-left": "40px"
+    "marginTop": "10px",
+    "marginRight": "20px",
+    "marginBottom": "50px",
+    "marginLeft": "40px"
   }
 }

@@ -158,6 +158,7 @@ interface ExpandOptions {
 Control how properties are ordered in the output:
 
 **`by-property`** (default) - CSS specification order, groups by property type:
+
 ```javascript
 {
   'border-top-width': '10px',
@@ -172,6 +173,7 @@ Control how properties are ordered in the output:
 ```
 
 **`by-side`** - Directional order, groups by box model side (useful for debugging):
+
 ```javascript
 {
   'border-top-width': '10px',
@@ -263,6 +265,7 @@ console.log(warning.warnings);  // [{ property: 'color', name: 'invalid-value', 
 ```
 
 **Use Cases:**
+
 - Pre-validation before expansion
 - CSS linting and validation tools
 - Build-time CSS checks

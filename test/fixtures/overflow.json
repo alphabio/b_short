@@ -1,58 +1,58 @@
 {
   "visible": {
-    "overflow-x": "visible",
-    "overflow-y": "visible"
+    "overflowX": "visible",
+    "overflowY": "visible"
   },
   "hidden": {
-    "overflow-x": "hidden",
-    "overflow-y": "hidden"
+    "overflowX": "hidden",
+    "overflowY": "hidden"
   },
   "scroll": {
-    "overflow-x": "scroll",
-    "overflow-y": "scroll"
+    "overflowX": "scroll",
+    "overflowY": "scroll"
   },
   "auto": {
-    "overflow-x": "auto",
-    "overflow-y": "auto"
+    "overflowX": "auto",
+    "overflowY": "auto"
   },
   "clip": {
-    "overflow-x": "clip",
-    "overflow-y": "clip"
+    "overflowX": "clip",
+    "overflowY": "clip"
   },
   "visible hidden": {
-    "overflow-x": "visible",
-    "overflow-y": "hidden"
+    "overflowX": "visible",
+    "overflowY": "hidden"
   },
   "hidden scroll": {
-    "overflow-x": "hidden",
-    "overflow-y": "scroll"
+    "overflowX": "hidden",
+    "overflowY": "scroll"
   },
   "scroll auto": {
-    "overflow-x": "scroll",
-    "overflow-y": "auto"
+    "overflowX": "scroll",
+    "overflowY": "auto"
   },
   "auto visible": {
-    "overflow-x": "auto",
-    "overflow-y": "visible"
+    "overflowX": "auto",
+    "overflowY": "visible"
   },
   "clip hidden": {
-    "overflow-x": "clip",
-    "overflow-y": "hidden"
+    "overflowX": "clip",
+    "overflowY": "hidden"
   },
   "inherit": {
-    "overflow-x": "inherit",
-    "overflow-y": "inherit"
+    "overflowX": "inherit",
+    "overflowY": "inherit"
   },
   "initial": {
-    "overflow-x": "initial",
-    "overflow-y": "initial"
+    "overflowX": "initial",
+    "overflowY": "initial"
   },
   "unset": {
-    "overflow-x": "unset",
-    "overflow-y": "unset"
+    "overflowX": "unset",
+    "overflowY": "unset"
   },
   "revert": {
-    "overflow-x": "revert",
-    "overflow-y": "revert"
+    "overflowX": "revert",
+    "overflowY": "revert"
   }
 }

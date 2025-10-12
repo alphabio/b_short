@@ -1,126 +1,126 @@
 {
   "normal": {
-    "align-items": "normal",
-    "justify-items": "normal"
+    "alignItems": "normal",
+    "justifyItems": "normal"
   },
   "stretch": {
-    "align-items": "stretch",
-    "justify-items": "stretch"
+    "alignItems": "stretch",
+    "justifyItems": "stretch"
   },
   "center": {
-    "align-items": "center",
-    "justify-items": "center"
+    "alignItems": "center",
+    "justifyItems": "center"
   },
   "start": {
-    "align-items": "start",
-    "justify-items": "start"
+    "alignItems": "start",
+    "justifyItems": "start"
   },
   "end": {
-    "align-items": "end",
-    "justify-items": "end"
+    "alignItems": "end",
+    "justifyItems": "end"
   },
   "self-start": {
-    "align-items": "self-start",
-    "justify-items": "self-start"
+    "alignItems": "self-start",
+    "justifyItems": "self-start"
   },
   "self-end": {
-    "align-items": "self-end",
-    "justify-items": "self-end"
+    "alignItems": "self-end",
+    "justifyItems": "self-end"
   },
   "flex-start": {
-    "align-items": "flex-start",
-    "justify-items": "flex-start"
+    "alignItems": "flex-start",
+    "justifyItems": "flex-start"
   },
   "flex-end": {
-    "align-items": "flex-end",
-    "justify-items": "flex-end"
+    "alignItems": "flex-end",
+    "justifyItems": "flex-end"
   },
   "baseline": {
-    "align-items": "baseline",
-    "justify-items": "baseline"
+    "alignItems": "baseline",
+    "justifyItems": "baseline"
   },
   "first baseline": {
-    "align-items": "first baseline",
-    "justify-items": "first baseline"
+    "alignItems": "first baseline",
+    "justifyItems": "first baseline"
   },
   "last baseline": {
-    "align-items": "last baseline",
-    "justify-items": "last baseline"
+    "alignItems": "last baseline",
+    "justifyItems": "last baseline"
   },
   "center start": {
-    "align-items": "center",
-    "justify-items": "start"
+    "alignItems": "center",
+    "justifyItems": "start"
   },
   "stretch center": {
-    "align-items": "stretch",
-    "justify-items": "center"
+    "alignItems": "stretch",
+    "justifyItems": "center"
   },
   "self-start self-end": {
-    "align-items": "self-start",
-    "justify-items": "self-end"
+    "alignItems": "self-start",
+    "justifyItems": "self-end"
   },
   "baseline center": {
-    "align-items": "baseline",
-    "justify-items": "center"
+    "alignItems": "baseline",
+    "justifyItems": "center"
   },
   "first baseline end": {
-    "align-items": "first baseline",
-    "justify-items": "end"
+    "alignItems": "first baseline",
+    "justifyItems": "end"
   },
   "normal normal": {
-    "align-items": "normal",
-    "justify-items": "normal"
+    "alignItems": "normal",
+    "justifyItems": "normal"
   },
   "center left": {
-    "align-items": "center",
-    "justify-items": "left"
+    "alignItems": "center",
+    "justifyItems": "left"
   },
   "stretch right": {
-    "align-items": "stretch",
-    "justify-items": "right"
+    "alignItems": "stretch",
+    "justifyItems": "right"
   },
   "start left": {
-    "align-items": "start",
-    "justify-items": "left"
+    "alignItems": "start",
+    "justifyItems": "left"
   },
   "safe center": {
-    "align-items": "safe center",
-    "justify-items": "safe center"
+    "alignItems": "safe center",
+    "justifyItems": "safe center"
   },
   "unsafe self-start": {
-    "align-items": "unsafe self-start",
-    "justify-items": "unsafe self-start"
+    "alignItems": "unsafe self-start",
+    "justifyItems": "unsafe self-start"
   },
   "safe center end": {
-    "align-items": "safe center",
-    "justify-items": "end"
+    "alignItems": "safe center",
+    "justifyItems": "end"
   },
   "inherit": {
-    "align-items": "inherit",
-    "justify-items": "inherit"
+    "alignItems": "inherit",
+    "justifyItems": "inherit"
   },
   "initial": {
-    "align-items": "initial",
-    "justify-items": "initial"
+    "alignItems": "initial",
+    "justifyItems": "initial"
   },
   "unset": {
-    "align-items": "unset",
-    "justify-items": "unset"
+    "alignItems": "unset",
+    "justifyItems": "unset"
   },
   "revert": {
-    "align-items": "revert",
-    "justify-items": "revert"
+    "alignItems": "revert",
+    "justifyItems": "revert"
   },
   "First Baseline": {
-    "align-items": "First Baseline",
-    "justify-items": "First Baseline"
+    "alignItems": "First Baseline",
+    "justifyItems": "First Baseline"
   },
   "SAFE center": {
-    "align-items": "SAFE center",
-    "justify-items": "SAFE center"
+    "alignItems": "SAFE center",
+    "justifyItems": "SAFE center"
   },
   "SAFE Center End": {
-    "align-items": "SAFE Center",
-    "justify-items": "End"
+    "alignItems": "SAFE Center",
+    "justifyItems": "End"
   }
 }

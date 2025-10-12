@@ -1,57 +1,237 @@
 {
-  "none": { "flex-grow": "0", "flex-shrink": "0", "flex-basis": "auto" },
-  "auto": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "auto" },
-  "initial": { "flex-grow": "0", "flex-shrink": "1", "flex-basis": "auto" },
-  "0": { "flex-grow": "0", "flex-shrink": "1", "flex-basis": "0%" },
-  "1": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "0%" },
-  "2": { "flex-grow": "2", "flex-shrink": "1", "flex-basis": "0%" },
-  "0.5": { "flex-grow": "0.5", "flex-shrink": "1", "flex-basis": "0%" },
-  "3.14": { "flex-grow": "3.14", "flex-shrink": "1", "flex-basis": "0%" },
-  "100px": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "100px" },
-  "10em": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "10em" },
-  "50%": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "50%" },
-  "20rem": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "20rem" },
-  "content": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "content" },
-  "max-content": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "max-content" },
-  "min-content": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "min-content" },
-  "1 1": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "0%" },
-  "2 1": { "flex-grow": "2", "flex-shrink": "1", "flex-basis": "0%" },
-  "1 0": { "flex-grow": "1", "flex-shrink": "0", "flex-basis": "0%" },
-  "0 1": { "flex-grow": "0", "flex-shrink": "1", "flex-basis": "0%" },
-  "2 2": { "flex-grow": "2", "flex-shrink": "2", "flex-basis": "0%" },
-  "1 100px": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "100px" },
-  "2 50%": { "flex-grow": "2", "flex-shrink": "1", "flex-basis": "50%" },
-  "0 auto": { "flex-grow": "0", "flex-shrink": "1", "flex-basis": "auto" },
-  "3 10em": { "flex-grow": "3", "flex-shrink": "1", "flex-basis": "10em" },
-  "1 content": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "content" },
-  "100px 1": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "100px" },
-  "50% 2": { "flex-grow": "2", "flex-shrink": "1", "flex-basis": "50%" },
-  "10em 3": { "flex-grow": "3", "flex-shrink": "1", "flex-basis": "10em" },
-  "auto 0": { "flex-grow": "0", "flex-shrink": "1", "flex-basis": "auto" },
-  "content 1": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "content" },
-  "20rem 0.5": { "flex-grow": "0.5", "flex-shrink": "1", "flex-basis": "20rem" },
-  "1 1 auto": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "auto" },
-  "2 1 100px": { "flex-grow": "2", "flex-shrink": "1", "flex-basis": "100px" },
-  "0 0 auto": { "flex-grow": "0", "flex-shrink": "0", "flex-basis": "auto" },
-  "1 0 50%": { "flex-grow": "1", "flex-shrink": "0", "flex-basis": "50%" },
-  "2 2 10em": { "flex-grow": "2", "flex-shrink": "2", "flex-basis": "10em" },
-  "0.5 1.5 200px": { "flex-grow": "0.5", "flex-shrink": "1.5", "flex-basis": "200px" },
-  "inherit": { "flex-grow": "inherit", "flex-shrink": "inherit", "flex-basis": "inherit" },
-  "unset": { "flex-grow": "unset", "flex-shrink": "unset", "flex-basis": "unset" },
-  "revert": { "flex-grow": "revert", "flex-shrink": "revert", "flex-basis": "revert" },
-  "1 1 0": { "flex-grow": "1", "flex-shrink": "1", "flex-basis": "0" },
-  "0 0 0": { "flex-grow": "0", "flex-shrink": "0", "flex-basis": "0" },
+  "0": {
+    "flexGrow": "0",
+    "flexShrink": "1",
+    "flexBasis": "0%"
+  },
+  "1": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "0%"
+  },
+  "2": {
+    "flexGrow": "2",
+    "flexShrink": "1",
+    "flexBasis": "0%"
+  },
+  "none": {
+    "flexGrow": "0",
+    "flexShrink": "0",
+    "flexBasis": "auto"
+  },
+  "auto": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "auto"
+  },
+  "initial": {
+    "flexGrow": "0",
+    "flexShrink": "1",
+    "flexBasis": "auto"
+  },
+  "0.5": {
+    "flexGrow": "0.5",
+    "flexShrink": "1",
+    "flexBasis": "0%"
+  },
+  "3.14": {
+    "flexGrow": "3.14",
+    "flexShrink": "1",
+    "flexBasis": "0%"
+  },
+  "100px": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "100px"
+  },
+  "10em": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "10em"
+  },
+  "50%": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "50%"
+  },
+  "20rem": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "20rem"
+  },
+  "content": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "content"
+  },
+  "max-content": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "max-content"
+  },
+  "min-content": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "min-content"
+  },
+  "1 1": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "0%"
+  },
+  "2 1": {
+    "flexGrow": "2",
+    "flexShrink": "1",
+    "flexBasis": "0%"
+  },
+  "1 0": {
+    "flexGrow": "1",
+    "flexShrink": "0",
+    "flexBasis": "0%"
+  },
+  "0 1": {
+    "flexGrow": "0",
+    "flexShrink": "1",
+    "flexBasis": "0%"
+  },
+  "2 2": {
+    "flexGrow": "2",
+    "flexShrink": "2",
+    "flexBasis": "0%"
+  },
+  "1 100px": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "100px"
+  },
+  "2 50%": {
+    "flexGrow": "2",
+    "flexShrink": "1",
+    "flexBasis": "50%"
+  },
+  "0 auto": {
+    "flexGrow": "0",
+    "flexShrink": "1",
+    "flexBasis": "auto"
+  },
+  "3 10em": {
+    "flexGrow": "3",
+    "flexShrink": "1",
+    "flexBasis": "10em"
+  },
+  "1 content": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "content"
+  },
+  "100px 1": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "100px"
+  },
+  "50% 2": {
+    "flexGrow": "2",
+    "flexShrink": "1",
+    "flexBasis": "50%"
+  },
+  "10em 3": {
+    "flexGrow": "3",
+    "flexShrink": "1",
+    "flexBasis": "10em"
+  },
+  "auto 0": {
+    "flexGrow": "0",
+    "flexShrink": "1",
+    "flexBasis": "auto"
+  },
+  "content 1": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "content"
+  },
+  "20rem 0.5": {
+    "flexGrow": "0.5",
+    "flexShrink": "1",
+    "flexBasis": "20rem"
+  },
+  "1 1 auto": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "auto"
+  },
+  "2 1 100px": {
+    "flexGrow": "2",
+    "flexShrink": "1",
+    "flexBasis": "100px"
+  },
+  "0 0 auto": {
+    "flexGrow": "0",
+    "flexShrink": "0",
+    "flexBasis": "auto"
+  },
+  "1 0 50%": {
+    "flexGrow": "1",
+    "flexShrink": "0",
+    "flexBasis": "50%"
+  },
+  "2 2 10em": {
+    "flexGrow": "2",
+    "flexShrink": "2",
+    "flexBasis": "10em"
+  },
+  "0.5 1.5 200px": {
+    "flexGrow": "0.5",
+    "flexShrink": "1.5",
+    "flexBasis": "200px"
+  },
+  "inherit": {
+    "flexGrow": "inherit",
+    "flexShrink": "inherit",
+    "flexBasis": "inherit"
+  },
+  "unset": {
+    "flexGrow": "unset",
+    "flexShrink": "unset",
+    "flexBasis": "unset"
+  },
+  "revert": {
+    "flexGrow": "revert",
+    "flexShrink": "revert",
+    "flexBasis": "revert"
+  },
+  "1 1 0": {
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "0"
+  },
+  "0 0 0": {
+    "flexGrow": "0",
+    "flexShrink": "0",
+    "flexBasis": "0"
+  },
   "1 fit-content(200px)": {
-    "flex-grow": "1",
-    "flex-shrink": "1",
-    "flex-basis": "fit-content(200px)"
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "fit-content(200px)"
   },
   "1 1 fit-content(50%)": {
-    "flex-grow": "1",
-    "flex-shrink": "1",
-    "flex-basis": "fit-content(50%)"
+    "flexGrow": "1",
+    "flexShrink": "1",
+    "flexBasis": "fit-content(50%)"
   },
-  "1 1 auto; flex-grow: 2": { "flex-grow": "2", "flex-shrink": "1", "flex-basis": "auto" },
-  "0 1 100px; flex-basis: 200px": { "flex-grow": "0", "flex-shrink": "1", "flex-basis": "200px" },
-  "1; flex-shrink: 0": { "flex-grow": "1", "flex-shrink": "0", "flex-basis": "0%" }
+  "1 1 auto; flex-grow: 2": {
+    "flexGrow": "2",
+    "flexShrink": "1",
+    "flexBasis": "auto"
+  },
+  "0 1 100px; flex-basis: 200px": {
+    "flexGrow": "0",
+    "flexShrink": "1",
+    "flexBasis": "200px"
+  },
+  "1; flex-shrink: 0": {
+    "flexGrow": "1",
+    "flexShrink": "0",
+    "flexBasis": "0%"
+  }
 }

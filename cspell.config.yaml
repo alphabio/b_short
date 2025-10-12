@@ -82,9 +82,13 @@ words:
   - mediumturquoise
   - mediumvioletred
   - midnightblue
+  - minmax
   - mintcream
   - mistyrose
   - navajowhite
+  - notacolor
+  - npmjs
+  - npmtrends
   - oldlace
   - olivedrab
   - orangered
@@ -117,6 +121,7 @@ words:
   - Unparseable
   - url
   - vitest
+  - webdev
   - whitesmoke
   - xtend
   - yellowgreen

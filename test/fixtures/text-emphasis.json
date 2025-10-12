@@ -1,105 +1,105 @@
 {
   "none": {
-    "text-emphasis-style": "none"
+    "textEmphasisStyle": "none"
   },
   "filled": {
-    "text-emphasis-style": "filled"
+    "textEmphasisStyle": "filled"
   },
   "open": {
-    "text-emphasis-style": "open"
+    "textEmphasisStyle": "open"
   },
   "red": {
-    "text-emphasis-color": "red"
+    "textEmphasisColor": "red"
   },
   "#ff0000": {
-    "text-emphasis-color": "#ff0000"
+    "textEmphasisColor": "#ff0000"
   },
   "filled dot": {
-    "text-emphasis-style": "filled dot"
+    "textEmphasisStyle": "filled dot"
   },
   "open circle": {
-    "text-emphasis-style": "open circle"
+    "textEmphasisStyle": "open circle"
   },
   "filled triangle": {
-    "text-emphasis-style": "filled triangle"
+    "textEmphasisStyle": "filled triangle"
   },
   "open sesame": {
-    "text-emphasis-style": "open sesame"
+    "textEmphasisStyle": "open sesame"
   },
   "dot filled": {
-    "text-emphasis-style": "filled dot"
+    "textEmphasisStyle": "filled dot"
   },
   "circle open": {
-    "text-emphasis-style": "open circle"
+    "textEmphasisStyle": "open circle"
   },
   "triangle filled": {
-    "text-emphasis-style": "filled triangle"
+    "textEmphasisStyle": "filled triangle"
   },
   "sesame open": {
-    "text-emphasis-style": "open sesame"
+    "textEmphasisStyle": "open sesame"
   },
   "double-circle filled": {
-    "text-emphasis-style": "filled double-circle"
+    "textEmphasisStyle": "filled double-circle"
   },
   "filled red": {
-    "text-emphasis-style": "filled",
-    "text-emphasis-color": "red"
+    "textEmphasisStyle": "filled",
+    "textEmphasisColor": "red"
   },
   "red filled": {
-    "text-emphasis-style": "filled",
-    "text-emphasis-color": "red"
+    "textEmphasisStyle": "filled",
+    "textEmphasisColor": "red"
   },
   "filled dot #555": {
-    "text-emphasis-style": "filled dot",
-    "text-emphasis-color": "#555"
+    "textEmphasisStyle": "filled dot",
+    "textEmphasisColor": "#555"
   },
   "#555 filled dot": {
-    "text-emphasis-style": "filled dot",
-    "text-emphasis-color": "#555"
+    "textEmphasisStyle": "filled dot",
+    "textEmphasisColor": "#555"
   },
   "dot filled #555": {
-    "text-emphasis-style": "filled dot",
-    "text-emphasis-color": "#555"
+    "textEmphasisStyle": "filled dot",
+    "textEmphasisColor": "#555"
   },
   "#555 dot filled": {
-    "text-emphasis-style": "filled dot",
-    "text-emphasis-color": "#555"
+    "textEmphasisStyle": "filled dot",
+    "textEmphasisColor": "#555"
   },
   "triangle rgb(255, 0, 0)": {
-    "text-emphasis-style": "triangle",
-    "text-emphasis-color": "rgb(255,0,0)"
+    "textEmphasisStyle": "triangle",
+    "textEmphasisColor": "rgb(255,0,0)"
   },
   "\"*\"": {
-    "text-emphasis-style": "\"*\""
+    "textEmphasisStyle": "\"*\""
   },
   "'※'": {
-    "text-emphasis-style": "'※'"
+    "textEmphasisStyle": "'※'"
   },
   "\"※\" red": {
-    "text-emphasis-style": "\"※\"",
-    "text-emphasis-color": "red"
+    "textEmphasisStyle": "\"※\"",
+    "textEmphasisColor": "red"
   },
   "inherit": {
-    "text-emphasis-style": "inherit",
-    "text-emphasis-color": "inherit"
+    "textEmphasisStyle": "inherit",
+    "textEmphasisColor": "inherit"
   },
   "initial": {
-    "text-emphasis-style": "initial",
-    "text-emphasis-color": "initial"
+    "textEmphasisStyle": "initial",
+    "textEmphasisColor": "initial"
   },
   "unset": {
-    "text-emphasis-style": "unset",
-    "text-emphasis-color": "unset"
+    "textEmphasisStyle": "unset",
+    "textEmphasisColor": "unset"
   },
   "revert": {
-    "text-emphasis-style": "revert",
-    "text-emphasis-color": "revert"
+    "textEmphasisStyle": "revert",
+    "textEmphasisColor": "revert"
   },
   "var(--my-color)": {
-    "text-emphasis-color": "var(--my-color)"
+    "textEmphasisColor": "var(--my-color)"
   },
   "filled var(--my-color)": {
-    "text-emphasis-style": "filled",
-    "text-emphasis-color": "var(--my-color)"
+    "textEmphasisStyle": "filled",
+    "textEmphasisColor": "var(--my-color)"
   }
 }

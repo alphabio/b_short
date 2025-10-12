@@ -1,236 +1,236 @@
 {
   "none": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "underline": {
-    "text-decoration-line": "underline",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "overline": {
-    "text-decoration-line": "overline",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "overline",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "line-through": {
-    "text-decoration-line": "line-through",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "line-through",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "underline overline": {
-    "text-decoration-line": "underline overline",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline overline",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "underline line-through": {
-    "text-decoration-line": "underline line-through",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline line-through",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "overline line-through": {
-    "text-decoration-line": "overline line-through",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "overline line-through",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "solid": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "double": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "double",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "double",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "dotted": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "dotted",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "dotted",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "dashed": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "dashed",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "dashed",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "wavy": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "wavy",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "wavy",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "red": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "red",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "red",
+    "textDecorationThickness": "auto"
   },
   "#ff0000": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "#ff0000",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "#ff0000",
+    "textDecorationThickness": "auto"
   },
   "rgb(255, 0, 0)": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "rgb(255,0,0)",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "rgb(255,0,0)",
+    "textDecorationThickness": "auto"
   },
   "auto": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "from-font": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "from-font"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "from-font"
   },
   "2px": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "2px"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "2px"
   },
   "0.1em": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "0.1em"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "0.1em"
   },
   "10%": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "10%"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "10%"
   },
   "underline solid": {
-    "text-decoration-line": "underline",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "underline red": {
-    "text-decoration-line": "underline",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "red",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "red",
+    "textDecorationThickness": "auto"
   },
   "underline 2px": {
-    "text-decoration-line": "underline",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "2px"
+    "textDecorationLine": "underline",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "2px"
   },
   "solid red": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "red",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "red",
+    "textDecorationThickness": "auto"
   },
   "red solid": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "red",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "red",
+    "textDecorationThickness": "auto"
   },
   "underline dotted red": {
-    "text-decoration-line": "underline",
-    "text-decoration-style": "dotted",
-    "text-decoration-color": "red",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline",
+    "textDecorationStyle": "dotted",
+    "textDecorationColor": "red",
+    "textDecorationThickness": "auto"
   },
   "red dotted underline": {
-    "text-decoration-line": "underline",
-    "text-decoration-style": "dotted",
-    "text-decoration-color": "red",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline",
+    "textDecorationStyle": "dotted",
+    "textDecorationColor": "red",
+    "textDecorationThickness": "auto"
   },
   "underline wavy #ff3028": {
-    "text-decoration-line": "underline",
-    "text-decoration-style": "wavy",
-    "text-decoration-color": "#ff3028",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline",
+    "textDecorationStyle": "wavy",
+    "textDecorationColor": "#ff3028",
+    "textDecorationThickness": "auto"
   },
   "underline solid red 5px": {
-    "text-decoration-line": "underline",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "red",
-    "text-decoration-thickness": "5px"
+    "textDecorationLine": "underline",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "red",
+    "textDecorationThickness": "5px"
   },
   "5px red solid underline": {
-    "text-decoration-line": "underline",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "red",
-    "text-decoration-thickness": "5px"
+    "textDecorationLine": "underline",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "red",
+    "textDecorationThickness": "5px"
   },
   "underline overline dotted": {
-    "text-decoration-line": "underline overline",
-    "text-decoration-style": "dotted",
-    "text-decoration-color": "currentColor",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline overline",
+    "textDecorationStyle": "dotted",
+    "textDecorationColor": "currentColor",
+    "textDecorationThickness": "auto"
   },
   "underline overline red": {
-    "text-decoration-line": "underline overline",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "red",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline overline",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "red",
+    "textDecorationThickness": "auto"
   },
   "underline overline wavy red 2px": {
-    "text-decoration-line": "underline overline",
-    "text-decoration-style": "wavy",
-    "text-decoration-color": "red",
-    "text-decoration-thickness": "2px"
+    "textDecorationLine": "underline overline",
+    "textDecorationStyle": "wavy",
+    "textDecorationColor": "red",
+    "textDecorationThickness": "2px"
   },
   "inherit": {
-    "text-decoration-line": "inherit",
-    "text-decoration-style": "inherit",
-    "text-decoration-color": "inherit",
-    "text-decoration-thickness": "inherit"
+    "textDecorationLine": "inherit",
+    "textDecorationStyle": "inherit",
+    "textDecorationColor": "inherit",
+    "textDecorationThickness": "inherit"
   },
   "initial": {
-    "text-decoration-line": "initial",
-    "text-decoration-style": "initial",
-    "text-decoration-color": "initial",
-    "text-decoration-thickness": "initial"
+    "textDecorationLine": "initial",
+    "textDecorationStyle": "initial",
+    "textDecorationColor": "initial",
+    "textDecorationThickness": "initial"
   },
   "unset": {
-    "text-decoration-line": "unset",
-    "text-decoration-style": "unset",
-    "text-decoration-color": "unset",
-    "text-decoration-thickness": "unset"
+    "textDecorationLine": "unset",
+    "textDecorationStyle": "unset",
+    "textDecorationColor": "unset",
+    "textDecorationThickness": "unset"
   },
   "revert": {
-    "text-decoration-line": "revert",
-    "text-decoration-style": "revert",
-    "text-decoration-color": "revert",
-    "text-decoration-thickness": "revert"
+    "textDecorationLine": "revert",
+    "textDecorationStyle": "revert",
+    "textDecorationColor": "revert",
+    "textDecorationThickness": "revert"
   },
   "var(--my-color)": {
-    "text-decoration-line": "none",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "var(--my-color)",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "var(--my-color)",
+    "textDecorationThickness": "auto"
   },
   "underline var(--my-color)": {
-    "text-decoration-line": "underline",
-    "text-decoration-style": "solid",
-    "text-decoration-color": "var(--my-color)",
-    "text-decoration-thickness": "auto"
+    "textDecorationLine": "underline",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "var(--my-color)",
+    "textDecorationThickness": "auto"
   }
 }

@@ -1,149 +1,149 @@
 {
   "1px solid #000": {
-    "column-rule-width": "1px",
-    "column-rule-style": "solid",
-    "column-rule-color": "#000"
+    "columnRuleWidth": "1px",
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "#000"
   },
   "solid 1px #000": {
-    "column-rule-width": "1px",
-    "column-rule-style": "solid",
-    "column-rule-color": "#000"
+    "columnRuleWidth": "1px",
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "#000"
   },
   "solid #000000 1px": {
-    "column-rule-width": "1px",
-    "column-rule-style": "solid",
-    "column-rule-color": "#000000"
+    "columnRuleWidth": "1px",
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "#000000"
   },
   "solid": {
-    "column-rule-style": "solid"
+    "columnRuleStyle": "solid"
   },
   "black": {
-    "column-rule-color": "black"
+    "columnRuleColor": "black"
   },
   "1px": {
-    "column-rule-width": "1px"
+    "columnRuleWidth": "1px"
   },
   "inherit": {
-    "column-rule-width": "inherit",
-    "column-rule-style": "inherit",
-    "column-rule-color": "inherit"
+    "columnRuleWidth": "inherit",
+    "columnRuleStyle": "inherit",
+    "columnRuleColor": "inherit"
   },
   "initial": {
-    "column-rule-width": "initial",
-    "column-rule-style": "initial",
-    "column-rule-color": "initial"
+    "columnRuleWidth": "initial",
+    "columnRuleStyle": "initial",
+    "columnRuleColor": "initial"
   },
   "unset": {
-    "column-rule-width": "unset",
-    "column-rule-style": "unset",
-    "column-rule-color": "unset"
+    "columnRuleWidth": "unset",
+    "columnRuleStyle": "unset",
+    "columnRuleColor": "unset"
   },
   "revert": {
-    "column-rule-width": "revert",
-    "column-rule-style": "revert",
-    "column-rule-color": "revert"
+    "columnRuleWidth": "revert",
+    "columnRuleStyle": "revert",
+    "columnRuleColor": "revert"
   },
   "2em": {
-    "column-rule-width": "2em"
+    "columnRuleWidth": "2em"
   },
   "thin": {
-    "column-rule-width": "thin"
+    "columnRuleWidth": "thin"
   },
   "medium": {
-    "column-rule-width": "medium"
+    "columnRuleWidth": "medium"
   },
   "thick": {
-    "column-rule-width": "thick"
+    "columnRuleWidth": "thick"
   },
   "dotted": {
-    "column-rule-style": "dotted"
+    "columnRuleStyle": "dotted"
   },
   "dashed": {
-    "column-rule-style": "dashed"
+    "columnRuleStyle": "dashed"
   },
   "double": {
-    "column-rule-style": "double"
+    "columnRuleStyle": "double"
   },
   "groove": {
-    "column-rule-style": "groove"
+    "columnRuleStyle": "groove"
   },
   "ridge": {
-    "column-rule-style": "ridge"
+    "columnRuleStyle": "ridge"
   },
   "inset": {
-    "column-rule-style": "inset"
+    "columnRuleStyle": "inset"
   },
   "outset": {
-    "column-rule-style": "outset"
+    "columnRuleStyle": "outset"
   },
   "none": {
-    "column-rule-style": "none"
+    "columnRuleStyle": "none"
   },
   "hidden": {
-    "column-rule-style": "hidden"
+    "columnRuleStyle": "hidden"
   },
   "red": {
-    "column-rule-color": "red"
+    "columnRuleColor": "red"
   },
   "#ff0000": {
-    "column-rule-color": "#ff0000"
+    "columnRuleColor": "#ff0000"
   },
   "rgb(255, 0, 0)": {
-    "column-rule-color": "rgb(255,0,0)"
+    "columnRuleColor": "rgb(255,0,0)"
   },
   "hsl(0, 100%, 50%)": {
-    "column-rule-color": "hsl(0,100%,50%)"
+    "columnRuleColor": "hsl(0,100%,50%)"
   },
   "1px solid": {
-    "column-rule-width": "1px",
-    "column-rule-style": "solid"
+    "columnRuleWidth": "1px",
+    "columnRuleStyle": "solid"
   },
   "solid 1px": {
-    "column-rule-width": "1px",
-    "column-rule-style": "solid"
+    "columnRuleWidth": "1px",
+    "columnRuleStyle": "solid"
   },
   "1px red": {
-    "column-rule-width": "1px",
-    "column-rule-color": "red"
+    "columnRuleWidth": "1px",
+    "columnRuleColor": "red"
   },
   "red 1px": {
-    "column-rule-width": "1px",
-    "column-rule-color": "red"
+    "columnRuleWidth": "1px",
+    "columnRuleColor": "red"
   },
   "solid red": {
-    "column-rule-style": "solid",
-    "column-rule-color": "red"
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "red"
   },
   "red solid": {
-    "column-rule-style": "solid",
-    "column-rule-color": "red"
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "red"
   },
   "thin dotted #ff0000": {
-    "column-rule-width": "thin",
-    "column-rule-style": "dotted",
-    "column-rule-color": "#ff0000"
+    "columnRuleWidth": "thin",
+    "columnRuleStyle": "dotted",
+    "columnRuleColor": "#ff0000"
   },
   "medium dashed rgb(0, 0, 0)": {
-    "column-rule-width": "medium",
-    "column-rule-style": "dashed",
-    "column-rule-color": "rgb(0,0,0)"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "dashed",
+    "columnRuleColor": "rgb(0,0,0)"
   },
   "var(--my-color)": {
-    "column-rule-color": "var(--my-color)"
+    "columnRuleColor": "var(--my-color)"
   },
   "1px solid var(--my-color)": {
-    "column-rule-width": "1px",
-    "column-rule-style": "solid",
-    "column-rule-color": "var(--my-color)"
+    "columnRuleWidth": "1px",
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "var(--my-color)"
   },
   "#000 1px solid": {
-    "column-rule-width": "1px",
-    "column-rule-style": "solid",
-    "column-rule-color": "#000"
+    "columnRuleWidth": "1px",
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "#000"
   },
   "1px #000 solid": {
-    "column-rule-width": "1px",
-    "column-rule-style": "solid",
-    "column-rule-color": "#000"
+    "columnRuleWidth": "1px",
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "#000"
   }
 }
