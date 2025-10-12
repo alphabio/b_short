@@ -21,8 +21,18 @@ export default function textDecoration(value: string): Record<string, string> | 
     });
   }
 
-  const result: Record<string, string> = {};
+  // Initialize with defaults - text-decoration shorthand resets all properties
+  const result: Record<string, string> = {
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto",
+  };
+
   const lines: string[] = [];
+  let hasStyle = false;
+  let hasColor = false;
+  let hasThickness = false;
 
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
@@ -30,14 +40,17 @@ export default function textDecoration(value: string): Record<string, string> | 
     if (LINE.test(v)) {
       lines.push(v);
     } else if (STYLE.test(v)) {
-      if (result["text-decoration-style"]) return;
+      if (hasStyle) return; // Duplicate style
       result["text-decoration-style"] = v;
+      hasStyle = true;
     } else if (isColor(v)) {
-      if (result["text-decoration-color"]) return;
+      if (hasColor) return; // Duplicate color
       result["text-decoration-color"] = v;
+      hasColor = true;
     } else if (THICKNESS.test(v) || isLength(v)) {
-      if (result["text-decoration-thickness"]) return;
+      if (hasThickness) return; // Duplicate thickness
       result["text-decoration-thickness"] = v;
+      hasThickness = true;
     } else {
       return;
     }
