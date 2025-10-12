@@ -1,118 +1,118 @@
 {
-  "inherit": {
-    "grid-column-start": "inherit",
-    "grid-column-end": "inherit"
-  },
-  "initial": {
-    "grid-column-start": "initial",
-    "grid-column-end": "initial"
-  },
-  "unset": {
-    "grid-column-start": "unset",
-    "grid-column-end": "unset"
-  },
-  "revert": {
-    "grid-column-start": "revert",
-    "grid-column-end": "revert"
-  },
-  "auto": {
-    "grid-column-start": "auto",
-    "grid-column-end": "auto"
-  },
   "1": {
-    "grid-column-start": "1",
-    "grid-column-end": "auto"
-  },
-  "-1": {
-    "grid-column-start": "-1",
-    "grid-column-end": "auto"
+    "gridColumnStart": "1",
+    "gridColumnEnd": "auto"
   },
   "2": {
-    "grid-column-start": "2",
-    "grid-column-end": "auto"
+    "gridColumnStart": "2",
+    "gridColumnEnd": "auto"
+  },
+  "inherit": {
+    "gridColumnStart": "inherit",
+    "gridColumnEnd": "inherit"
+  },
+  "initial": {
+    "gridColumnStart": "initial",
+    "gridColumnEnd": "initial"
+  },
+  "unset": {
+    "gridColumnStart": "unset",
+    "gridColumnEnd": "unset"
+  },
+  "revert": {
+    "gridColumnStart": "revert",
+    "gridColumnEnd": "revert"
+  },
+  "auto": {
+    "gridColumnStart": "auto",
+    "gridColumnEnd": "auto"
+  },
+  "-1": {
+    "gridColumnStart": "-1",
+    "gridColumnEnd": "auto"
   },
   "main-start": {
-    "grid-column-start": "main-start",
-    "grid-column-end": "main-start"
+    "gridColumnStart": "main-start",
+    "gridColumnEnd": "main-start"
   },
   "sidebar": {
-    "grid-column-start": "sidebar",
-    "grid-column-end": "sidebar"
+    "gridColumnStart": "sidebar",
+    "gridColumnEnd": "sidebar"
   },
   "span 2": {
-    "grid-column-start": "span 2",
-    "grid-column-end": "auto"
+    "gridColumnStart": "span 2",
+    "gridColumnEnd": "auto"
   },
   "span 3": {
-    "grid-column-start": "span 3",
-    "grid-column-end": "auto"
+    "gridColumnStart": "span 3",
+    "gridColumnEnd": "auto"
   },
   "span main": {
-    "grid-column-start": "span main",
-    "grid-column-end": "auto"
+    "gridColumnStart": "span main",
+    "gridColumnEnd": "auto"
   },
   "span 2 main": {
-    "grid-column-start": "span 2 main",
-    "grid-column-end": "auto"
+    "gridColumnStart": "span 2 main",
+    "gridColumnEnd": "auto"
   },
   "2 main-start": {
-    "grid-column-start": "2 main-start",
-    "grid-column-end": "auto"
+    "gridColumnStart": "2 main-start",
+    "gridColumnEnd": "auto"
   },
   "1 / 3": {
-    "grid-column-start": "1",
-    "grid-column-end": "3"
+    "gridColumnStart": "1",
+    "gridColumnEnd": "3"
   },
   "1 / -1": {
-    "grid-column-start": "1",
-    "grid-column-end": "-1"
+    "gridColumnStart": "1",
+    "gridColumnEnd": "-1"
   },
   "2 / span 2": {
-    "grid-column-start": "2",
-    "grid-column-end": "span 2"
+    "gridColumnStart": "2",
+    "gridColumnEnd": "span 2"
   },
   "span 2 / 4": {
-    "grid-column-start": "span 2",
-    "grid-column-end": "4"
+    "gridColumnStart": "span 2",
+    "gridColumnEnd": "4"
   },
   "main-start / main-end": {
-    "grid-column-start": "main-start",
-    "grid-column-end": "main-end"
+    "gridColumnStart": "main-start",
+    "gridColumnEnd": "main-end"
   },
   "1 / span 3": {
-    "grid-column-start": "1",
-    "grid-column-end": "span 3"
+    "gridColumnStart": "1",
+    "gridColumnEnd": "span 3"
   },
   "auto / auto": {
-    "grid-column-start": "auto",
-    "grid-column-end": "auto"
+    "gridColumnStart": "auto",
+    "gridColumnEnd": "auto"
   },
   "span 2 main / 5": {
-    "grid-column-start": "span 2 main",
-    "grid-column-end": "5"
+    "gridColumnStart": "span 2 main",
+    "gridColumnEnd": "5"
   },
   "2 main-start / 4 main-end": {
-    "grid-column-start": "2 main-start",
-    "grid-column-end": "4 main-end"
+    "gridColumnStart": "2 main-start",
+    "gridColumnEnd": "4 main-end"
   },
   "1  /  3": {
-    "grid-column-start": "1",
-    "grid-column-end": "3"
+    "gridColumnStart": "1",
+    "gridColumnEnd": "3"
   },
   "-1 / -2": {
-    "grid-column-start": "-1",
-    "grid-column-end": "-2"
+    "gridColumnStart": "-1",
+    "gridColumnEnd": "-2"
   },
   "main-start 2": {
-    "grid-column-start": "main-start 2",
-    "grid-column-end": "auto"
+    "gridColumnStart": "main-start 2",
+    "gridColumnEnd": "auto"
   },
   "header 3": {
-    "grid-column-start": "header 3",
-    "grid-column-end": "auto"
+    "gridColumnStart": "header 3",
+    "gridColumnEnd": "auto"
   },
   "main-start 2 / -1": {
-    "grid-column-start": "main-start 2",
-    "grid-column-end": "-1"
+    "gridColumnStart": "main-start 2",
+    "gridColumnEnd": "-1"
   }
 }

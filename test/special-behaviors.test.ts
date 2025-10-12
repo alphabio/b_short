@@ -18,7 +18,7 @@ describe("!important handling", () => {
     expect(result.ok).toBe(true);
     expect(result.result).toEqual({
       margin: "10px !important",
-      "margin-top": "5px",
+      marginTop: "5px",
     });
     expect(
       result.issues.some(
@@ -31,10 +31,10 @@ describe("!important handling", () => {
     const result = expand("margin: 10px; margin-top: 20px !important;", { format: "js" });
     expect(result.ok).toBe(true);
     expect(result.result).toEqual({
-      "margin-top": "20px !important",
-      "margin-right": "10px",
-      "margin-bottom": "10px",
-      "margin-left": "10px",
+      marginTop: "20px !important",
+      marginRight: "10px",
+      marginBottom: "10px",
+      marginLeft: "10px",
     });
     expect(
       result.issues.some(
@@ -80,10 +80,10 @@ describe("expansion failure warnings", () => {
     expect(result.ok).toBe(true);
     expect(result.result).toEqual({
       grid: "invalid-syntax",
-      "margin-top": "10px",
-      "margin-right": "10px",
-      "margin-bottom": "10px",
-      "margin-left": "10px",
+      marginTop: "10px",
+      marginRight: "10px",
+      marginBottom: "10px",
+      marginLeft: "10px",
     });
     expect(
       result.issues.some((issue) => issue.name === "expansion-failed" && issue.property === "grid")
@@ -107,7 +107,7 @@ describe("non-shorthand property", () => {
       result,
       "should return the property for unknown properties (validation will catch them)"
     );
-    expect(result).toEqual({ "unknown-property": "value" });
+    expect(result).toEqual({ unknownProperty: "value" });
   });
 });
 
@@ -132,10 +132,10 @@ describe("format options", () => {
     const { result } = expand("margin: 10px;", { format: "js" });
     assertNoDuplicateProperties(result, "should return object when format is js");
     expect(result).toEqual({
-      "margin-top": "10px",
-      "margin-right": "10px",
-      "margin-bottom": "10px",
-      "margin-left": "10px",
+      marginTop: "10px",
+      marginRight: "10px",
+      marginBottom: "10px",
+      marginLeft: "10px",
     });
   });
 

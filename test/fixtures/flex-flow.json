@@ -1,22 +1,63 @@
 {
-  "row": { "flex-direction": "row" },
-  "row-reverse": { "flex-direction": "row-reverse" },
-  "column": { "flex-direction": "column" },
-  "column-reverse": { "flex-direction": "column-reverse" },
-  "nowrap": { "flex-wrap": "nowrap" },
-  "wrap": { "flex-wrap": "wrap" },
-  "wrap-reverse": { "flex-wrap": "wrap-reverse" },
-  "row nowrap": { "flex-direction": "row", "flex-wrap": "nowrap" },
-  "nowrap row": { "flex-direction": "row", "flex-wrap": "nowrap" },
-  "column wrap": { "flex-direction": "column", "flex-wrap": "wrap" },
-  "wrap column": { "flex-direction": "column", "flex-wrap": "wrap" },
-  "row-reverse wrap-reverse": { "flex-direction": "row-reverse", "flex-wrap": "wrap-reverse" },
-  "wrap-reverse column-reverse": {
-    "flex-direction": "column-reverse",
-    "flex-wrap": "wrap-reverse"
+  "row": {
+    "flexDirection": "row"
   },
-  "inherit": { "flex-direction": "inherit", "flex-wrap": "inherit" },
-  "initial": { "flex-direction": "initial", "flex-wrap": "initial" },
-  "unset": { "flex-direction": "unset", "flex-wrap": "unset" },
-  "revert": { "flex-direction": "revert", "flex-wrap": "revert" }
+  "row-reverse": {
+    "flexDirection": "row-reverse"
+  },
+  "column": {
+    "flexDirection": "column"
+  },
+  "column-reverse": {
+    "flexDirection": "column-reverse"
+  },
+  "nowrap": {
+    "flexWrap": "nowrap"
+  },
+  "wrap": {
+    "flexWrap": "wrap"
+  },
+  "wrap-reverse": {
+    "flexWrap": "wrap-reverse"
+  },
+  "row nowrap": {
+    "flexDirection": "row",
+    "flexWrap": "nowrap"
+  },
+  "nowrap row": {
+    "flexDirection": "row",
+    "flexWrap": "nowrap"
+  },
+  "column wrap": {
+    "flexDirection": "column",
+    "flexWrap": "wrap"
+  },
+  "wrap column": {
+    "flexDirection": "column",
+    "flexWrap": "wrap"
+  },
+  "row-reverse wrap-reverse": {
+    "flexDirection": "row-reverse",
+    "flexWrap": "wrap-reverse"
+  },
+  "wrap-reverse column-reverse": {
+    "flexDirection": "column-reverse",
+    "flexWrap": "wrap-reverse"
+  },
+  "inherit": {
+    "flexDirection": "inherit",
+    "flexWrap": "inherit"
+  },
+  "initial": {
+    "flexDirection": "initial",
+    "flexWrap": "initial"
+  },
+  "unset": {
+    "flexDirection": "unset",
+    "flexWrap": "unset"
+  },
+  "revert": {
+    "flexDirection": "revert",
+    "flexWrap": "revert"
+  }
 }

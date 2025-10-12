@@ -1,56 +1,56 @@
 {
   "1px": {
-    "border-top-left-radius": "1px",
-    "border-top-right-radius": "1px",
-    "border-bottom-right-radius": "1px",
-    "border-bottom-left-radius": "1px"
+    "borderTopLeftRadius": "1px",
+    "borderTopRightRadius": "1px",
+    "borderBottomRightRadius": "1px",
+    "borderBottomLeftRadius": "1px"
   },
   "1px 2px": {
-    "border-top-left-radius": "1px",
-    "border-top-right-radius": "2px",
-    "border-bottom-right-radius": "1px",
-    "border-bottom-left-radius": "2px"
+    "borderTopLeftRadius": "1px",
+    "borderTopRightRadius": "2px",
+    "borderBottomRightRadius": "1px",
+    "borderBottomLeftRadius": "2px"
   },
   "1px 2px 3px": {
-    "border-top-left-radius": "1px",
-    "border-top-right-radius": "2px",
-    "border-bottom-right-radius": "3px",
-    "border-bottom-left-radius": "2px"
+    "borderTopLeftRadius": "1px",
+    "borderTopRightRadius": "2px",
+    "borderBottomRightRadius": "3px",
+    "borderBottomLeftRadius": "2px"
   },
   "1px 2px 3px 4px": {
-    "border-top-left-radius": "1px",
-    "border-top-right-radius": "2px",
-    "border-bottom-right-radius": "3px",
-    "border-bottom-left-radius": "4px"
+    "borderTopLeftRadius": "1px",
+    "borderTopRightRadius": "2px",
+    "borderBottomRightRadius": "3px",
+    "borderBottomLeftRadius": "4px"
   },
   "10px / 5px": {
-    "border-top-left-radius": "10px 5px",
-    "border-top-right-radius": "10px 5px",
-    "border-bottom-right-radius": "10px 5px",
-    "border-bottom-left-radius": "10px 5px"
+    "borderTopLeftRadius": "10px 5px",
+    "borderTopRightRadius": "10px 5px",
+    "borderBottomRightRadius": "10px 5px",
+    "borderBottomLeftRadius": "10px 5px"
   },
   "10px 20px / 5px 15px": {
-    "border-top-left-radius": "10px 5px",
-    "border-top-right-radius": "20px 15px",
-    "border-bottom-right-radius": "10px 5px",
-    "border-bottom-left-radius": "20px 15px"
+    "borderTopLeftRadius": "10px 5px",
+    "borderTopRightRadius": "20px 15px",
+    "borderBottomRightRadius": "10px 5px",
+    "borderBottomLeftRadius": "20px 15px"
   },
   "10px 20px 30px / 5px 15px 25px": {
-    "border-top-left-radius": "10px 5px",
-    "border-top-right-radius": "20px 15px",
-    "border-bottom-right-radius": "30px 25px",
-    "border-bottom-left-radius": "20px 15px"
+    "borderTopLeftRadius": "10px 5px",
+    "borderTopRightRadius": "20px 15px",
+    "borderBottomRightRadius": "30px 25px",
+    "borderBottomLeftRadius": "20px 15px"
   },
   "10px 20px 30px 40px / 5px 15px 25px 35px": {
-    "border-top-left-radius": "10px 5px",
-    "border-top-right-radius": "20px 15px",
-    "border-bottom-right-radius": "30px 25px",
-    "border-bottom-left-radius": "40px 35px"
+    "borderTopLeftRadius": "10px 5px",
+    "borderTopRightRadius": "20px 15px",
+    "borderBottomRightRadius": "30px 25px",
+    "borderBottomLeftRadius": "40px 35px"
   },
   "inherit": {
-    "border-top-left-radius": "inherit",
-    "border-top-right-radius": "inherit",
-    "border-bottom-right-radius": "inherit",
-    "border-bottom-left-radius": "inherit"
+    "borderTopLeftRadius": "inherit",
+    "borderTopRightRadius": "inherit",
+    "borderBottomRightRadius": "inherit",
+    "borderBottomLeftRadius": "inherit"
   }
 }

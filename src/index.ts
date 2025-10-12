@@ -337,6 +337,20 @@ const PROPERTY_ORDER_MAP: Record<string, number> = {
 };
 
 /**
+ * Converts a kebab-case CSS property name to camelCase for JavaScript.
+ *
+ * @param property - CSS property name in kebab-case (e.g., "margin-top")
+ * @returns Property name in camelCase (e.g., "marginTop")
+ *
+ * @example
+ * kebabToCamelCase('margin-top') // → 'marginTop'
+ * kebabToCamelCase('text-decoration-line') // → 'textDecorationLine'
+ */
+function kebabToCamelCase(property: string): string {
+  return property.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+/**
  * Sorts an object's properties according to CSS specification order defined in PROPERTY_ORDER_MAP.
  *
  * @param obj - Object with CSS properties to sort
@@ -723,10 +737,19 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
     finalResult = undefined;
   } else if (cleanedResults.length === 1) {
     const result = cleanedResults[0];
-    finalResult =
-      format === "css" && typeof result === "object"
-        ? objectToCss(result, indent, separator, propertyGrouping)
-        : result;
+    if (format === "css" && typeof result === "object") {
+      finalResult = objectToCss(result, indent, separator, propertyGrouping);
+    } else if (format === "js" && typeof result === "object") {
+      // Sort and convert to camelCase for JS format
+      const sorted = sortProperties(result, propertyGrouping);
+      const camelCased: Record<string, string> = {};
+      for (const [key, value] of Object.entries(sorted)) {
+        camelCased[kebabToCamelCase(key)] = value;
+      }
+      finalResult = camelCased;
+    } else {
+      finalResult = result;
+    }
   } else {
     if (format === "css") {
       // For CSS format with multiple declarations, we need to merge objects first
@@ -761,7 +784,15 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
       }
 
       // Sort the merged result according to the specified grouping strategy
-      finalResult = sortProperties(mergedResult, options.propertyGrouping || "by-property");
+      const sorted = sortProperties(mergedResult, options.propertyGrouping || "by-property");
+
+      // Convert property names to camelCase for JavaScript
+      const camelCased: Record<string, string> = {};
+      for (const [key, value] of Object.entries(sorted)) {
+        camelCased[kebabToCamelCase(key)] = value;
+      }
+
+      finalResult = camelCased;
     }
   }
 

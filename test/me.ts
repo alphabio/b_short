@@ -1,6 +1,6 @@
 // b_path:: test/me.ts
 // Test file to verify partial options work correctly
-import expand from "../src/index";
+import { expand } from "../src/index";
 
 // Test the user's desired usage pattern
 // const css = "margin: 10px; padding: 5px;";
