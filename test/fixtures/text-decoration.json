@@ -1,98 +1,171 @@
 {
   "none": {
-    "text-decoration-line": "none"
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "underline": {
-    "text-decoration-line": "underline"
+    "text-decoration-line": "underline",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "overline": {
-    "text-decoration-line": "overline"
+    "text-decoration-line": "overline",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "line-through": {
-    "text-decoration-line": "line-through"
+    "text-decoration-line": "line-through",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "underline overline": {
-    "text-decoration-line": "underline overline"
+    "text-decoration-line": "underline overline",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "underline line-through": {
-    "text-decoration-line": "underline line-through"
+    "text-decoration-line": "underline line-through",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "overline line-through": {
-    "text-decoration-line": "overline line-through"
+    "text-decoration-line": "overline line-through",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "solid": {
-    "text-decoration-style": "solid"
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "double": {
-    "text-decoration-style": "double"
+    "text-decoration-line": "none",
+    "text-decoration-style": "double",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "dotted": {
-    "text-decoration-style": "dotted"
+    "text-decoration-line": "none",
+    "text-decoration-style": "dotted",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "dashed": {
-    "text-decoration-style": "dashed"
+    "text-decoration-line": "none",
+    "text-decoration-style": "dashed",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "wavy": {
-    "text-decoration-style": "wavy"
+    "text-decoration-line": "none",
+    "text-decoration-style": "wavy",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "red": {
-    "text-decoration-color": "red"
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "red",
+    "text-decoration-thickness": "auto"
   },
   "#ff0000": {
-    "text-decoration-color": "#ff0000"
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "#ff0000",
+    "text-decoration-thickness": "auto"
   },
   "rgb(255, 0, 0)": {
-    "text-decoration-color": "rgb(255,0,0)"
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "rgb(255,0,0)",
+    "text-decoration-thickness": "auto"
   },
   "auto": {
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
     "text-decoration-thickness": "auto"
   },
   "from-font": {
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
     "text-decoration-thickness": "from-font"
   },
   "2px": {
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
     "text-decoration-thickness": "2px"
   },
   "0.1em": {
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
     "text-decoration-thickness": "0.1em"
   },
   "10%": {
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
     "text-decoration-thickness": "10%"
   },
   "underline solid": {
     "text-decoration-line": "underline",
-    "text-decoration-style": "solid"
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "underline red": {
     "text-decoration-line": "underline",
-    "text-decoration-color": "red"
+    "text-decoration-style": "solid",
+    "text-decoration-color": "red",
+    "text-decoration-thickness": "auto"
   },
   "underline 2px": {
     "text-decoration-line": "underline",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
     "text-decoration-thickness": "2px"
   },
   "solid red": {
+    "text-decoration-line": "none",
     "text-decoration-style": "solid",
-    "text-decoration-color": "red"
+    "text-decoration-color": "red",
+    "text-decoration-thickness": "auto"
   },
   "red solid": {
+    "text-decoration-line": "none",
     "text-decoration-style": "solid",
-    "text-decoration-color": "red"
+    "text-decoration-color": "red",
+    "text-decoration-thickness": "auto"
   },
   "underline dotted red": {
     "text-decoration-line": "underline",
     "text-decoration-style": "dotted",
-    "text-decoration-color": "red"
+    "text-decoration-color": "red",
+    "text-decoration-thickness": "auto"
   },
   "red dotted underline": {
     "text-decoration-line": "underline",
     "text-decoration-style": "dotted",
-    "text-decoration-color": "red"
+    "text-decoration-color": "red",
+    "text-decoration-thickness": "auto"
   },
   "underline wavy #ff3028": {
     "text-decoration-line": "underline",
     "text-decoration-style": "wavy",
-    "text-decoration-color": "#ff3028"
+    "text-decoration-color": "#ff3028",
+    "text-decoration-thickness": "auto"
   },
   "underline solid red 5px": {
     "text-decoration-line": "underline",
@@ -108,11 +181,15 @@
   },
   "underline overline dotted": {
     "text-decoration-line": "underline overline",
-    "text-decoration-style": "dotted"
+    "text-decoration-style": "dotted",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto"
   },
   "underline overline red": {
     "text-decoration-line": "underline overline",
-    "text-decoration-color": "red"
+    "text-decoration-style": "solid",
+    "text-decoration-color": "red",
+    "text-decoration-thickness": "auto"
   },
   "underline overline wavy red 2px": {
     "text-decoration-line": "underline overline",
@@ -145,10 +222,15 @@
     "text-decoration-thickness": "revert"
   },
   "var(--my-color)": {
-    "text-decoration-color": "var(--my-color)"
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "var(--my-color)",
+    "text-decoration-thickness": "auto"
   },
   "underline var(--my-color)": {
     "text-decoration-line": "underline",
-    "text-decoration-color": "var(--my-color)"
+    "text-decoration-style": "solid",
+    "text-decoration-color": "var(--my-color)",
+    "text-decoration-thickness": "auto"
   }
 }
