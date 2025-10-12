@@ -14,6 +14,10 @@ interface BorderProperties {
   color?: string;
 }
 
+interface BorderResult extends BorderProperties {
+  boxSizing?: string;
+}
+
 type BorderFunction = {
   (value: string): Record<string, string> | undefined;
   width: (value: string) => Record<string, string> | undefined;
@@ -48,16 +52,38 @@ const direction =
 
     const filtered: Record<string, string> = {};
     for (const key in longhand) {
-      if (longhand[key as keyof BorderProperties]) {
+      if (key === "boxSizing" && longhand[key]) {
+        filtered[key] = longhand[key];
+      } else if (longhand[key as keyof BorderProperties]) {
         filtered[`border-${direction}-${key}`] = longhand[key as keyof BorderProperties] as string;
       }
     }
     return filtered;
   };
 
-const all = (value: string): BorderProperties | undefined => {
+const all = (value: string): BorderResult | undefined => {
   const values = normalizeColor(value).split(/\s+/);
   const first = values[0];
+
+  // Handle special case: border values with box-sizing
+  if (values.length === 4) {
+    const [width, style, color, boxSizing] = values;
+
+    // Check if first 3 values are valid border values and 4th is valid box-sizing
+    if (
+      (WIDTH.test(width) || isLength(width)) &&
+      STYLE.test(style) &&
+      isColor(color) &&
+      (boxSizing === "border-box" || boxSizing === "content-box")
+    ) {
+      return {
+        width,
+        style,
+        color,
+        boxSizing,
+      };
+    }
+  }
 
   if (values.length > 3) return;
   if (values.length === 1 && KEYWORD.test(first)) {
@@ -95,12 +121,21 @@ const border: BorderFunction = (value: string): Record<string, string> | undefin
   if (!longhand) return;
 
   const result: Record<string, string> = {};
-  for (const key of Object.keys(longhand) as (keyof BorderProperties)[]) {
-    const propFunction = border[key as keyof BorderFunction] as (
-      value: string
-    ) => Record<string, string> | undefined;
-    const propValue = longhand[key];
+
+  // Handle box-sizing separately
+  if (longhand.boxSizing) {
+    result["box-sizing"] = longhand.boxSizing;
+  }
+
+  // Handle border properties
+  for (const key in longhand) {
+    if (key === "boxSizing") continue; // Already handled above
+
+    const propValue = longhand[key as keyof BorderProperties];
     if (propValue) {
+      const propFunction = border[key as keyof BorderFunction] as (
+        value: string
+      ) => Record<string, string> | undefined;
       const props = propFunction(propValue);
       if (props) {
         Object.assign(result, props);

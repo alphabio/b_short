@@ -1,6 +1,6 @@
 // b_path:: src/background.ts
 
-import { needsAdvancedParser, parseBackgroundLayers, reconstructLayers } from "./background-layers";
+import { parseBackgroundLayers, reconstructLayers } from "./background-layers";
 import { cssUrlRegex } from "./color-utils";
 import isColor from "./is-color";
 import isLength from "./is-length";
@@ -32,16 +32,18 @@ const normalizeUrl = (value: string): string =>
   );
 
 export default function background(value: string): Record<string, string> | undefined {
-  // Check if this needs advanced multi-layer parsing
-  if (needsAdvancedParser(value)) {
-    const layeredResult = parseBackgroundLayers(value);
-    if (layeredResult) {
-      return reconstructLayers(layeredResult.layers, layeredResult.color);
-    }
-    return undefined; // Advanced parsing failed
+  // Use advanced parsing for all cases - it handles both simple and complex syntax better
+  const layeredResult = parseBackgroundLayers(value);
+  if (layeredResult) {
+    return reconstructLayers(layeredResult.layers, layeredResult.color);
   }
 
-  // Use existing single-layer parsing logic
+  // Fallback to simple parsing if advanced parsing fails
+  return simpleBackgroundParser(value);
+}
+
+function simpleBackgroundParser(value: string): Record<string, string> | undefined {
+  // Use existing single-layer parsing logic as fallback
   const result: BackgroundResult = {};
   const values = normalizeUrl(normalizeColor(value))
     .replace(/\(.*\/.*\)|(\/)+/g, (match: string, group1: string) => (!group1 ? match : " / "))

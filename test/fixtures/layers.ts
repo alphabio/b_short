@@ -5,9 +5,23 @@ interface TestCase {
   name?: string; // Optional name for better test descriptions
 }
 
-const _backgroundLayerDistributionTestFixtures: TestCase[] = [
+const backgroundLayerTestFixtures: TestCase[] = [
   // --- Property Distribution Rules: Multiple Layers, Varying Values ---
 
+  {
+    name: "Test defaults with single layer",
+    input: "background: red;",
+    expected: {
+      "background-image": "none",
+      "background-position": "0% 0%",
+      "background-size": "auto auto",
+      "background-repeat": "repeat",
+      "background-attachment": "scroll",
+      "background-origin": "padding-box",
+      "background-clip": "border-box",
+      "background-color": "red",
+    },
+  },
   {
     name: "Two layers: image, position (single value for both)",
     input: "background: url(a.png) center, url(b.png) 10px;",
@@ -375,10 +389,26 @@ const maskLayerTestFixtures: TestCase[] = [
       "mask-size": "auto, auto",
       "mask-repeat": "repeat, repeat",
       "mask-origin": "border-box, padding-box",
-      "mask-clip": "no-clip, border-box",
+      "mask-clip": "border-box, border-box",
       "mask-composite": "add, add",
+    },
+  },
+  {
+    name: "Three layers with mixed SVG, gradient, and image masks",
+    input:
+      "mask: url(#mySVGMask) alpha repeat-x 50% 50% / contain, linear-gradient(to top, black, transparent) round left 20px, url('https://example.com/mask-overlay.png') luminance 10px 10px / 50px 50px;",
+    expected: {
+      "mask-clip": "border-box, border-box, border-box",
+      "mask-composite": "add, add, add",
+      "mask-image":
+        "url(#mySVGMask), linear-gradient(to top,black,transparent), url(https://example.com/mask-overlay.png)",
+      "mask-mode": "alpha, match-source, luminance",
+      "mask-origin": "border-box, border-box, border-box",
+      "mask-position": "50% 50%, left 20px, 10px 10px",
+      "mask-repeat": "repeat-x, round, repeat",
+      "mask-size": "contain, auto, 50px 50px",
     },
   },
 ];
 
-export { _backgroundLayerDistributionTestFixtures, maskLayerTestFixtures };
+export { backgroundLayerTestFixtures, maskLayerTestFixtures };

@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2024-12-XX
+
+### 🧪 **Test Suite Reorganization**
+**Complete refactoring of test structure for improved maintainability**
+
+- **Restructured 728 tests** into 5 focused files with clear responsibilities:
+  - `test/valid-expansions.test.ts` - Fixture-based valid CSS shorthand expansion tests (606 tests)
+  - `test/invalid-cases.test.ts` - Invalid input and edge case handling (71 tests)
+  - `test/overrides.test.ts` - CSS cascade and property override behavior (9 tests)
+  - `test/special-behaviors.test.ts` - Special behaviors: !important handling, warnings, format options (13 tests)
+  - `test/multi-layer.test.ts` - Multi-layer background and mask property tests (29 tests)
+
+- **Enhanced maintainability** with logical grouping of related functionality
+- **Improved developer experience** with focused, single-responsibility test files
+- **Preserved 100% test coverage** while dramatically improving code organization
+- **Future-proof structure** for easy addition of new tests and maintenance
+
+### 🔧 **Code Quality**
+- Cleaned up unused imports in `src/background.ts`
+- Improved code clarity and reduced technical debt
+
+---
+
 ## [2.0.0] - 2024-12-XX
 
 ### 🎉 Major Feature Release - 5x Expansion
@@ -65,9 +88,13 @@ This release represents a massive expansion of `b_short` from 7 to **35 supporte
 - Enhanced use cases with real-world examples
 - Updated API reference with new property examples
 
+### ⚠️ Breaking Changes
+
+- **JS format merge behavior**: When using `format: 'js'` with multiple CSS declarations, the library now returns a single merged object instead of an array of objects. Previously, `expand('margin: 10px; padding: 5px;', { format: 'js' })` would return `[{ 'margin-top': '10px', ... }, { 'padding-top': '5px', ... }]`, but now returns `{ 'margin-top': '10px', ..., 'padding-top': '5px', ... }`. This change improves consistency and reduces memory usage.
+
 ### 💡 Migration Guide
 
-**No breaking changes!** This is a feature-additive release. All existing code continues to work exactly as before. Simply upgrade to 2.0.0 to gain access to 28 additional shorthands.
+**Breaking changes introduced!** The JS format merge behavior has changed to return merged objects instead of arrays. If you need the old array behavior, please refactor your code to handle the new merged object format. This change improves performance and consistency across the API.
 
 ### 📊 Statistics
 

@@ -175,11 +175,12 @@ export const ExpandResultSchema = z
     ok: z.boolean().describe("Whether expansion was successful (no syntax errors)"),
     result: z
       .union([
-        z.record(z.string(), z.string()).describe("JavaScript object format result"),
-        z.string().describe("CSS string format result"),
         z
-          .array(z.union([z.record(z.string(), z.string()), z.string()]))
-          .describe("Array of results for multiple declarations"),
+          .record(z.string(), z.string())
+          .describe(
+            "JavaScript object format result (multiple declarations are merged, with later properties overriding earlier ones)"
+          ),
+        z.string().describe("CSS string format result (multiple declarations are joined)"),
         z.undefined().describe("No result when input is empty or invalid"),
       ])
       .describe("The expanded CSS result"),
