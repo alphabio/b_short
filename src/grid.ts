@@ -10,6 +10,8 @@ export const GRID_DEFAULTS = {
   "grid-auto-rows": "auto",
   "grid-auto-columns": "auto",
   "grid-auto-flow": "row",
+  "row-gap": "normal",
+  "column-gap": "normal",
 } as const;
 
 /**
@@ -244,6 +246,8 @@ function parseTemplateForm(
     "grid-auto-rows": GRID_DEFAULTS["grid-auto-rows"],
     "grid-auto-columns": GRID_DEFAULTS["grid-auto-columns"],
     "grid-auto-flow": GRID_DEFAULTS["grid-auto-flow"],
+    "row-gap": GRID_DEFAULTS["row-gap"],
+    "column-gap": GRID_DEFAULTS["column-gap"],
   };
 }
 
@@ -319,6 +323,8 @@ function parseExplicitRowsForm(
     "grid-auto-rows": GRID_DEFAULTS["grid-auto-rows"],
     "grid-auto-columns": autoColumns || GRID_DEFAULTS["grid-auto-columns"],
     "grid-auto-flow": autoFlow,
+    "row-gap": GRID_DEFAULTS["row-gap"],
+    "column-gap": GRID_DEFAULTS["column-gap"],
   };
 }
 
@@ -394,6 +400,8 @@ function parseExplicitColumnsForm(
     "grid-auto-rows": autoRows || GRID_DEFAULTS["grid-auto-rows"],
     "grid-auto-columns": GRID_DEFAULTS["grid-auto-columns"],
     "grid-auto-flow": autoFlow,
+    "row-gap": GRID_DEFAULTS["row-gap"],
+    "column-gap": GRID_DEFAULTS["column-gap"],
   };
 }
 
@@ -407,6 +415,8 @@ export default (value: string): Record<string, string> | undefined => {
       "grid-auto-rows": value,
       "grid-auto-columns": value,
       "grid-auto-flow": value,
+      "row-gap": value,
+      "column-gap": value,
     };
   }
 

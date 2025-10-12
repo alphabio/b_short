@@ -14,10 +14,11 @@ const STRING_VALUE = /^["'].*["']$/;
 export default function listStyle(value: string): Record<string, string> | undefined {
   const normalizedValue = normalizeColor(value);
 
-  // Special case: "none" alone sets both type and image to none
+  // Special case: "none" alone sets both type and image to none, position to default
   if (normalizedValue === "none") {
     return sortProperties({
       "list-style-type": "none",
+      "list-style-position": "outside",
       "list-style-image": "none",
     });
   }
@@ -32,25 +33,41 @@ export default function listStyle(value: string): Record<string, string> | undef
     });
   }
 
-  const result: Record<string, string> = {};
+  // Start with defaults - list-style shorthand resets all properties
+  const result: Record<string, string> = {
+    "list-style-type": "disc",
+    "list-style-position": "outside",
+    "list-style-image": "none",
+  };
+
+  // Track what was explicitly set to detect duplicates
+  const explicitlySet = {
+    type: false,
+    position: false,
+    image: false,
+  };
 
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
 
     if (POSITION.test(v)) {
-      if (result["list-style-position"]) return;
+      if (explicitlySet.position) return;
       result["list-style-position"] = v;
+      explicitlySet.position = true;
     } else if (IMAGE.test(v)) {
-      if (result["list-style-image"]) return;
+      if (explicitlySet.image) return;
       result["list-style-image"] = v;
+      explicitlySet.image = true;
     } else if (COMMON_TYPE.test(v)) {
-      if (result["list-style-type"]) return;
+      if (explicitlySet.type) return;
       result["list-style-type"] = v;
+      explicitlySet.type = true;
     } else {
       // Custom counter-style identifier or string value
       if (IDENT.test(v) || STRING_VALUE.test(v)) {
-        if (result["list-style-type"]) return;
+        if (explicitlySet.type) return;
         result["list-style-type"] = v;
+        explicitlySet.type = true;
       } else {
         return;
       }

@@ -660,13 +660,28 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
         : result;
   } else {
     if (format === "css") {
-      // Convert all objects to CSS strings and join them
-      const cssResults = cleanedResults.map((result) =>
-        typeof result === "object"
-          ? objectToCss(result, indent, separator, propertyGrouping)
-          : result
-      );
-      finalResult = cssResults.join(separator);
+      // For CSS format with multiple declarations, we need to merge objects first
+      // then convert to CSS to respect property grouping across declarations
+      const mergedObject: Record<string, string> = {};
+
+      for (const result of cleanedResults) {
+        if (typeof result === "object" && result) {
+          Object.assign(mergedObject, result);
+        }
+      }
+
+      // If we have a merged object, convert it to CSS with proper grouping
+      if (Object.keys(mergedObject).length > 0) {
+        finalResult = objectToCss(mergedObject, indent, separator, propertyGrouping);
+      } else {
+        // Fallback for non-object results (shouldn't normally happen)
+        const cssResults = cleanedResults.map((result) =>
+          typeof result === "object"
+            ? objectToCss(result, indent, separator, propertyGrouping)
+            : result
+        );
+        finalResult = cssResults.join(separator);
+      }
     } else {
       // format === "js" - merge objects with simple "later wins" logic
       const mergedResult: Record<string, string> = {};
