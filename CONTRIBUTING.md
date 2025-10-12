@@ -66,10 +66,10 @@ This project uses [Husky](https://typicode.github.io/husky/) to run pre-commit c
 - Automatically installed when running `pnpm install`
 
 If you need to skip hooks temporarily (not recommended):
+
 ```bash
 git commit --no-verify
 ```
-
 
 ## 📝 Code Style
 

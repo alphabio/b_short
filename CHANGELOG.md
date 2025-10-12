@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-10-12
+
+### ✨ New Features
+
+- **JavaScript format now uses camelCase property names**
+  - When using `format: 'js'`, property names are now properly camelCased
+  - Examples: `textDecorationLine`, `marginTop`, `backgroundColor`
+  - CSS format continues to use kebab-case as expected
+  - Makes JS output more idiomatic and consistent with React/JSX style conventions
+
 ## [2.0.0] - 2025-10-12
 
 ### 💥 BREAKING CHANGES
@@ -141,15 +151,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ⚠️ Minor Breaking Changes
 
 #### Font Shorthand
+
 The `font` shorthand now outputs additional properties with their default values:
 
 **Before:**
+
 ```javascript
 expand('font: 16px Arial', { format: 'js' })
 // { "font-size": "16px", "font-family": "Arial" }
 ```
 
 **After:**
+
 ```javascript
 expand('font: 16px Arial', { format: 'js' })
 // {
@@ -163,15 +176,18 @@ expand('font: 16px Arial', { format: 'js' })
 ```
 
 #### Grid Shorthand
+
 The `grid` shorthand now includes gap properties:
 
 **Before:**
+
 ```javascript
 expand('grid: auto-flow / 1fr 2fr', { format: 'js' })
 // { "grid-template-rows": "none", ... } // 6 properties
 ```
 
 **After:**
+
 ```javascript
 expand('grid: auto-flow / 1fr 2fr', { format: 'js' })
 // {
@@ -183,15 +199,18 @@ expand('grid: auto-flow / 1fr 2fr', { format: 'js' })
 ```
 
 #### List-Style Shorthand
+
 The `list-style` shorthand now outputs all three properties:
 
 **Before:**
+
 ```javascript
 expand('list-style: circle', { format: 'js' })
 // { "list-style-type": "circle" }
 ```
 
 **After:**
+
 ```javascript
 expand('list-style: circle', { format: 'js' })
 // {

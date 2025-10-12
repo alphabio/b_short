@@ -8,10 +8,10 @@ describe("property override behavior", () => {
     const { result } = expand("margin: 10px; margin-top: 20px;", { format: "js" });
     assertNoDuplicateProperties(result, "margin override test");
     expect(result).toEqual({
-      "margin-top": "20px",
-      "margin-right": "10px",
-      "margin-bottom": "10px",
-      "margin-left": "10px",
+      marginTop: "20px",
+      marginRight: "10px",
+      marginBottom: "10px",
+      marginLeft: "10px",
     });
   });
 
@@ -21,10 +21,10 @@ describe("property override behavior", () => {
     });
     assertNoDuplicateProperties(result, "padding multiple override test");
     expect(result).toEqual({
-      "padding-top": "10px",
-      "padding-right": "5px",
-      "padding-bottom": "15px",
-      "padding-left": "5px",
+      paddingTop: "10px",
+      paddingRight: "5px",
+      paddingBottom: "15px",
+      paddingLeft: "5px",
     });
   });
 
@@ -32,13 +32,13 @@ describe("property override behavior", () => {
     const { result } = expand("background: url(a.png); background-size: cover;", { format: "js" });
     assertNoDuplicateProperties(result, "background size override test");
     expect(result).toEqual({
-      "background-image": "url(a.png)",
-      "background-position": "0% 0%",
-      "background-size": "cover",
-      "background-repeat": "repeat",
-      "background-attachment": "scroll",
-      "background-origin": "padding-box",
-      "background-clip": "border-box",
+      backgroundImage: "url(a.png)",
+      backgroundPosition: "0% 0%",
+      backgroundSize: "cover",
+      backgroundRepeat: "repeat",
+      backgroundAttachment: "scroll",
+      backgroundOrigin: "padding-box",
+      backgroundClip: "border-box",
     });
   });
 
@@ -46,14 +46,14 @@ describe("property override behavior", () => {
     const { result } = expand("margin: 10px; padding: 5px;", { format: "js" });
     assertNoDuplicateProperties(result, "multiple shorthands no conflict test");
     expect(result).toEqual({
-      "margin-top": "10px",
-      "margin-right": "10px",
-      "margin-bottom": "10px",
-      "margin-left": "10px",
-      "padding-top": "5px",
-      "padding-right": "5px",
-      "padding-bottom": "5px",
-      "padding-left": "5px",
+      marginTop: "10px",
+      marginRight: "10px",
+      marginBottom: "10px",
+      marginLeft: "10px",
+      paddingTop: "5px",
+      paddingRight: "5px",
+      paddingBottom: "5px",
+      paddingLeft: "5px",
     });
   });
 
@@ -61,10 +61,10 @@ describe("property override behavior", () => {
     const { result } = expand("margin-top: 20px; margin: 10px;", { format: "js" });
     assertNoDuplicateProperties(result, "shorthand overrides longhand test");
     expect(result).toEqual({
-      "margin-top": "10px",
-      "margin-right": "10px",
-      "margin-bottom": "10px",
-      "margin-left": "10px",
+      marginTop: "10px",
+      marginRight: "10px",
+      marginBottom: "10px",
+      marginLeft: "10px",
     });
   });
 
@@ -75,13 +75,13 @@ describe("property override behavior", () => {
     );
     assertNoDuplicateProperties(result, "complex background multiple overrides test");
     expect(result).toEqual({
-      "background-image": "url(a.png)",
-      "background-position": "center",
-      "background-size": "cover",
-      "background-repeat": "no-repeat",
-      "background-attachment": "scroll",
-      "background-origin": "padding-box",
-      "background-clip": "border-box",
+      backgroundImage: "url(a.png)",
+      backgroundPosition: "center",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      backgroundAttachment: "scroll",
+      backgroundOrigin: "padding-box",
+      backgroundClip: "border-box",
     });
   });
 
@@ -89,18 +89,18 @@ describe("property override behavior", () => {
     const { result } = expand("border: 1px solid red; border-top-color: blue;", { format: "js" });
     assertNoDuplicateProperties(result, "border color override test");
     expect(result).toEqual({
-      "border-top-width": "1px",
-      "border-top-style": "solid",
-      "border-top-color": "blue",
-      "border-right-width": "1px",
-      "border-right-style": "solid",
-      "border-right-color": "red",
-      "border-bottom-width": "1px",
-      "border-bottom-style": "solid",
-      "border-bottom-color": "red",
-      "border-left-width": "1px",
-      "border-left-style": "solid",
-      "border-left-color": "red",
+      borderTopWidth: "1px",
+      borderTopStyle: "solid",
+      borderTopColor: "blue",
+      borderRightWidth: "1px",
+      borderRightStyle: "solid",
+      borderRightColor: "red",
+      borderBottomWidth: "1px",
+      borderBottomStyle: "solid",
+      borderBottomColor: "red",
+      borderLeftWidth: "1px",
+      borderLeftStyle: "solid",
+      borderLeftColor: "red",
     });
   });
 
@@ -119,14 +119,14 @@ describe("property override behavior", () => {
     });
     assertNoDuplicateProperties(result, "animation duration override test");
     expect(result).toEqual({
-      "animation-name": "spin",
-      "animation-duration": "2s",
-      "animation-timing-function": "ease-in",
-      "animation-delay": "0s",
-      "animation-direction": "normal",
-      "animation-iteration-count": "1",
-      "animation-fill-mode": "none",
-      "animation-play-state": "running",
+      animationName: "spin",
+      animationDuration: "2s",
+      animationTimingFunction: "ease-in",
+      animationDelay: "0s",
+      animationDirection: "normal",
+      animationIterationCount: "1",
+      animationFillMode: "none",
+      animationPlayState: "running",
     });
   });
 });

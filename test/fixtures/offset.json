@@ -1,145 +1,145 @@
 {
   "inherit": {
-    "offset-position": "inherit",
-    "offset-path": "inherit",
-    "offset-distance": "inherit",
-    "offset-rotate": "inherit",
-    "offset-anchor": "inherit"
+    "offsetPosition": "inherit",
+    "offsetPath": "inherit",
+    "offsetDistance": "inherit",
+    "offsetRotate": "inherit",
+    "offsetAnchor": "inherit"
   },
   "initial": {
-    "offset-position": "initial",
-    "offset-path": "initial",
-    "offset-distance": "initial",
-    "offset-rotate": "initial",
-    "offset-anchor": "initial"
+    "offsetPosition": "initial",
+    "offsetPath": "initial",
+    "offsetDistance": "initial",
+    "offsetRotate": "initial",
+    "offsetAnchor": "initial"
   },
   "unset": {
-    "offset-position": "unset",
-    "offset-path": "unset",
-    "offset-distance": "unset",
-    "offset-rotate": "unset",
-    "offset-anchor": "unset"
+    "offsetPosition": "unset",
+    "offsetPath": "unset",
+    "offsetDistance": "unset",
+    "offsetRotate": "unset",
+    "offsetAnchor": "unset"
   },
   "revert": {
-    "offset-position": "revert",
-    "offset-path": "revert",
-    "offset-distance": "revert",
-    "offset-rotate": "revert",
-    "offset-anchor": "revert"
+    "offsetPosition": "revert",
+    "offsetPath": "revert",
+    "offsetDistance": "revert",
+    "offsetRotate": "revert",
+    "offsetAnchor": "revert"
   },
   "auto": {
-    "offset-position": "auto"
+    "offsetPosition": "auto"
   },
   "normal": {
-    "offset-position": "normal"
+    "offsetPosition": "normal"
   },
   "10px 30px": {
-    "offset-position": "10px 30px"
+    "offsetPosition": "10px 30px"
   },
   "left top": {
-    "offset-position": "left top"
+    "offsetPosition": "left top"
   },
   "center": {
-    "offset-position": "center"
+    "offsetPosition": "center"
   },
   "none": {
-    "offset-path": "none"
+    "offsetPath": "none"
   },
   "path('M 100 100 L 300 100 L 200 300 z')": {
-    "offset-path": "path('M 100 100 L 300 100 L 200 300 z')"
+    "offsetPath": "path('M 100 100 L 300 100 L 200 300 z')"
   },
   "url('arc.svg')": {
-    "offset-path": "url('arc.svg')"
+    "offsetPath": "url('arc.svg')"
   },
   "ray(45deg closest-side)": {
-    "offset-path": "ray(45deg closest-side)"
+    "offsetPath": "ray(45deg closest-side)"
   },
   "url('circle.svg') 100px": {
-    "offset-path": "url('circle.svg')",
-    "offset-distance": "100px"
+    "offsetPath": "url('circle.svg')",
+    "offsetDistance": "100px"
   },
   "url('circle.svg') 40%": {
-    "offset-path": "url('circle.svg')",
-    "offset-distance": "40%"
+    "offsetPath": "url('circle.svg')",
+    "offsetDistance": "40%"
   },
   "path('M 20 60 L 120 60') 50%": {
-    "offset-path": "path('M 20 60 L 120 60')",
-    "offset-distance": "50%"
+    "offsetPath": "path('M 20 60 L 120 60')",
+    "offsetDistance": "50%"
   },
   "url('circle.svg') 30deg": {
-    "offset-path": "url('circle.svg')",
-    "offset-rotate": "30deg"
+    "offsetPath": "url('circle.svg')",
+    "offsetRotate": "30deg"
   },
   "url('circle.svg') auto": {
-    "offset-path": "url('circle.svg')",
-    "offset-rotate": "auto"
+    "offsetPath": "url('circle.svg')",
+    "offsetRotate": "auto"
   },
   "ray(45deg) reverse": {
-    "offset-path": "ray(45deg)",
-    "offset-rotate": "reverse"
+    "offsetPath": "ray(45deg)",
+    "offsetRotate": "reverse"
   },
   "path('M 0 0 L 100 100') auto 90deg": {
-    "offset-path": "path('M 0 0 L 100 100')",
-    "offset-rotate": "auto 90deg"
+    "offsetPath": "path('M 0 0 L 100 100')",
+    "offsetRotate": "auto 90deg"
   },
   "url('circle.svg') 50px 20deg": {
-    "offset-path": "url('circle.svg')",
-    "offset-distance": "50px",
-    "offset-rotate": "20deg"
+    "offsetPath": "url('circle.svg')",
+    "offsetDistance": "50px",
+    "offsetRotate": "20deg"
   },
   "url('circle.svg') 40% auto": {
-    "offset-path": "url('circle.svg')",
-    "offset-distance": "40%",
-    "offset-rotate": "auto"
+    "offsetPath": "url('circle.svg')",
+    "offsetDistance": "40%",
+    "offsetRotate": "auto"
   },
   "path('M 0 0 L 100 100') 100px auto 45deg": {
-    "offset-path": "path('M 0 0 L 100 100')",
-    "offset-distance": "100px",
-    "offset-rotate": "auto 45deg"
+    "offsetPath": "path('M 0 0 L 100 100')",
+    "offsetDistance": "100px",
+    "offsetRotate": "auto 45deg"
   },
   "ray(45deg closest-side) / 40px 20px": {
-    "offset-path": "ray(45deg closest-side)",
-    "offset-anchor": "40px 20px"
+    "offsetPath": "ray(45deg closest-side)",
+    "offsetAnchor": "40px 20px"
   },
   "url('arc.svg') 2cm / 0.5cm 3cm": {
-    "offset-path": "url('arc.svg')",
-    "offset-distance": "2cm",
-    "offset-anchor": "0.5cm 3cm"
+    "offsetPath": "url('arc.svg')",
+    "offsetDistance": "2cm",
+    "offsetAnchor": "0.5cm 3cm"
   },
   "url('arc.svg') 30deg / 50px 100px": {
-    "offset-path": "url('arc.svg')",
-    "offset-rotate": "30deg",
-    "offset-anchor": "50px 100px"
+    "offsetPath": "url('arc.svg')",
+    "offsetRotate": "30deg",
+    "offsetAnchor": "50px 100px"
   },
   "path('M 20 60 L 120 60') 0% auto / 50% 50%": {
-    "offset-path": "path('M 20 60 L 120 60')",
-    "offset-distance": "0%",
-    "offset-rotate": "auto",
-    "offset-anchor": "50% 50%"
+    "offsetPath": "path('M 20 60 L 120 60')",
+    "offsetDistance": "0%",
+    "offsetRotate": "auto",
+    "offsetAnchor": "50% 50%"
   },
   "url('circle.svg') / center": {
-    "offset-path": "url('circle.svg')",
-    "offset-anchor": "center"
+    "offsetPath": "url('circle.svg')",
+    "offsetAnchor": "center"
   },
   "10px 30px path('M 0 0 L 100 100')": {
-    "offset-position": "10px 30px",
-    "offset-path": "path('M 0 0 L 100 100')"
+    "offsetPosition": "10px 30px",
+    "offsetPath": "path('M 0 0 L 100 100')"
   },
   "center url('arc.svg')": {
-    "offset-position": "center",
-    "offset-path": "url('arc.svg')"
+    "offsetPosition": "center",
+    "offsetPath": "url('arc.svg')"
   },
   "10px 30px url('arc.svg') 100px auto 45deg / center": {
-    "offset-position": "10px 30px",
-    "offset-path": "url('arc.svg')",
-    "offset-distance": "100px",
-    "offset-rotate": "auto 45deg",
-    "offset-anchor": "center"
+    "offsetPosition": "10px 30px",
+    "offsetPath": "url('arc.svg')",
+    "offsetDistance": "100px",
+    "offsetRotate": "auto 45deg",
+    "offsetAnchor": "center"
   },
   "left top path('M 0 0 L 100 100') 50% / 40px 20px": {
-    "offset-position": "left top",
-    "offset-path": "path('M 0 0 L 100 100')",
-    "offset-distance": "50%",
-    "offset-anchor": "40px 20px"
+    "offsetPosition": "left top",
+    "offsetPath": "path('M 0 0 L 100 100')",
+    "offsetDistance": "50%",
+    "offsetAnchor": "40px 20px"
   }
 }

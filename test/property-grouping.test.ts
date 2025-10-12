@@ -14,14 +14,14 @@ describe("propertyGrouping option", () => {
 
       // All border properties should come before margin properties (lower indices)
       expect(keys).toEqual([
-        "border-top-width",
-        "border-right-width",
-        "border-bottom-width",
-        "border-left-width",
-        "margin-top",
-        "margin-right",
-        "margin-bottom",
-        "margin-left",
+        "borderTopWidth",
+        "borderRightWidth",
+        "borderBottomWidth",
+        "borderLeftWidth",
+        "marginTop",
+        "marginRight",
+        "marginBottom",
+        "marginLeft",
       ]);
     });
 
@@ -34,14 +34,14 @@ describe("propertyGrouping option", () => {
 
       // Should default to by-property
       expect(keys).toEqual([
-        "border-top-width",
-        "border-right-width",
-        "border-bottom-width",
-        "border-left-width",
-        "margin-top",
-        "margin-right",
-        "margin-bottom",
-        "margin-left",
+        "borderTopWidth",
+        "borderRightWidth",
+        "borderBottomWidth",
+        "borderLeftWidth",
+        "marginTop",
+        "marginRight",
+        "marginBottom",
+        "marginLeft",
       ]);
     });
 
@@ -57,27 +57,27 @@ describe("propertyGrouping option", () => {
       // Within each side: width, style, color
       // This is the CSS spec order for border properties
       expect(keys).toEqual([
-        "border-top-width",
-        "border-top-style",
-        "border-top-color",
-        "border-right-width",
-        "border-right-style",
-        "border-right-color",
-        "border-bottom-width",
-        "border-bottom-style",
-        "border-bottom-color",
-        "border-left-width",
-        "border-left-style",
-        "border-left-color",
-        "margin-top",
-        "margin-right",
-        "margin-bottom",
-        "margin-left",
+        "borderTopWidth",
+        "borderTopStyle",
+        "borderTopColor",
+        "borderRightWidth",
+        "borderRightStyle",
+        "borderRightColor",
+        "borderBottomWidth",
+        "borderBottomStyle",
+        "borderBottomColor",
+        "borderLeftWidth",
+        "borderLeftStyle",
+        "borderLeftColor",
+        "marginTop",
+        "marginRight",
+        "marginBottom",
+        "marginLeft",
       ]);
     });
   });
 
-  describe("by-side", () => {
+  describe("bySide", () => {
     it("should group all properties of the same side together", () => {
       const { result } = expand("margin: 5px; border-width: 10px;", {
         format: "js",
@@ -88,14 +88,14 @@ describe("propertyGrouping option", () => {
 
       // All top properties, then all right properties, etc.
       expect(keys).toEqual([
-        "border-top-width",
-        "margin-top",
-        "border-right-width",
-        "margin-right",
-        "border-bottom-width",
-        "margin-bottom",
-        "border-left-width",
-        "margin-left",
+        "borderTopWidth",
+        "marginTop",
+        "borderRightWidth",
+        "marginRight",
+        "borderBottomWidth",
+        "marginBottom",
+        "borderLeftWidth",
+        "marginLeft",
       ]);
     });
 
@@ -109,16 +109,16 @@ describe("propertyGrouping option", () => {
 
       // Check that all "top" properties come together
       const topIndices = keys
-        .map((k, i) => (k.includes("-top-") || k === "margin-top" ? i : -1))
+        .map((k, i) => (k.includes("Top") || k === "marginTop" ? i : -1))
         .filter((i) => i >= 0);
       const rightIndices = keys
-        .map((k, i) => (k.includes("-right-") || k === "margin-right" ? i : -1))
+        .map((k, i) => (k.includes("Right") || k === "marginRight" ? i : -1))
         .filter((i) => i >= 0);
       const bottomIndices = keys
-        .map((k, i) => (k.includes("-bottom-") || k === "margin-bottom" ? i : -1))
+        .map((k, i) => (k.includes("Bottom") || k === "marginBottom" ? i : -1))
         .filter((i) => i >= 0);
       const leftIndices = keys
-        .map((k, i) => (k.includes("-left-") || k === "margin-left" ? i : -1))
+        .map((k, i) => (k.includes("Left") || k === "marginLeft" ? i : -1))
         .filter((i) => i >= 0);
 
       // Each side's properties should be contiguous
@@ -138,14 +138,14 @@ describe("propertyGrouping option", () => {
 
       // Top properties together, right properties together, etc.
       expect(keys).toEqual([
-        "border-top-style",
-        "padding-top",
-        "border-right-style",
-        "padding-right",
-        "border-bottom-style",
-        "padding-bottom",
-        "border-left-style",
-        "padding-left",
+        "borderTopStyle",
+        "paddingTop",
+        "borderRightStyle",
+        "paddingRight",
+        "borderBottomStyle",
+        "paddingBottom",
+        "borderLeftStyle",
+        "paddingLeft",
       ]);
     });
   });
@@ -221,9 +221,9 @@ describe("propertyGrouping option", () => {
       const keys = Object.keys(result as Record<string, string>);
 
       // Border properties first (indices 70-81), then padding (210-213), then margin (200-203)
-      const borderKeys = keys.filter((k) => k.startsWith("border-"));
-      const marginKeys = keys.filter((k) => k.startsWith("margin-"));
-      const paddingKeys = keys.filter((k) => k.startsWith("padding-"));
+      const borderKeys = keys.filter((k) => k.startsWith("border"));
+      const marginKeys = keys.filter((k) => k.startsWith("margin"));
+      const paddingKeys = keys.filter((k) => k.startsWith("padding"));
 
       // Border should come first (lower indices)
       expect(keys.indexOf(borderKeys[0])).toBeLessThan(keys.indexOf(marginKeys[0]));
@@ -242,7 +242,7 @@ describe("propertyGrouping option", () => {
       const keys = Object.keys(result as Record<string, string>);
 
       // Check that all "top" properties are together
-      const topKeys = keys.filter((k) => k.includes("-top"));
+      const topKeys = keys.filter((k) => k.includes("Top"));
       const topIndices = topKeys.map((k) => keys.indexOf(k));
 
       // All top properties should be consecutive
@@ -262,19 +262,19 @@ describe("propertyGrouping option", () => {
       const keys = Object.keys(result as Record<string, string>);
 
       // font-size should come before directional properties (lower spec index)
-      expect(keys[0]).toBe("font-size");
+      expect(keys[0]).toBe("fontSize");
 
       // Then directional properties grouped by side
       const remainingKeys = keys.slice(1);
       expect(remainingKeys).toEqual([
-        "border-top-width",
-        "margin-top",
-        "border-right-width",
-        "margin-right",
-        "border-bottom-width",
-        "margin-bottom",
-        "border-left-width",
-        "margin-left",
+        "borderTopWidth",
+        "marginTop",
+        "borderRightWidth",
+        "marginRight",
+        "borderBottomWidth",
+        "marginBottom",
+        "borderLeftWidth",
+        "marginLeft",
       ]);
     });
 
@@ -287,19 +287,19 @@ describe("propertyGrouping option", () => {
       const keys = Object.keys(result as Record<string, string>);
 
       // font-size should come before directional properties (lower spec index)
-      expect(keys[0]).toBe("font-size");
+      expect(keys[0]).toBe("fontSize");
 
       // Then directional properties grouped by property type
       const remainingKeys = keys.slice(1);
       expect(remainingKeys).toEqual([
-        "border-top-width",
-        "border-right-width",
-        "border-bottom-width",
-        "border-left-width",
-        "margin-top",
-        "margin-right",
-        "margin-bottom",
-        "margin-left",
+        "borderTopWidth",
+        "borderRightWidth",
+        "borderBottomWidth",
+        "borderLeftWidth",
+        "marginTop",
+        "marginRight",
+        "marginBottom",
+        "marginLeft",
       ]);
     });
   });

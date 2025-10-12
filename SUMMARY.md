@@ -1,42 +1,50 @@
 # Enhancement Implementation Complete ✅
 
 ## Overview
+
 All enhancements from the code review have been successfully implemented, plus additional developer tooling improvements.
 
 ## Changes Summary
 
 ### 1. ✅ Performance Optimization - Memoization
+
 - Added LRU caching to `directional()` (1000 entries)
 - Added LRU caching to `isColor()` (500 entries)
 - Significant performance improvement for repeated calls
 - Benchmarks: 30,000-180,000 ops/sec depending on complexity
 
 ### 2. ✅ Bundle Size - Remove Mixed Exports (BREAKING)
+
 - Removed default export, using only named exports
 - No more build warnings
 - Better tree-shaking and module compatibility
 - **Requires v2.0.0 major version bump**
 
 ### 3. ✅ Error Context - Configurable Window Size
+
 - Added `contextWindowSize` option to error formatting
 - Backward compatible (defaults to 2 lines)
 - More flexible for tooling integration
 
 ### 4. ✅ Documentation - Enhanced JSDoc Comments
+
 - Comprehensive JSDoc for all public APIs
 - Examples included for complex functions
 - Better IDE autocomplete support
 
 ### 5. ✅ Testing - Performance Regression Tests
+
 - Added 5 performance tests
 - All operations verified under 10ms
 - 750 total tests passing
 
 ### 6. ✅ Dependencies - Up to Date
+
 - `css-tree`: ^3.1.0 ✓
 - `zod`: ^4.1.12 ✓
 
 ### 7. ✅ Developer Tooling (BONUS)
+
 - Husky pre-commit hooks
 - npm scripts for common tasks:
   - `outdated` - Check outdated packages
@@ -46,7 +54,7 @@ All enhancements from the code review have been successfully implemented, plus a
 
 ## Test Results
 
-```
+```bash
 ✓ test/property-grouping.test.ts (13 tests)
 ✓ test/overrides.test.ts (9 tests)
 ✓ test/special-behaviors.test.ts (13 tests)
@@ -61,7 +69,7 @@ Tests: 750 passed (750)
 
 ## Bundle Size
 
-```
+```bash
 ESM (import):  106.63 KB (limit: 120 KB) ✓
 CJS (require): 116.7 KB (limit: 125 KB) ✓
 ```
@@ -91,25 +99,26 @@ import { expand } from 'b_short';
 
 ```typescript
 // All exports are now named
-import { 
-  expand, 
-  validate, 
-  sortProperties, 
-  PROPERTY_ORDER_MAP 
+import {
+  expand,
+  validate,
+  sortProperties,
+  PROPERTY_ORDER_MAP
 } from 'b_short';
 
 // All types available
-import type { 
-  ExpandOptions, 
+import type {
+  ExpandOptions,
   ExpandResult,
   BStyleWarning,
-  StylesheetValidation 
+  StylesheetValidation
 } from 'b_short';
 ```
 
 ## Files Changed/Created
 
 ### Modified (17 files)
+
 1. `src/index.ts` - Named exports, JSDoc, types
 2. `src/directional.ts` - Caching, JSDoc
 3. `src/is-color.ts` - Caching, JSDoc
@@ -124,12 +133,13 @@ import type {
 12. All test files (6 files) - Updated imports
 
 ### Created (2 files)
+
 1. `test/performance.test.ts` - Performance regression tests
 2. `.husky/pre-commit` - Git hook
 
 ## Performance Benchmarks
 
-```
+```bash
 ┌─────────────────────────────────────────────────────┬───────────┬───────────┐
 │ Test Case                                           │ ops/sec   │ avg (ms)  │
 ├─────────────────────────────────────────────────────┼───────────┼───────────┤

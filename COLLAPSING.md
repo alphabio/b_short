@@ -25,7 +25,7 @@ However, your `expand` function is receiving a single shorthand `background: ...
 
 So, your collapsing logic will work on these fully "padded" longhand values.
 
-### Test Fixtures for Collapsing Repeating Layers
+## Test Fixtures for Collapsing Repeating Layers
 
 These fixtures assume your parser *first* expands all defaults and repetitions, and *then* applies the collapsing rule to the generated comma-separated longhand strings.
 

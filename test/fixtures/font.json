@@ -1,85 +1,85 @@
 {
   "16px sans-serif": {
-    "font-style": "normal",
-    "font-variant": "normal",
-    "font-weight": "normal",
-    "font-stretch": "normal",
-    "font-size": "16px",
-    "font-family": "sans-serif"
+    "fontStyle": "normal",
+    "fontVariant": "normal",
+    "fontWeight": "normal",
+    "fontStretch": "normal",
+    "fontSize": "16px",
+    "fontFamily": "sans-serif"
   },
   "16px sans-serif, \"Times New Roman\"": {
-    "font-style": "normal",
-    "font-variant": "normal",
-    "font-weight": "normal",
-    "font-stretch": "normal",
-    "font-size": "16px",
-    "font-family": "sans-serif, \"Times New Roman\""
+    "fontStyle": "normal",
+    "fontVariant": "normal",
+    "fontWeight": "normal",
+    "fontStretch": "normal",
+    "fontSize": "16px",
+    "fontFamily": "sans-serif, \"Times New Roman\""
   },
   "16px / 1.2 sans-serif": {
-    "font-style": "normal",
-    "font-variant": "normal",
-    "font-weight": "normal",
-    "font-stretch": "normal",
-    "font-size": "16px",
-    "line-height": "1.2",
-    "font-family": "sans-serif"
+    "fontStyle": "normal",
+    "fontVariant": "normal",
+    "fontWeight": "normal",
+    "fontStretch": "normal",
+    "fontSize": "16px",
+    "lineHeight": "1.2",
+    "fontFamily": "sans-serif"
   },
   "bold 16px sans-serif": {
-    "font-style": "normal",
-    "font-variant": "normal",
-    "font-weight": "bold",
-    "font-stretch": "normal",
-    "font-size": "16px",
-    "font-family": "sans-serif"
+    "fontStyle": "normal",
+    "fontVariant": "normal",
+    "fontWeight": "bold",
+    "fontStretch": "normal",
+    "fontSize": "16px",
+    "fontFamily": "sans-serif"
   },
   "normal 16px sans-serif": {
-    "font-style": "normal",
-    "font-variant": "normal",
-    "font-weight": "normal",
-    "font-stretch": "normal",
-    "font-size": "16px",
-    "font-family": "sans-serif"
+    "fontStyle": "normal",
+    "fontVariant": "normal",
+    "fontWeight": "normal",
+    "fontStretch": "normal",
+    "fontSize": "16px",
+    "fontFamily": "sans-serif"
   },
   "italic 16px sans-serif": {
-    "font-style": "italic",
-    "font-variant": "normal",
-    "font-weight": "normal",
-    "font-stretch": "normal",
-    "font-size": "16px",
-    "font-family": "sans-serif"
+    "fontStyle": "italic",
+    "fontVariant": "normal",
+    "fontWeight": "normal",
+    "fontStretch": "normal",
+    "fontSize": "16px",
+    "fontFamily": "sans-serif"
   },
   "small-caps 16px sans-serif": {
-    "font-style": "normal",
-    "font-variant": "small-caps",
-    "font-weight": "normal",
-    "font-stretch": "normal",
-    "font-size": "16px",
-    "font-family": "sans-serif"
+    "fontStyle": "normal",
+    "fontVariant": "small-caps",
+    "fontWeight": "normal",
+    "fontStretch": "normal",
+    "fontSize": "16px",
+    "fontFamily": "sans-serif"
   },
   "ultra-condensed 16px sans-serif": {
-    "font-style": "normal",
-    "font-variant": "normal",
-    "font-weight": "normal",
-    "font-stretch": "ultra-condensed",
-    "font-size": "16px",
-    "font-family": "sans-serif"
+    "fontStyle": "normal",
+    "fontVariant": "normal",
+    "fontWeight": "normal",
+    "fontStretch": "ultra-condensed",
+    "fontSize": "16px",
+    "fontFamily": "sans-serif"
   },
   "oblique 500 small-caps semi-expanded 20% / 2em monospace, \"Times New Roman\", Helvetica": {
-    "font-style": "oblique",
-    "font-variant": "small-caps",
-    "font-weight": "500",
-    "font-stretch": "semi-expanded",
-    "font-size": "20%",
-    "line-height": "2em",
-    "font-family": "monospace, \"Times New Roman\", \"Helvetica\""
+    "fontStyle": "oblique",
+    "fontVariant": "small-caps",
+    "fontWeight": "500",
+    "fontStretch": "semi-expanded",
+    "fontSize": "20%",
+    "lineHeight": "2em",
+    "fontFamily": "monospace, \"Times New Roman\", \"Helvetica\""
   },
   "inherit": {
-    "font-style": "inherit",
-    "font-variant": "inherit",
-    "font-weight": "inherit",
-    "font-stretch": "inherit",
-    "font-size": "inherit",
-    "line-height": "inherit",
-    "font-family": "inherit"
+    "fontStyle": "inherit",
+    "fontVariant": "inherit",
+    "fontWeight": "inherit",
+    "fontStretch": "inherit",
+    "fontSize": "inherit",
+    "lineHeight": "inherit",
+    "fontFamily": "inherit"
   }
 }

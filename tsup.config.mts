@@ -21,8 +21,4 @@ export default defineConfig({
       "this-is-undefined-in-esm": "silent",
     };
   },
-  onSuccess: async () => {
-    // Suppress the Rollup warning about mixed exports - this is intentional
-    // Users can use: import expand from 'b_short' OR import { expand } from 'b_short'
-  },
 });

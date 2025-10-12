@@ -1,82 +1,82 @@
 {
   "1000px": {
-    "contain-intrinsic-width": "1000px",
-    "contain-intrinsic-height": "1000px"
+    "containIntrinsicWidth": "1000px",
+    "containIntrinsicHeight": "1000px"
   },
   "10rem": {
-    "contain-intrinsic-width": "10rem",
-    "contain-intrinsic-height": "10rem"
+    "containIntrinsicWidth": "10rem",
+    "containIntrinsicHeight": "10rem"
   },
   "1.5em": {
-    "contain-intrinsic-width": "1.5em",
-    "contain-intrinsic-height": "1.5em"
+    "containIntrinsicWidth": "1.5em",
+    "containIntrinsicHeight": "1.5em"
   },
   "1000px 1.5em": {
-    "contain-intrinsic-width": "1000px",
-    "contain-intrinsic-height": "1.5em"
+    "containIntrinsicWidth": "1000px",
+    "containIntrinsicHeight": "1.5em"
   },
   "500px 800px": {
-    "contain-intrinsic-width": "500px",
-    "contain-intrinsic-height": "800px"
+    "containIntrinsicWidth": "500px",
+    "containIntrinsicHeight": "800px"
   },
   "10rem 20rem": {
-    "contain-intrinsic-width": "10rem",
-    "contain-intrinsic-height": "20rem"
+    "containIntrinsicWidth": "10rem",
+    "containIntrinsicHeight": "20rem"
   },
   "none": {
-    "contain-intrinsic-width": "none",
-    "contain-intrinsic-height": "none"
+    "containIntrinsicWidth": "none",
+    "containIntrinsicHeight": "none"
   },
   "auto 300px": {
-    "contain-intrinsic-width": "auto 300px",
-    "contain-intrinsic-height": "auto 300px"
+    "containIntrinsicWidth": "auto 300px",
+    "containIntrinsicHeight": "auto 300px"
   },
   "auto 10rem": {
-    "contain-intrinsic-width": "auto 10rem",
-    "contain-intrinsic-height": "auto 10rem"
+    "containIntrinsicWidth": "auto 10rem",
+    "containIntrinsicHeight": "auto 10rem"
   },
   "auto none": {
-    "contain-intrinsic-width": "auto none",
-    "contain-intrinsic-height": "auto none"
+    "containIntrinsicWidth": "auto none",
+    "containIntrinsicHeight": "auto none"
   },
   "auto 300px auto 4rem": {
-    "contain-intrinsic-width": "auto 300px",
-    "contain-intrinsic-height": "auto 4rem"
+    "containIntrinsicWidth": "auto 300px",
+    "containIntrinsicHeight": "auto 4rem"
   },
   "auto 100px auto 200px": {
-    "contain-intrinsic-width": "auto 100px",
-    "contain-intrinsic-height": "auto 200px"
+    "containIntrinsicWidth": "auto 100px",
+    "containIntrinsicHeight": "auto 200px"
   },
   "none 100px": {
-    "contain-intrinsic-width": "none",
-    "contain-intrinsic-height": "100px"
+    "containIntrinsicWidth": "none",
+    "containIntrinsicHeight": "100px"
   },
   "100px none": {
-    "contain-intrinsic-width": "100px",
-    "contain-intrinsic-height": "none"
+    "containIntrinsicWidth": "100px",
+    "containIntrinsicHeight": "none"
   },
   "auto 300px 500px": {
-    "contain-intrinsic-width": "auto 300px",
-    "contain-intrinsic-height": "500px"
+    "containIntrinsicWidth": "auto 300px",
+    "containIntrinsicHeight": "500px"
   },
   "200px auto 400px": {
-    "contain-intrinsic-width": "200px",
-    "contain-intrinsic-height": "auto 400px"
+    "containIntrinsicWidth": "200px",
+    "containIntrinsicHeight": "auto 400px"
   },
   "inherit": {
-    "contain-intrinsic-width": "inherit",
-    "contain-intrinsic-height": "inherit"
+    "containIntrinsicWidth": "inherit",
+    "containIntrinsicHeight": "inherit"
   },
   "initial": {
-    "contain-intrinsic-width": "initial",
-    "contain-intrinsic-height": "initial"
+    "containIntrinsicWidth": "initial",
+    "containIntrinsicHeight": "initial"
   },
   "unset": {
-    "contain-intrinsic-width": "unset",
-    "contain-intrinsic-height": "unset"
+    "containIntrinsicWidth": "unset",
+    "containIntrinsicHeight": "unset"
   },
   "revert": {
-    "contain-intrinsic-width": "revert",
-    "contain-intrinsic-height": "revert"
+    "containIntrinsicWidth": "revert",
+    "containIntrinsicHeight": "revert"
   }
 }
