@@ -301,4 +301,71 @@ describe("propertyGrouping option", () => {
       ]);
     });
   });
+
+  describe("complex multi-property CSS with comments", () => {
+    it("should handle a complex CSS string with multiple shorthands, comments, and invalid properties", () => {
+      const css = `/* This is a comment */
+margin: 10px auto 5px;
+padding-left: 20px;
+background: url(bg.png) no-repeat center/cover #eee content-box;
+font: italic small-caps bold 1.2em/1.5 "Helvetica Neue", sans-serif;
+border-top: 2px dashed blue;
+flex: 1 1 auto;
+text-align: center;
+color: #333;
+width: 100%;
+height: calc(100vh - 50px);
+z-index: 99;
+display: flex;
+invalid-property: some-value; /* An invalid property to see if it's flagged */
+transition: opacity 0.3s ease-in, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);`;
+
+      const result = expand(css, { format: "css", propertyGrouping: "by-side" });
+
+      expect(result.ok).toBe(true);
+      expect(result.result).toBe(
+        `transition-property: opacity, transform;
+transition-duration: 0.3s, 0.5s;
+transition-timing-function: ease-in, cubic-bezier(0.175, 0.885, 0.32, 1.275);
+transition-delay: 0s, 0s;
+background-image: url(bg.png);
+background-position: center;
+background-size: cover;
+background-repeat: no-repeat;
+background-attachment: scroll;
+background-origin: content-box;
+background-clip: content-box;
+background-color: #eee;
+font-style: italic;
+font-variant: small-caps;
+font-weight: bold;
+font-stretch: normal;
+font-size: 1.2em;
+line-height: 1.5;
+font-family: "Helvetica Neue", sans-serif;
+flex-grow: 1;
+flex-shrink: 1;
+flex-basis: auto;
+border-top-width: 2px;
+border-top-style: dashed;
+border-top-color: blue;
+margin-top: 10px;
+margin-right: auto;
+margin-bottom: 5px;
+margin-left: auto;
+padding-left: 20px;
+color: #333;
+display: flex;
+height: calc(100vh - 50px);
+invalid-property: some-value;
+text-align: center;
+width: 100%;
+z-index: 99;`
+      );
+
+      expect(result.issues).toHaveLength(1);
+      expect(result.issues[0].property).toBe("invalid-property");
+      expect(result.issues[0].name).toBe("SyntaxReferenceError");
+    });
+  });
 });

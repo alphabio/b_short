@@ -29,6 +29,43 @@ import textEmphasis from "./text-emphasis";
 import transition from "./transition";
 import { validate } from "./validate";
 
+/**
+ * Removes all CSS comments from the input string.
+ * Uses a character-by-character scanning approach that safely handles multi-line comments.
+ */
+function stripComments(css: string): string {
+  // Remove all CSS comments /* ... */
+  // This function scans character-by-character to handle multi-line comments safely
+  let result = "";
+  let i = 0;
+
+  while (i < css.length) {
+    // Check for comment start
+    if (css[i] === "/" && css[i + 1] === "*") {
+      // Find comment end
+      let j = i + 2;
+      while (j < css.length) {
+        if (css[j] === "*" && css[j + 1] === "/") {
+          // Skip the comment, replace with a space to preserve token boundaries
+          result += " ";
+          i = j + 2;
+          break;
+        }
+        j++;
+      }
+      // If we didn't find a closing */, treat rest of string as comment and stop
+      if (j >= css.length) {
+        i = css.length;
+      }
+    } else {
+      result += css[i];
+      i++;
+    }
+  }
+
+  return result;
+}
+
 function parseInputString(input: string): string[] {
   const declarations: string[] = [];
   let current = "";
@@ -513,6 +550,9 @@ function objectToCss(
  * // → { ok: true, result: { 'margin-top': '20px', 'margin-right': '10px', ... }, issues: [] }
  */
 function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
+  // Strip comments first to avoid parsing issues
+  const cleanedInput = stripComments(input);
+
   // Merge partial options with defaults from schema
   const {
     format = "css",
@@ -522,9 +562,9 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
   } = options;
 
   // Validate the input CSS directly (assume it's valid CSS)
-  const validation = validate(input);
+  const validation = validate(cleanedInput);
 
-  const inputs = parseInputString(input);
+  const inputs = parseInputString(cleanedInput);
   const results: (Record<string, string> | string)[] = [];
   const issues: BStyleWarning[] = [];
   const resultMetadata: Array<{ isShorthand: boolean; properties: Set<string> }> = [];
