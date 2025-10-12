@@ -1,46 +1,46 @@
 {
   "1px solid #000": {
-    "outline-width": "1px",
-    "outline-style": "solid",
-    "outline-color": "#000"
+    "outlineWidth": "1px",
+    "outlineStyle": "solid",
+    "outlineColor": "#000"
   },
   "solid 1px #000": {
-    "outline-width": "1px",
-    "outline-style": "solid",
-    "outline-color": "#000"
+    "outlineWidth": "1px",
+    "outlineStyle": "solid",
+    "outlineColor": "#000"
   },
   "solid #000000 1px": {
-    "outline-width": "1px",
-    "outline-style": "solid",
-    "outline-color": "#000000"
+    "outlineWidth": "1px",
+    "outlineStyle": "solid",
+    "outlineColor": "#000000"
   },
   "solid": {
-    "outline-style": "solid"
+    "outlineStyle": "solid"
   },
   "black": {
-    "outline-color": "black"
+    "outlineColor": "black"
   },
   "1px": {
-    "outline-width": "1px"
+    "outlineWidth": "1px"
   },
   "inherit": {
-    "outline-width": "inherit",
-    "outline-style": "inherit",
-    "outline-color": "inherit"
+    "outlineWidth": "inherit",
+    "outlineStyle": "inherit",
+    "outlineColor": "inherit"
   },
   "initial": {
-    "outline-width": "initial",
-    "outline-style": "initial",
-    "outline-color": "initial"
+    "outlineWidth": "initial",
+    "outlineStyle": "initial",
+    "outlineColor": "initial"
   },
   "unset": {
-    "outline-width": "unset",
-    "outline-style": "unset",
-    "outline-color": "unset"
+    "outlineWidth": "unset",
+    "outlineStyle": "unset",
+    "outlineColor": "unset"
   },
   "revert": {
-    "outline-width": "revert",
-    "outline-style": "revert",
-    "outline-color": "revert"
+    "outlineWidth": "revert",
+    "outlineStyle": "revert",
+    "outlineColor": "revert"
   }
 }

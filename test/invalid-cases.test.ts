@@ -51,19 +51,19 @@ describe("flex-flow (invalid cases)", () => {
   it("should pass through invalid token", () => {
     const { result } = expand("flex-flow: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through invalid token");
-    expect(result).toEqual({ "flex-flow": "foo" });
+    expect(result).toEqual({ flexFlow: "foo" });
   });
 
   it("should pass through too many values", () => {
     const { result } = expand("flex-flow: row wrap nowrap;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through too many values");
-    expect(result).toEqual({ "flex-flow": "row wrap nowrap" });
+    expect(result).toEqual({ flexFlow: "row wrap nowrap" });
   });
 
   it("should pass through duplicate direction", () => {
     const { result } = expand("flex-flow: row column;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through duplicate direction");
-    expect(result).toEqual({ "flex-flow": "row column" });
+    expect(result).toEqual({ flexFlow: "row column" });
   });
 });
 
@@ -84,9 +84,9 @@ describe("flex (invalid cases)", () => {
     const { result } = expand("flex: 100px 1;", { format: "js" });
     assertNoDuplicateProperties(result, "should expand basis number order correctly");
     expect(result).toEqual({
-      "flex-grow": "1",
-      "flex-shrink": "1",
-      "flex-basis": "100px",
+      flexGrow: "1",
+      flexShrink: "1",
+      flexBasis: "100px",
     });
   });
 
@@ -101,31 +101,31 @@ describe("text-decoration (invalid cases)", () => {
   it("text-decoration: foo", () => {
     const { result } = expand("text-decoration: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "text-decoration: foo");
-    expect(result).toEqual({ "text-decoration": "foo" });
+    expect(result).toEqual({ textDecoration: "foo" });
   });
 
   it("text-decoration: underline underline", () => {
     const { result } = expand("text-decoration: underline underline;", { format: "js" });
     assertNoDuplicateProperties(result, "text-decoration: underline underline");
-    expect(result).toEqual({ "text-decoration": "underline underline" });
+    expect(result).toEqual({ textDecoration: "underline underline" });
   });
 
   it("text-decoration: solid dotted", () => {
     const { result } = expand("text-decoration: solid dotted;", { format: "js" });
     assertNoDuplicateProperties(result, "text-decoration: solid dotted");
-    expect(result).toEqual({ "text-decoration": "solid dotted" });
+    expect(result).toEqual({ textDecoration: "solid dotted" });
   });
 
   it("text-decoration: none underline", () => {
     const { result } = expand("text-decoration: none underline;", { format: "js" });
     assertNoDuplicateProperties(result, "text-decoration: none underline");
-    expect(result).toEqual({ "text-decoration": "none underline" });
+    expect(result).toEqual({ textDecoration: "none underline" });
   });
 
   it("text-decoration: overline none", () => {
     const { result } = expand("text-decoration: overline none;", { format: "js" });
     assertNoDuplicateProperties(result, "text-decoration: overline none");
-    expect(result).toEqual({ "text-decoration": "overline none" });
+    expect(result).toEqual({ textDecoration: "overline none" });
   });
 });
 
@@ -133,25 +133,25 @@ describe("text-emphasis (invalid cases)", () => {
   it("text-emphasis: foo", () => {
     const { result } = expand("text-emphasis: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "text-emphasis: foo");
-    expect(result).toEqual({ "text-emphasis": "foo" });
+    expect(result).toEqual({ textEmphasis: "foo" });
   });
 
   it("text-emphasis: red blue", () => {
     const { result } = expand("text-emphasis: red blue;", { format: "js" });
     assertNoDuplicateProperties(result, "text-emphasis: red blue");
-    expect(result).toEqual({ "text-emphasis": "red blue" });
+    expect(result).toEqual({ textEmphasis: "red blue" });
   });
 
   it("text-emphasis: filled open", () => {
     const { result } = expand("text-emphasis: filled open;", { format: "js" });
     assertNoDuplicateProperties(result, "text-emphasis: filled open");
-    expect(result).toEqual({ "text-emphasis": "filled open" });
+    expect(result).toEqual({ textEmphasis: "filled open" });
   });
 
   it('text-emphasis: "※" dot', () => {
     const { result } = expand('text-emphasis: "※" dot;', { format: "js" });
     assertNoDuplicateProperties(result, 'text-emphasis: "※" dot');
-    expect(result).toEqual({ "text-emphasis": '"※" dot' });
+    expect(result).toEqual({ textEmphasis: '"※" dot' });
   });
 });
 
@@ -160,28 +160,28 @@ describe("list-style (invalid cases)", () => {
     const { result } = expand("list-style: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "list-style: foo");
     expect(result).toEqual({
-      "list-style-type": "foo",
-      "list-style-position": "outside",
-      "list-style-image": "none",
+      listStyleType: "foo",
+      listStylePosition: "outside",
+      listStyleImage: "none",
     });
   });
 
   it("list-style: inside outside", () => {
     const { result } = expand("list-style: inside outside;", { format: "js" });
     assertNoDuplicateProperties(result, "list-style: inside outside");
-    expect(result).toEqual({ "list-style": "inside outside" });
+    expect(result).toEqual({ listStyle: "inside outside" });
   });
 
   it("list-style: url(a.png) url(b.png)", () => {
     const { result } = expand("list-style: url(a.png) url(b.png);", { format: "js" });
     assertNoDuplicateProperties(result, "list-style: url(a.png) url(b.png)");
-    expect(result).toEqual({ "list-style": "url(a.png) url(b.png)" });
+    expect(result).toEqual({ listStyle: "url(a.png) url(b.png)" });
   });
 
   it("list-style: disc none", () => {
     const { result } = expand("list-style: disc none;", { format: "js" });
     assertNoDuplicateProperties(result, "list-style: disc none");
-    expect(result).toEqual({ "list-style": "disc none" });
+    expect(result).toEqual({ listStyle: "disc none" });
   });
 });
 
@@ -189,19 +189,19 @@ describe("place-content (invalid cases)", () => {
   it("should pass through invalid keyword", () => {
     const { result } = expand("place-content: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through invalid keyword");
-    expect(result).toEqual({ "place-content": "foo" });
+    expect(result).toEqual({ placeContent: "foo" });
   });
 
   it("should pass through too many values", () => {
     const { result } = expand("place-content: center start end;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through too many values");
-    expect(result).toEqual({ "place-content": "center start end" });
+    expect(result).toEqual({ placeContent: "center start end" });
   });
 
   it("should pass through invalid compound keyword", () => {
     const { result } = expand("place-content: safe;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through invalid compound keyword");
-    expect(result).toEqual({ "place-content": "safe" });
+    expect(result).toEqual({ placeContent: "safe" });
   });
 });
 
@@ -209,25 +209,25 @@ describe("place-items (invalid cases)", () => {
   it("should pass through invalid keyword", () => {
     const { result } = expand("place-items: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through invalid keyword");
-    expect(result).toEqual({ "place-items": "foo" });
+    expect(result).toEqual({ placeItems: "foo" });
   });
 
   it("should pass through left/right as single value", () => {
     const { result } = expand("place-items: left;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through left/right as single value");
-    expect(result).toEqual({ "place-items": "left" });
+    expect(result).toEqual({ placeItems: "left" });
   });
 
   it("should pass through left/right as first value", () => {
     const { result } = expand("place-items: left center;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through left/right as first value");
-    expect(result).toEqual({ "place-items": "left center" });
+    expect(result).toEqual({ placeItems: "left center" });
   });
 
   it("should pass through too many values", () => {
     const { result } = expand("place-items: center start end;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through too many values");
-    expect(result).toEqual({ "place-items": "center start end" });
+    expect(result).toEqual({ placeItems: "center start end" });
   });
 });
 
@@ -235,25 +235,25 @@ describe("place-self (invalid cases)", () => {
   it("should pass through invalid keyword", () => {
     const { result } = expand("place-self: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through invalid keyword");
-    expect(result).toEqual({ "place-self": "foo" });
+    expect(result).toEqual({ placeSelf: "foo" });
   });
 
   it("should pass through left/right as single value", () => {
     const { result } = expand("place-self: right;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through left/right as single value");
-    expect(result).toEqual({ "place-self": "right" });
+    expect(result).toEqual({ placeSelf: "right" });
   });
 
   it("should pass through left/right as first value", () => {
     const { result } = expand("place-self: right center;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through left/right as first value");
-    expect(result).toEqual({ "place-self": "right center" });
+    expect(result).toEqual({ placeSelf: "right center" });
   });
 
   it("should pass through too many values", () => {
     const { result } = expand("place-self: auto center start;", { format: "js" });
     assertNoDuplicateProperties(result, "should pass through too many values");
-    expect(result).toEqual({ "place-self": "auto center start" });
+    expect(result).toEqual({ placeSelf: "auto center start" });
   });
 });
 
@@ -261,31 +261,31 @@ describe("column-rule (invalid cases)", () => {
   it("column-rule: foo", () => {
     const { result } = expand("column-rule: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "column-rule: foo");
-    expect(result).toEqual({ "column-rule": "foo" });
+    expect(result).toEqual({ columnRule: "foo" });
   });
 
   it("column-rule: 1px solid red blue", () => {
     const { result } = expand("column-rule: 1px solid red blue;", { format: "js" });
     assertNoDuplicateProperties(result, "column-rule: 1px solid red blue");
-    expect(result).toEqual({ "column-rule": "1px solid red blue" });
+    expect(result).toEqual({ columnRule: "1px solid red blue" });
   });
 
   it("column-rule: 1px 2px", () => {
     const { result } = expand("column-rule: 1px 2px;", { format: "js" });
     assertNoDuplicateProperties(result, "column-rule: 1px 2px");
-    expect(result).toEqual({ "column-rule": "1px 2px" });
+    expect(result).toEqual({ columnRule: "1px 2px" });
   });
 
   it("column-rule: solid dotted", () => {
     const { result } = expand("column-rule: solid dotted;", { format: "js" });
     assertNoDuplicateProperties(result, "column-rule: solid dotted");
-    expect(result).toEqual({ "column-rule": "solid dotted" });
+    expect(result).toEqual({ columnRule: "solid dotted" });
   });
 
   it("column-rule: red blue", () => {
     const { result } = expand("column-rule: red blue;", { format: "js" });
     assertNoDuplicateProperties(result, "column-rule: red blue");
-    expect(result).toEqual({ "column-rule": "red blue" });
+    expect(result).toEqual({ columnRule: "red blue" });
   });
 });
 
@@ -293,25 +293,25 @@ describe("contain-intrinsic-size (invalid cases)", () => {
   it("contain-intrinsic-size: foo", () => {
     const { result } = expand("contain-intrinsic-size: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "contain-intrinsic-size: foo");
-    expect(result).toEqual({ "contain-intrinsic-size": "foo" });
+    expect(result).toEqual({ containIntrinsicSize: "foo" });
   });
 
   it("contain-intrinsic-size: 100px 200px 300px", () => {
     const { result } = expand("contain-intrinsic-size: 100px 200px 300px;", { format: "js" });
     assertNoDuplicateProperties(result, "contain-intrinsic-size: 100px 200px 300px");
-    expect(result).toEqual({ "contain-intrinsic-size": "100px 200px 300px" });
+    expect(result).toEqual({ containIntrinsicSize: "100px 200px 300px" });
   });
 
   it("contain-intrinsic-size: auto", () => {
     const { result } = expand("contain-intrinsic-size: auto;", { format: "js" });
     assertNoDuplicateProperties(result, "contain-intrinsic-size: auto");
-    expect(result).toEqual({ "contain-intrinsic-size": "auto" });
+    expect(result).toEqual({ containIntrinsicSize: "auto" });
   });
 
   it("contain-intrinsic-size: auto auto", () => {
     const { result } = expand("contain-intrinsic-size: auto auto;", { format: "js" });
     assertNoDuplicateProperties(result, "contain-intrinsic-size: auto auto");
-    expect(result).toEqual({ "contain-intrinsic-size": "auto auto" });
+    expect(result).toEqual({ containIntrinsicSize: "auto auto" });
   });
 });
 
@@ -357,14 +357,14 @@ describe("background (invalid cases)", () => {
     });
     assertNoDuplicateProperties(result, "should parse URL with semicolon and extract color");
     expect(result).toEqual({
-      "background-image": "url(image.png)",
-      "background-color": "red",
-      "background-position": "0% 0%",
-      "background-size": "auto auto",
-      "background-repeat": "repeat",
-      "background-attachment": "scroll",
-      "background-origin": "padding-box",
-      "background-clip": "border-box",
+      backgroundImage: "url(image.png)",
+      backgroundColor: "red",
+      backgroundPosition: "0% 0%",
+      backgroundSize: "auto auto",
+      backgroundRepeat: "repeat",
+      backgroundAttachment: "scroll",
+      backgroundOrigin: "padding-box",
+      backgroundClip: "border-box",
     });
   });
 
@@ -374,13 +374,13 @@ describe("background (invalid cases)", () => {
     });
     assertNoDuplicateProperties(result, "should parse multi-layer background with extra token");
     expect(result).toEqual({
-      "background-image": "url(image1.png), url(image2.png)",
-      "background-position": "0% 0%, 0% 0%",
-      "background-size": "auto auto, auto auto",
-      "background-repeat": "repeat, repeat",
-      "background-attachment": "scroll, scroll",
-      "background-origin": "padding-box, padding-box",
-      "background-clip": "border-box, border-box",
+      backgroundImage: "url(image1.png), url(image2.png)",
+      backgroundPosition: "0% 0%, 0% 0%",
+      backgroundSize: "auto auto, auto auto",
+      backgroundRepeat: "repeat, repeat",
+      backgroundAttachment: "scroll, scroll",
+      backgroundOrigin: "padding-box, padding-box",
+      backgroundClip: "border-box, border-box",
     });
   });
 
@@ -400,13 +400,13 @@ describe("background (invalid cases)", () => {
     const { result } = expand("background: [unclosed;", { format: "js" });
     assertNoDuplicateProperties(result, "should parse bracketed identifier as color");
     expect(result).toEqual({
-      "background-image": "none",
-      "background-position": "0% 0%",
-      "background-size": "auto auto",
-      "background-repeat": "repeat",
-      "background-attachment": "scroll",
-      "background-origin": "padding-box",
-      "background-clip": "border-box",
+      backgroundImage: "none",
+      backgroundPosition: "0% 0%",
+      backgroundSize: "auto auto",
+      backgroundRepeat: "repeat",
+      backgroundAttachment: "scroll",
+      backgroundOrigin: "padding-box",
+      backgroundClip: "border-box",
     });
   });
 
@@ -418,7 +418,7 @@ describe("background (invalid cases)", () => {
     );
     expect(out.result).toEqual({
       background: "@invalid",
-      "background-color": "red",
+      backgroundColor: "red",
     });
     expect(
       out.issues.some((i) => i.name === "expansion-failed" && i.property === "background")
@@ -458,10 +458,10 @@ describe("transition (invalid cases)", () => {
     const { result } = expand("transition: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "transition: foo");
     expect(result).toEqual({
-      "transition-property": "foo",
-      "transition-duration": "0s",
-      "transition-timing-function": "ease",
-      "transition-delay": "0s",
+      transitionProperty: "foo",
+      transitionDuration: "0s",
+      transitionTimingFunction: "ease",
+      transitionDelay: "0s",
     });
   });
 

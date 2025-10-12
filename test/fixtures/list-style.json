@@ -1,177 +1,177 @@
 {
   "disc": {
-    "list-style-type": "disc",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "disc",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "circle": {
-    "list-style-type": "circle",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "circle",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "square": {
-    "list-style-type": "square",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "square",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "decimal": {
-    "list-style-type": "decimal",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "decimal",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "lower-roman": {
-    "list-style-type": "lower-roman",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "lower-roman",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "upper-alpha": {
-    "list-style-type": "upper-alpha",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "upper-alpha",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "georgian": {
-    "list-style-type": "georgian",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "georgian",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "inside": {
-    "list-style-type": "disc",
-    "list-style-position": "inside",
-    "list-style-image": "none"
+    "listStyleType": "disc",
+    "listStylePosition": "inside",
+    "listStyleImage": "none"
   },
   "outside": {
-    "list-style-type": "disc",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "disc",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "url(bullet.png)": {
-    "list-style-type": "disc",
-    "list-style-position": "outside",
-    "list-style-image": "url(bullet.png)"
+    "listStyleType": "disc",
+    "listStylePosition": "outside",
+    "listStyleImage": "url(bullet.png)"
   },
   "url(\"icons/bullet.svg\")": {
-    "list-style-type": "disc",
-    "list-style-position": "outside",
-    "list-style-image": "url(\"icons/bullet.svg\")"
+    "listStyleType": "disc",
+    "listStylePosition": "outside",
+    "listStyleImage": "url(\"icons/bullet.svg\")"
   },
   "url('icons/bullet.svg')": {
-    "list-style-type": "disc",
-    "list-style-position": "outside",
-    "list-style-image": "url('icons/bullet.svg')"
+    "listStyleType": "disc",
+    "listStylePosition": "outside",
+    "listStyleImage": "url('icons/bullet.svg')"
   },
   "none": {
-    "list-style-type": "none",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "none",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "square inside": {
-    "list-style-type": "square",
-    "list-style-position": "inside",
-    "list-style-image": "none"
+    "listStyleType": "square",
+    "listStylePosition": "inside",
+    "listStyleImage": "none"
   },
   "inside square": {
-    "list-style-type": "square",
-    "list-style-position": "inside",
-    "list-style-image": "none"
+    "listStyleType": "square",
+    "listStylePosition": "inside",
+    "listStyleImage": "none"
   },
   "url(bullet.png) inside": {
-    "list-style-type": "disc",
-    "list-style-position": "inside",
-    "list-style-image": "url(bullet.png)"
+    "listStyleType": "disc",
+    "listStylePosition": "inside",
+    "listStyleImage": "url(bullet.png)"
   },
   "inside url(bullet.png)": {
-    "list-style-type": "disc",
-    "list-style-position": "inside",
-    "list-style-image": "url(bullet.png)"
+    "listStyleType": "disc",
+    "listStylePosition": "inside",
+    "listStyleImage": "url(bullet.png)"
   },
   "georgian outside": {
-    "list-style-type": "georgian",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "georgian",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "lower-roman url(\"icons/bullet.svg\") outside": {
-    "list-style-type": "lower-roman",
-    "list-style-position": "outside",
-    "list-style-image": "url(\"icons/bullet.svg\")"
+    "listStyleType": "lower-roman",
+    "listStylePosition": "outside",
+    "listStyleImage": "url(\"icons/bullet.svg\")"
   },
   "url(\"icons/bullet.svg\") inside square": {
-    "list-style-type": "square",
-    "list-style-position": "inside",
-    "list-style-image": "url(\"icons/bullet.svg\")"
+    "listStyleType": "square",
+    "listStylePosition": "inside",
+    "listStyleImage": "url(\"icons/bullet.svg\")"
   },
   "custom-counter": {
-    "list-style-type": "custom-counter",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "custom-counter",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "my-style inside": {
-    "list-style-type": "my-style",
-    "list-style-position": "inside",
-    "list-style-image": "none"
+    "listStyleType": "my-style",
+    "listStylePosition": "inside",
+    "listStyleImage": "none"
   },
   "\"→\"": {
-    "list-style-type": "\"→\"",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "\"→\"",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "'※' inside": {
-    "list-style-type": "'※'",
-    "list-style-position": "inside",
-    "list-style-image": "none"
+    "listStyleType": "'※'",
+    "listStylePosition": "inside",
+    "listStyleImage": "none"
   },
   "inherit": {
-    "list-style-type": "inherit",
-    "list-style-position": "inherit",
-    "list-style-image": "inherit"
+    "listStyleType": "inherit",
+    "listStylePosition": "inherit",
+    "listStyleImage": "inherit"
   },
   "initial": {
-    "list-style-type": "initial",
-    "list-style-position": "initial",
-    "list-style-image": "initial"
+    "listStyleType": "initial",
+    "listStylePosition": "initial",
+    "listStyleImage": "initial"
   },
   "unset": {
-    "list-style-type": "unset",
-    "list-style-position": "unset",
-    "list-style-image": "unset"
+    "listStyleType": "unset",
+    "listStylePosition": "unset",
+    "listStyleImage": "unset"
   },
   "revert": {
-    "list-style-type": "revert",
-    "list-style-position": "revert",
-    "list-style-image": "revert"
+    "listStyleType": "revert",
+    "listStylePosition": "revert",
+    "listStyleImage": "revert"
   },
   "disc url(bullet.png)": {
-    "list-style-type": "disc",
-    "list-style-position": "outside",
-    "list-style-image": "url(bullet.png)"
+    "listStyleType": "disc",
+    "listStylePosition": "outside",
+    "listStyleImage": "url(bullet.png)"
   },
   "url(bullet.png) disc outside": {
-    "list-style-type": "disc",
-    "list-style-position": "outside",
-    "list-style-image": "url(bullet.png)"
+    "listStyleType": "disc",
+    "listStylePosition": "outside",
+    "listStyleImage": "url(bullet.png)"
   },
   "emoji": {
-    "list-style-type": "emoji",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "emoji",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "emoji inside": {
-    "list-style-type": "emoji",
-    "list-style-position": "inside",
-    "list-style-image": "none"
+    "listStyleType": "emoji",
+    "listStylePosition": "inside",
+    "listStyleImage": "none"
   },
   "none outside": {
-    "list-style-type": "none",
-    "list-style-position": "outside",
-    "list-style-image": "none"
+    "listStyleType": "none",
+    "listStylePosition": "outside",
+    "listStyleImage": "none"
   },
   "inside none": {
-    "list-style-type": "none",
-    "list-style-position": "inside",
-    "list-style-image": "none"
+    "listStyleType": "none",
+    "listStylePosition": "inside",
+    "listStyleImage": "none"
   },
   "none url(a.png)": {
-    "list-style-type": "none",
-    "list-style-position": "outside",
-    "list-style-image": "url(a.png)"
+    "listStyleType": "none",
+    "listStylePosition": "outside",
+    "listStyleImage": "url(a.png)"
   }
 }

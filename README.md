@@ -30,10 +30,26 @@ b_short is a TypeScript-first library that expands CSS shorthand properties into
 - **📦 Lightweight**: ~15KB minified
 - **🎨 Complete**: Supports 35+ CSS shorthands including modern features
 - **🔒 Type-Safe**: Full TypeScript support with comprehensive type definitions
-- **✅ Reliable**: 738 tests ensuring 100% accuracy
-- **🎛️ Flexible**: Multiple output formats and property ordering strategies
+- **✅ Reliable**: 750 tests ensuring 100% accuracy
+- **🎛️ Flexible**: Multiple output formats (CSS string or JS object with camelCase)
+- **⚛️ React-Ready**: JS format returns camelCase properties perfect for inline styles
 
 ## ✨ Features
+
+### Output Formats
+
+- **CSS Format** (default): Returns kebab-case strings ready for stylesheets
+- **JavaScript Format**: Returns camelCase objects perfect for React inline styles, CSS-in-JS libraries, and JavaScript style manipulation
+
+```typescript
+// CSS format - kebab-case string
+expand('text-decoration: underline;', { format: 'css' })
+// → "text-decoration-line: underline;\ntext-decoration-style: solid;..."
+
+// JS format - camelCase object
+expand('text-decoration: underline;', { format: 'js' })
+// → { textDecorationLine: 'underline', textDecorationStyle: 'solid', ... }
+```
 
 ### Supported CSS Shorthands
 
@@ -116,9 +132,13 @@ console.log(result);
 const { result: obj } = expand('background: url(bg.png) no-repeat center;', { format: 'js' });
 console.log(obj);
 // Output: {
-//   'background-image': 'url(bg.png)',
-//   'background-repeat': 'no-repeat',
-//   'background-position': 'center'
+//   backgroundImage: 'url(bg.png)',
+//   backgroundRepeat: 'no-repeat',
+//   backgroundPosition: 'center',
+//   backgroundSize: 'auto auto',
+//   backgroundAttachment: 'scroll',
+//   backgroundOrigin: 'padding-box',
+//   backgroundClip: 'border-box'
 // }
 ```
 
@@ -139,7 +159,7 @@ Expands CSS shorthand properties to their longhand equivalents.
 
 ```typescript
 interface ExpandOptions {
-  /** Output format */
+  /** Output format: 'css' returns kebab-case string, 'js' returns camelCase object */
   format?: 'js' | 'css';  // default: 'css'
 
   /** Indentation level for CSS format */
@@ -158,30 +178,37 @@ interface ExpandOptions {
 Control how properties are ordered in the output:
 
 **`by-property`** (default) - CSS specification order, groups by property type:
+
 ```javascript
+// CSS format
+'border-top-width: 10px;\nborder-right-width: 10px;\n...'
+
+// JS format
 {
-  'border-top-width': '10px',
-  'border-right-width': '10px',
-  'border-bottom-width': '10px',
-  'border-left-width': '10px',
-  'margin-top': '5px',
-  'margin-right': '5px',
-  'margin-bottom': '5px',
-  'margin-left': '5px'
+  borderTopWidth: '10px',
+  borderRightWidth: '10px',
+  borderBottomWidth: '10px',
+  borderLeftWidth: '10px',
+  marginTop: '5px',
+  marginRight: '5px',
+  marginBottom: '5px',
+  marginLeft: '5px'
 }
 ```
 
 **`by-side`** - Directional order, groups by box model side (useful for debugging):
+
 ```javascript
+// JS format
 {
-  'border-top-width': '10px',
-  'margin-top': '5px',
-  'border-right-width': '10px',
-  'margin-right': '5px',
-  'border-bottom-width': '10px',
-  'margin-bottom': '5px',
-  'border-left-width': '10px',
-  'margin-left': '5px'
+  borderTopWidth: '10px',
+  marginTop: '5px',
+  borderRightWidth: '10px',
+  marginRight: '5px',
+  borderBottomWidth: '10px',
+  marginBottom: '5px',
+  borderLeftWidth: '10px',
+  marginLeft: '5px'
 }
 ```
 
@@ -263,6 +290,7 @@ console.log(warning.warnings);  // [{ property: 'color', name: 'invalid-value', 
 ```
 
 **Use Cases:**
+
 - Pre-validation before expansion
 - CSS linting and validation tools
 - Build-time CSS checks
@@ -277,13 +305,22 @@ console.log(warning.warnings);  // [{ property: 'color', name: 'invalid-value', 
 ```typescript
 import { expand } from 'b_short';
 
-// Margin expansion
+// CSS format (default)
 expand('margin: 10px 20px 30px 40px;');
-// → margin-top: 10px; margin-right: 20px; margin-bottom: 30px; margin-left: 40px;
+// → "margin-top: 10px;\nmargin-right: 20px;\nmargin-bottom: 30px;\nmargin-left: 40px;"
 
-// Padding with JavaScript object output
+// JavaScript format
 expand('padding: 1rem;', { format: 'js' });
-// → { 'padding-top': '1rem', 'padding-right': '1rem', 'padding-bottom': '1rem', 'padding-left': '1rem' }
+// → { paddingTop: '1rem', paddingRight: '1rem', paddingBottom: '1rem', paddingLeft: '1rem' }
+
+// Text decoration with all properties
+expand('text-decoration: underline wavy red;', { format: 'js' });
+// → {
+//   textDecorationLine: 'underline',
+//   textDecorationStyle: 'wavy',
+//   textDecorationColor: 'red',
+//   textDecorationThickness: 'auto'
+// }
 ```
 
 ### Complex Backgrounds
@@ -296,9 +333,13 @@ expand('background: url(img1.png) top left no-repeat, linear-gradient(to bottom,
   format: 'js'
 });
 // → {
-//   'background-image': 'url(img1.png), linear-gradient(to bottom, #000, #fff)',
-//   'background-position': 'top left, 0% 0%',
-//   'background-repeat': 'no-repeat, repeat'
+//   backgroundImage: 'url(img1.png), linear-gradient(to bottom, #000, #fff)',
+//   backgroundPosition: 'top left, 0% 0%',
+//   backgroundRepeat: 'no-repeat, repeat',
+//   backgroundSize: 'auto auto, auto auto',
+//   backgroundAttachment: 'scroll, scroll',
+//   backgroundOrigin: 'padding-box, padding-box',
+//   backgroundClip: 'border-box, border-box'
 // }
 ```
 
@@ -309,11 +350,21 @@ import { expand } from 'b_short';
 
 // Flexbox
 expand('flex: 1 1 auto; flex-flow: row wrap;', { format: 'js' });
-// → { 'flex-grow': '1', 'flex-shrink': '1', 'flex-basis': 'auto', 'flex-direction': 'row', 'flex-wrap': 'wrap' }
+// → {
+//   flexGrow: '1',
+//   flexShrink: '1',
+//   flexBasis: 'auto',
+//   flexDirection: 'row',
+//   flexWrap: 'wrap'
+// }
 
 // Grid
 expand('grid: repeat(3, 1fr) / auto-flow 100px;', { format: 'js' });
-// → { 'grid-template-rows': 'repeat(3, 1fr)', 'grid-auto-flow': 'column', 'grid-auto-columns': '100px' }
+// → {
+//   gridTemplateRows: 'repeat(3, 1fr)',
+//   gridAutoFlow: 'column',
+//   gridAutoColumns: '100px'
+// }
 ```
 
 ### Animation & Transitions
@@ -324,14 +375,24 @@ import { expand } from 'b_short';
 // Multi-layer animations
 expand('animation: spin 1s linear infinite, fade 2s ease-in-out;', { format: 'js' });
 // → {
-//   'animation-name': 'spin, fade',
-//   'animation-duration': '1s, 2s',
-//   'animation-timing-function': 'linear, ease-in-out',
-//   'animation-iteration-count': 'infinite, 1'
+//   animationName: 'spin, fade',
+//   animationDuration: '1s, 2s',
+//   animationTimingFunction: 'linear, ease-in-out',
+//   animationIterationCount: 'infinite, 1',
+//   animationDelay: '0s, 0s',
+//   animationDirection: 'normal, normal',
+//   animationFillMode: 'none, none',
+//   animationPlayState: 'running, running'
 // }
 
 // Transitions
 expand('transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);', { format: 'js' });
+// → {
+//   transitionProperty: 'opacity, transform',
+//   transitionDuration: '0.3s, 0.5s',
+//   transitionTimingFunction: 'ease, cubic-bezier(0.4, 0, 0.2, 1)',
+//   transitionDelay: '0s, 0s'
+// }
 ```
 
 ### Modern CSS Features
@@ -341,10 +402,20 @@ import { expand } from 'b_short';
 
 // CSS Motion Path (offset)
 expand('offset: path("M 0 0 L 100 100") 50% / center;', { format: 'js' });
-// → { 'offset-path': 'path("M 0 0 L 100 100")', 'offset-distance': '50%', 'offset-anchor': 'center' }
+// → {
+//   offsetPath: 'path("M 0 0 L 100 100")',
+//   offsetDistance: '50%',
+//   offsetAnchor: 'center'
+// }
 
 // Mask with multiple layers
 expand('mask: url(mask.svg) center / contain, linear-gradient(black, transparent);', { format: 'js' });
+// → {
+//   maskImage: 'url(mask.svg), linear-gradient(black, transparent)',
+//   maskPosition: 'center, 0% 0%',
+//   maskSize: 'contain, auto',
+//   // ... other mask properties
+// }
 ```
 
 ### Property Overrides
@@ -354,11 +425,11 @@ import { expand } from 'b_short';
 
 // Later properties override earlier ones (CSS cascade)
 expand('margin: 10px; margin-top: 20px;', { format: 'js' });
-// → { 'margin-top': '20px', 'margin-right': '10px', 'margin-bottom': '10px', 'margin-left': '10px' }
+// → { marginTop: '20px', marginRight: '10px', marginBottom: '10px', marginLeft: '10px' }
 
 // Shorthand after longhand
 expand('margin-top: 20px; margin: 10px;', { format: 'js' });
-// → { 'margin-top': '10px', 'margin-right': '10px', 'margin-bottom': '10px', 'margin-left': '10px' }
+// → { marginTop: '10px', marginRight: '10px', marginBottom: '10px', marginLeft: '10px' }
 ```
 
 ### Error Handling
