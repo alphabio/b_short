@@ -472,7 +472,8 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
 
     const { property, value } = parsed;
     const normalized = value.trim();
-    const important = /\s+!important$/.test(normalized);
+    // Safe check for !important without ReDoS vulnerability
+    const important = normalized.endsWith("!important") && /\s/.test(normalized.slice(-11, -10));
 
     // Handle !important detection and warning
     if (important) {
