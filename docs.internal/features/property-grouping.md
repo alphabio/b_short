@@ -1,8 +1,8 @@
 # Property Grouping Feature Implementation
 
-**Date:** 2025-10-12  
-**Status:** ✅ COMPLETED  
-**Feature:** User-configurable property grouping strategies  
+**Date:** 2025-10-12
+**Status:** ✅ COMPLETED
+**Feature:** User-configurable property grouping strategies
 
 ## Summary
 
@@ -13,6 +13,7 @@ Successfully implemented a new `propertyGrouping` option that allows users to ch
 ### New Option
 
 Added to `ExpandOptions`:
+
 ```typescript
 propertyGrouping?: "by-property" | "by-side"  // default: "by-property"
 ```
@@ -20,7 +21,9 @@ propertyGrouping?: "by-property" | "by-side"  // default: "by-property"
 ### Two Strategies
 
 #### 1. **by-property** (Default - CSS Spec Order)
+
 Groups all properties of the same type together:
+
 ```javascript
 {
   'border-top-width': '10px',
@@ -35,13 +38,16 @@ Groups all properties of the same type together:
 ```
 
 **Best for:**
+
 - CSS spec compliance
 - Keeping related properties together
 - Traditional CSS formatting
 - Easier to scan for a specific property type
 
 #### 2. **by-side** (Directional Grouping)
+
 Groups all properties of the same directional side together:
+
 ```javascript
 {
   'border-top-width': '10px',
@@ -56,6 +62,7 @@ Groups all properties of the same directional side together:
 ```
 
 **Best for:**
+
 - Visual/mental model of the box model
 - Understanding relationships between sides
 - Debugging layout issues
@@ -99,12 +106,14 @@ function getPropertyMetadata(prop: string): {
 ### Sorting Algorithm
 
 **by-side strategy:**
+
 1. Extract side metadata for each property
 2. Group by side index (0=top, 1=right, 2=bottom, 3=left)
 3. Within each side, maintain CSS spec order
 4. Non-directional properties come first if they have lower spec indices
 
 **by-property strategy:**
+
 - Uses existing `PROPERTY_ORDER_MAP` indices
 - Falls back to alphabetical for unmapped properties
 
@@ -119,15 +128,15 @@ import expand from 'b_short';
 const result1 = expand('margin: 5px; border-width: 10px;', { format: 'js' });
 
 // Explicit by-property
-const result2 = expand('margin: 5px; border-width: 10px;', { 
-  format: 'js', 
-  propertyGrouping: 'by-property' 
+const result2 = expand('margin: 5px; border-width: 10px;', {
+  format: 'js',
+  propertyGrouping: 'by-property'
 });
 
 // By-side grouping
-const result3 = expand('margin: 5px; border-width: 10px;', { 
-  format: 'js', 
-  propertyGrouping: 'by-side' 
+const result3 = expand('margin: 5px; border-width: 10px;', {
+  format: 'js',
+  propertyGrouping: 'by-side'
 });
 ```
 
@@ -163,12 +172,12 @@ const result = expand(css, { format: 'js', propertyGrouping: 'by-side' });
 
 ## Quality Checks
 
-✅ TypeScript compilation successful  
-✅ Biome formatting passed  
-✅ Biome linting passed  
-✅ All tests passing  
-✅ No regressions  
-✅ Documentation updated  
+✅ TypeScript compilation successful
+✅ Biome formatting passed
+✅ Biome linting passed
+✅ All tests passing
+✅ No regressions
+✅ Documentation updated
 
 ## Performance Impact
 
@@ -177,6 +186,7 @@ const result = expand(css, { format: 'js', propertyGrouping: 'by-side' });
 ## Backward Compatibility
 
 **100% Backward Compatible:**
+
 - Default behavior unchanged (uses "by-property")
 - New option is optional
 - Existing code continues to work without modification
@@ -185,6 +195,7 @@ const result = expand(css, { format: 'js', propertyGrouping: 'by-side' });
 ## Future Enhancements
 
 Potential future additions:
+
 - Additional grouping strategies (e.g., "alphabetical", "frequency")
 - Custom property order maps
 - Per-property-type grouping preferences
@@ -193,6 +204,6 @@ Potential future additions:
 
 This feature adds valuable flexibility for users who prefer different property ordering strategies, particularly those working with box model debugging or who think in terms of directional sides rather than property types. The implementation is clean, well-tested, and maintains full backward compatibility.
 
-**Implementation complexity: LOW**  
-**User value: HIGH**  
-**Code quality: EXCELLENT**  
+**Implementation complexity: LOW**
+**User value: HIGH**
+**Code quality: EXCELLENT**

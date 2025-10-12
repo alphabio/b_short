@@ -5,7 +5,9 @@
     "grid-template-areas": "inherit",
     "grid-auto-rows": "inherit",
     "grid-auto-columns": "inherit",
-    "grid-auto-flow": "inherit"
+    "grid-auto-flow": "inherit",
+    "row-gap": "inherit",
+    "column-gap": "inherit"
   },
   "initial": {
     "grid-template-rows": "initial",
@@ -13,7 +15,9 @@
     "grid-template-areas": "initial",
     "grid-auto-rows": "initial",
     "grid-auto-columns": "initial",
-    "grid-auto-flow": "initial"
+    "grid-auto-flow": "initial",
+    "row-gap": "initial",
+    "column-gap": "initial"
   },
   "unset": {
     "grid-template-rows": "unset",
@@ -21,7 +25,9 @@
     "grid-template-areas": "unset",
     "grid-auto-rows": "unset",
     "grid-auto-columns": "unset",
-    "grid-auto-flow": "unset"
+    "grid-auto-flow": "unset",
+    "row-gap": "unset",
+    "column-gap": "unset"
   },
   "revert": {
     "grid-template-rows": "revert",
@@ -29,7 +35,9 @@
     "grid-template-areas": "revert",
     "grid-auto-rows": "revert",
     "grid-auto-columns": "revert",
-    "grid-auto-flow": "revert"
+    "grid-auto-flow": "revert",
+    "row-gap": "revert",
+    "column-gap": "revert"
   },
   "none": {
     "grid-template-rows": "none",
@@ -37,7 +45,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "100px / 200px": {
     "grid-template-rows": "100px",
@@ -45,7 +55,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "100px 200px / 1fr 2fr": {
     "grid-template-rows": "100px 200px",
@@ -53,7 +65,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "repeat(3, 1fr) / auto": {
     "grid-template-rows": "repeat(3,1fr)",
@@ -61,7 +75,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "minmax(100px, 1fr) / minmax(200px, 2fr)": {
     "grid-template-rows": "minmax(100px,1fr)",
@@ -69,7 +85,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "auto 1fr auto / 100px 200px": {
     "grid-template-rows": "auto 1fr auto",
@@ -77,7 +95,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "[line1] 100px [line2] 200px / 1fr 2fr": {
     "grid-template-rows": "100px 200px",
@@ -85,7 +105,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "fit-content(300px) / 1fr": {
     "grid-template-rows": "fit-content(300px)",
@@ -93,7 +115,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "\"header header\" 100px \"sidebar content\" 200px / 1fr 2fr": {
     "grid-template-rows": "100px 200px",
@@ -101,7 +125,9 @@
     "grid-template-areas": "\"header header\" \"sidebar content\"",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "\"a a\" \"b c\" / 1fr 1fr": {
     "grid-template-rows": "none",
@@ -109,7 +135,9 @@
     "grid-template-areas": "\"a a\" \"b c\"",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "\"header\" \"main\" \"footer\" / 100%": {
     "grid-template-rows": "none",
@@ -117,7 +145,9 @@
     "grid-template-areas": "\"header\" \"main\" \"footer\"",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "\"nav header header\" \"nav main aside\" \"nav footer footer\" / 150px 1fr 200px": {
     "grid-template-rows": "none",
@@ -125,7 +155,9 @@
     "grid-template-areas": "\"nav header header\" \"nav main aside\" \"nav footer footer\"",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "100px / auto-flow": {
     "grid-template-rows": "100px",
@@ -133,7 +165,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "column"
+    "grid-auto-flow": "column",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "100px 200px / auto-flow": {
     "grid-template-rows": "100px 200px",
@@ -141,7 +175,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "column"
+    "grid-auto-flow": "column",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "1fr 2fr / auto-flow dense": {
     "grid-template-rows": "1fr 2fr",
@@ -149,7 +185,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "column dense"
+    "grid-auto-flow": "column dense",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "100px / auto-flow 200px": {
     "grid-template-rows": "100px",
@@ -157,7 +195,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "200px",
-    "grid-auto-flow": "column"
+    "grid-auto-flow": "column",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "100px / auto-flow dense 150px": {
     "grid-template-rows": "100px",
@@ -165,7 +205,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "150px",
-    "grid-auto-flow": "column dense"
+    "grid-auto-flow": "column dense",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "repeat(3, 100px) / auto-flow minmax(100px, 1fr)": {
     "grid-template-rows": "repeat(3,100px)",
@@ -173,7 +215,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "minmax(100px,1fr)",
-    "grid-auto-flow": "column"
+    "grid-auto-flow": "column",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "minmax(100px, auto) / auto-flow dense": {
     "grid-template-rows": "minmax(100px,auto)",
@@ -181,7 +225,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "column dense"
+    "grid-auto-flow": "column dense",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "auto-flow / 100px": {
     "grid-template-rows": "none",
@@ -189,7 +235,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "auto-flow / 100px 200px": {
     "grid-template-rows": "none",
@@ -197,7 +245,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "auto-flow dense / 1fr 2fr": {
     "grid-template-rows": "none",
@@ -205,7 +255,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row dense"
+    "grid-auto-flow": "row dense",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "auto-flow 200px / 100px": {
     "grid-template-rows": "none",
@@ -213,7 +265,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "200px",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "auto-flow dense 150px / 100px": {
     "grid-template-rows": "none",
@@ -221,7 +275,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "150px",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row dense"
+    "grid-auto-flow": "row dense",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "auto-flow minmax(100px, 1fr) / repeat(3, 100px)": {
     "grid-template-rows": "none",
@@ -229,7 +285,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "minmax(100px,1fr)",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "auto-flow dense / minmax(100px, auto)": {
     "grid-template-rows": "none",
@@ -237,7 +295,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row dense"
+    "grid-auto-flow": "row dense",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "auto / auto": {
     "grid-template-rows": "auto",
@@ -245,7 +305,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "1fr / 1fr": {
     "grid-template-rows": "1fr",
@@ -253,7 +315,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "100% / 100%": {
     "grid-template-rows": "100%",
@@ -261,7 +325,9 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   },
   "min-content / max-content": {
     "grid-template-rows": "min-content",
@@ -269,6 +335,8 @@
     "grid-template-areas": "none",
     "grid-auto-rows": "auto",
     "grid-auto-columns": "auto",
-    "grid-auto-flow": "row"
+    "grid-auto-flow": "row",
+    "row-gap": "normal",
+    "column-gap": "normal"
   }
 }

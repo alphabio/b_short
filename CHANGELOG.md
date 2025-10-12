@@ -14,18 +14,119 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prevents potential Denial of Service attacks with malicious input
   - Addresses CodeQL security warning `js/polynomial-redos`
   - No functional changes to behavior - all existing code works as before
-  - All 738 tests passing
+
+### 🐛 Bug Fixes
+
+- **Fixed missing `font-stretch` property in font shorthand expansion**
+  - The `font` shorthand now correctly outputs `font-stretch: normal` when not explicitly provided
+  - Explicitly provided values (e.g., `condensed`, `expanded`) are properly preserved
+  - Per CSS specification, the font shorthand resets all font properties including `font-stretch`
+  - Also ensures `font-style`, `font-variant`, and `font-weight` default to `normal` when omitted
+  - Example: `font: 16px Arial` now expands to all 6 properties with correct defaults
+
+- **Fixed missing gap properties in grid shorthand expansion**
+  - The `grid` shorthand now correctly outputs `row-gap: normal` and `column-gap: normal`
+  - Per CSS specification, the grid shorthand resets gap properties to their initial values
+  - Example: `grid: auto-flow / 1fr 2fr` now includes all 8 properties
+
+- **Fixed missing default properties in list-style shorthand expansion**
+  - The `list-style` shorthand now outputs all three properties with defaults
+  - Example: `list-style: circle` now expands to type, position, and image properties
+  - Aligns with CSS specification where shorthands reset all constituent properties
+
+- **Fixed `border-radius` with slash separator for horizontal/vertical radii**
+  - Now correctly handles the `/` separator for independent horizontal and vertical radii
+  - Example: `border-radius: 10px 20px / 5px 15px` now expands to:
+    - `border-top-left-radius: 10px 5px`
+    - `border-top-right-radius: 20px 15px`
+    - `border-bottom-right-radius: 10px 5px`
+    - `border-bottom-left-radius: 20px 15px`
+  - Both horizontal and vertical value sets follow the CSS 1-4 value wrapping rules
+  - Supports all combinations: `1/1`, `2/2`, `3/3`, `4/4` values
+
+- **Fixed `propertyGrouping` option not working with CSS format**
+  - The `propertyGrouping` option now correctly applies to CSS string output
+  - Previously only worked with `format: 'js'`, now works for both formats
+  - `by-property`: Groups properties by type (border-*, then margin-*)
+  - `by-side`: Groups properties by directional side (border-top + margin-top together)
+  - Updated test expectations to match correct property ordering
+  - Added 3 new tests for CSS format property grouping
 
 ### 📊 Impact
 
-- **Severity:** Low to Medium (requires malicious input)
-- **Attack vector:** Strings with many consecutive spaces before `!important`
-- **Fix complexity:** Simple string operation replacement
-- **Backward compatibility:** 100% - no API changes
+- **Security:** Low to Medium severity (requires malicious input)
+- **Bug fixes:** Improves CSS spec compliance and consistency across all shorthands
+- **Backward compatibility:** Minor breaking change - shorthands now output more properties (defaults)
+- **All 745 tests passing** (7 new tests added)
+
+### ⚠️ Minor Breaking Changes
+
+#### Font Shorthand
+The `font` shorthand now outputs additional properties with their default values:
+
+**Before:**
+```javascript
+expand('font: 16px Arial', { format: 'js' })
+// { "font-size": "16px", "font-family": "Arial" }
+```
+
+**After:**
+```javascript
+expand('font: 16px Arial', { format: 'js' })
+// {
+//   "font-style": "normal",
+//   "font-variant": "normal",
+//   "font-weight": "normal",
+//   "font-stretch": "normal",
+//   "font-size": "16px",
+//   "font-family": "Arial"
+// }
+```
+
+#### Grid Shorthand
+The `grid` shorthand now includes gap properties:
+
+**Before:**
+```javascript
+expand('grid: auto-flow / 1fr 2fr', { format: 'js' })
+// { "grid-template-rows": "none", ... } // 6 properties
+```
+
+**After:**
+```javascript
+expand('grid: auto-flow / 1fr 2fr', { format: 'js' })
+// {
+//   "grid-template-rows": "none",
+//   ...
+//   "row-gap": "normal",
+//   "column-gap": "normal"
+// } // 8 properties
+```
+
+#### List-Style Shorthand
+The `list-style` shorthand now outputs all three properties:
+
+**Before:**
+```javascript
+expand('list-style: circle', { format: 'js' })
+// { "list-style-type": "circle" }
+```
+
+**After:**
+```javascript
+expand('list-style: circle', { format: 'js' })
+// {
+//   "list-style-type": "circle",
+//   "list-style-position": "outside",
+//   "list-style-image": "none"
+// }
+```
+
+These changes align with CSS specification behavior where shorthands reset all their constituent properties.
 
 ### 🔄 Upgrade Recommendation
 
-**All users should upgrade immediately** as this is a security fix with zero breaking changes.
+**All users should upgrade immediately** for the security fix. The shorthand property additions improve spec compliance and should not cause issues in most use cases.
 
 ```bash
 npm update b_short

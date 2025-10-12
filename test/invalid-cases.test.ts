@@ -159,7 +159,11 @@ describe("list-style (invalid cases)", () => {
   it("list-style: foo", () => {
     const { result } = expand("list-style: foo;", { format: "js" });
     assertNoDuplicateProperties(result, "list-style: foo");
-    expect(result).toEqual({ "list-style-type": "foo" });
+    expect(result).toEqual({
+      "list-style-type": "foo",
+      "list-style-position": "outside",
+      "list-style-image": "none",
+    });
   });
 
   it("list-style: inside outside", () => {

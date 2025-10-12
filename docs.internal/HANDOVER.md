@@ -41,15 +41,6 @@ Is this order important?
 
 ---
 
-
-
-
-
-
-
-
-
-
 quick next steps I’d line up:
 
 1. wire the validator
@@ -79,7 +70,3 @@ quick next steps I’d line up:
 * throttle validation during live typing (e.g., 150–250ms debounce).
 
 if you want, I can punch in the same typed helpers for `mask`/`shadow` next and drop in a micro test suite scaffold.
-
-
-
-

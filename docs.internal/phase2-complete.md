@@ -9,11 +9,13 @@
 ### 1. **Performance Benchmarks** ⭐⭐⭐⭐
 
 **Added:**
+
 - ✅ `tinybench` package for accurate benchmarking
 - ✅ Comprehensive benchmark suite (`benchmarks/expand.bench.ts`)
 - ✅ `pnpm run bench` script
 
 **Benchmarks Include:**
+
 - Simple shorthands (margin, padding, border)
 - Complex shorthands (background, font, animation)
 - Multi-layer expansions (backgrounds, animations)
@@ -21,6 +23,7 @@
 - Both CSS and JS output formats
 
 **Sample Results:**
+
 ```
 margin: 10px                    → 183,143 ops/sec (5.90ms avg)
 padding: 5px 10px               → 170,938 ops/sec (6.33ms avg)
@@ -30,6 +33,7 @@ animation: multi-layer          → 36,277 ops/sec (29.05ms avg)
 ```
 
 **Benefits:**
+
 - Track performance over time
 - Catch performance regressions
 - Optimize hot paths
@@ -40,12 +44,14 @@ animation: multi-layer          → 36,277 ops/sec (29.05ms avg)
 ### 2. **Bundle Size Monitoring** ⭐⭐⭐⭐
 
 **Added:**
+
 - ✅ `size-limit` package
 - ✅ `@size-limit/preset-small-lib`
 - ✅ `pnpm run size` script
 - ✅ Size limits configured in package.json
 
 **Size Limits:**
+
 ```json
 {
   "ESM": "120 KB limit",
@@ -54,12 +60,14 @@ animation: multi-layer          → 36,277 ops/sec (29.05ms avg)
 ```
 
 **Current Sizes:**
+
 ```
 ESM (import)  → 106.28 kB (brotli compressed)
 CJS (require) → 116.3 kB (brotli compressed)
 ```
 
 **Benefits:**
+
 - Prevents bundle size bloat
 - CI can fail if size increases
 - Tracks bundle size over time
@@ -70,6 +78,7 @@ CJS (require) → 116.3 kB (brotli compressed)
 ### 3. **Enhanced CI/CD** ⭐⭐⭐⭐⭐
 
 **Updated `.github/workflows/ci.yml`:**
+
 - ✅ Better job organization
 - ✅ Multiple Node versions (18, 20, 22)
 - ✅ Separate test, size-check, and benchmark jobs
@@ -77,6 +86,7 @@ CJS (require) → 116.3 kB (brotli compressed)
 - ✅ Better step descriptions
 
 **Created `.github/workflows/release.yml`:**
+
 - ✅ Automated releases on git tags
 - ✅ Full quality checks before publish
 - ✅ NPM provenance support
@@ -108,6 +118,7 @@ CJS (require) → 116.3 kB (brotli compressed)
 ```
 
 **Release Pipeline:**
+
 ```
 Git Tag (v*) → CI Checks → Build → Test → Size → Publish NPM → GitHub Release
 ```
@@ -117,6 +128,7 @@ Git Tag (v*) → CI Checks → Build → Test → Size → Publish NPM → GitHu
 ### 4. **Documentation Updates** ⭐⭐⭐⭐
 
 **Added to README.md:**
+
 - ✅ Full `validate` API documentation
 - ✅ Parameters and return types
 - ✅ Usage examples
@@ -124,6 +136,7 @@ Git Tag (v*) → CI Checks → Build → Test → Size → Publish NPM → GitHu
 - ✅ Error vs warning distinction
 
 **Documentation Structure:**
+
 ```markdown
 ### validate(css): ValidationResult
 - Parameters
@@ -137,17 +150,20 @@ Git Tag (v*) → CI Checks → Build → Test → Size → Publish NPM → GitHu
 ## Files Created/Modified
 
 ### Created (3 files)
+
 1. `benchmarks/expand.bench.ts` - Performance benchmark suite
 2. `.github/workflows/release.yml` - Automated release workflow
 3. `docs.internal/phase2-complete.md` - This summary
 
 ### Modified (4 files)
+
 4. `package.json` - Added scripts (bench, size), size-limit config
 5. `.github/workflows/ci.yml` - Enhanced CI with separate jobs
 6. `.npmignore` - Excluded benchmarks and scripts
 7. `README.md` - Added validate documentation
 
 ### Dependencies Added (4 packages)
+
 - `tinybench` - Benchmarking framework
 - `size-limit` - Bundle size monitoring
 - `@size-limit/preset-small-lib` - Size-limit preset
@@ -182,19 +198,23 @@ just check                  # All checks
 ## Verification Results
 
 ### ✅ Benchmarks
+
 - All 12 benchmark cases running
 - Performance metrics captured
 - Output formatted as table
 
 ### ✅ Size Limits
+
 - ESM: 106.28 KB (under 120 KB limit) ✓
 - CJS: 116.3 KB (under 125 KB limit) ✓
 
 ### ✅ Tests
+
 - All 738 tests passing
 - No regressions
 
 ### ✅ CI Configuration
+
 - Valid GitHub Actions syntax
 - All jobs properly configured
 - Matrix testing setup correct
@@ -204,16 +224,19 @@ just check                  # All checks
 ## Performance Insights
 
 ### Fastest Operations
+
 1. `margin: 10px` - 183k ops/sec
 2. `padding: 5px 10px` - 171k ops/sec
 3. `margin: 10px (CSS)` - 153k ops/sec
 
 ### Most Complex Operations
+
 1. Multi-layer backgrounds - 30k ops/sec
 2. Multi-layer animations - 36k ops/sec
 3. Complex backgrounds - 50k ops/sec
 
 ### Grouping Strategy Impact
+
 - `by-property`: 83,823 ops/sec
 - `by-side`: 76,518 ops/sec
 - Difference: ~9% (minimal impact)
@@ -225,16 +248,19 @@ just check                  # All checks
 ## Bundle Size Analysis
 
 ### Current Sizes (Brotli Compressed)
+
 - **ESM**: 106.28 KB
 - **CJS**: 116.3 KB
 
 ### What's Included
+
 - css-tree library (CSS parsing)
 - Zod library (schema validation)
 - All 35+ shorthand parsers
 - Type definitions
 
 ### Size is Acceptable Because
+
 1. css-tree is essential for accurate CSS parsing
 2. Zod provides runtime type safety
 3. Complete feature set (35+ shorthands)
@@ -246,12 +272,14 @@ just check                  # All checks
 ## CI/CD Improvements
 
 ### Before Phase 2
+
 - Single test job
 - No benchmark tracking
 - No size monitoring
 - Manual releases
 
 ### After Phase 2
+
 - Multi-job pipeline
 - Benchmark tracking on PRs
 - Automated size checks
@@ -264,18 +292,21 @@ just check                  # All checks
 ## Use Cases Enabled
 
 ### Benchmarking
+
 - Track performance over time
 - Compare implementation strategies
 - Identify performance regressions
 - Optimize critical paths
 
 ### Size Monitoring
+
 - Prevent accidental bloat
 - Track dependencies growth
 - Set team expectations
 - CI fails on size increase
 
 ### Automated Releases
+
 - Consistent release process
 - No manual steps
 - NPM provenance (supply chain security)
@@ -287,6 +318,7 @@ just check                  # All checks
 ## Future Enhancements (Phase 3 Ideas)
 
 ### Could Add (Optional)
+
 1. **Benchmark history tracking** - Store results over time
 2. **Visual size charts** - Graph bundle size changes
 3. **Performance budgets** - Fail CI on slow operations
@@ -300,6 +332,7 @@ just check                  # All checks
 ## Documentation Quality
 
 ### validate Documentation
+
 - ✅ Clear API signature
 - ✅ TypeScript types included
 - ✅ Multiple examples (valid, invalid, warnings)
@@ -312,12 +345,14 @@ just check                  # All checks
 ## Success Criteria: All Met ✅
 
 ### Phase 2 Goals
+
 - ✅ Add benchmark suite
 - ✅ Add size-limit monitoring
 - ✅ Improve CI/CD
 - ✅ Document validate
 
 ### Quality Gates
+
 - ✅ All tests passing (738/738)
 - ✅ No regressions
 - ✅ CI configuration valid
