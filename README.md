@@ -25,31 +25,36 @@ yarn add b_short
 import expand from 'b_short';
 
 // Simple expansion (CSS string output)
-expand('margin: 10px 20px;');
+const {ok, result, issues} = expand('margin: 10px 20px;');
+console.log(result);
 // margin-top: 10px;
 // margin-right: 20px;
 // margin-bottom: 10px;
-// margin-left: 20px;"
+// margin-left: 20px;
 
 // Complex multi-layer backgrounds
-expand('background: url(a.png) no-repeat, linear-gradient(to right, red, blue);');
+const {ok, result, issues} = expand('background: url(a.png) no-repeat, linear-gradient(to right, red, blue);');
+console.log(result);
 // background-image: url(a.png),linear-gradient(to right, red, blue);
 
 // CSS Motion Path (new!)
-expand('offset: path("M 0 0 L 100 100") 50px auto 45deg / center;');
+const {ok, result, issues} = expand('offset: path("M 0 0 L 100 100") 50px auto 45deg / center;');
+console.log(result);
 // offset-path: path("M 0 0 L 100 100");
 // offset-distance: 50px;
 // offset-rotate: auto 45deg;
 // offset-anchor: center;
 
 // Flexbox shorthand
-expand('flex: 1 0 auto;');
+const {ok, result, issues} = expand('flex: 1 0 auto;');
+console.log(result);
 // flex-grow: 1;
 // flex-shrink: 0;
 // flex-basis: auto;
 
 // Grid shorthand
-expand('grid: repeat(3, 1fr) / auto;');
+const {ok, result, issues} = expand('grid: repeat(3, 1fr) / auto;');
+console.log(result);
 // grid-template-columns: repeat(3, 1fr);
 // grid-template-rows: auto;
 ```
@@ -60,17 +65,16 @@ expand('grid: repeat(3, 1fr) / auto;');
 
 ```javascript
 // Flex shorthand
-expand('flex: 1;');
+const {ok, result, issues} = expand('flex: 1;');
+console.log(result);
 // flex-grow: 1;
 // flex-shrink: 1;
 // flex-basis: 0%;
 
-expand('flex: 0 1 auto;');
 // flex-grow: 0;
 // flex-shrink: 1;
 // flex-basis: auto;
 
-expand('flex-flow: column wrap;');
 // flex-direction: column;
 // flex-wrap: wrap;
 ```
@@ -79,22 +83,16 @@ expand('flex-flow: column wrap;');
 
 ```javascript
 // Grid area
-expand('grid-area: header;');
-// grid-row-start: header;
+const {ok, result, issues} = expand('grid-area: header;');
+console.log(result);
 // grid-column-start: header;
-// grid-row-end: auto;
 // grid-column-end: auto;
-
-expand('grid-column: 1 / 3;');
-// grid-column-start: 1;
-// grid-column-end: 3;
-
-expand('grid-row: span 2;');
-// grid-row-start: span 2;
+// grid-row-start: header;
 // grid-row-end: auto;
 
 // Complex grid template
-expand('grid: "header header" 50px "sidebar main" 1fr / 200px 1fr;');
+const {ok, result, issues} = expand('grid: "header header" 50px "sidebar main" 1fr / 200px 1fr;');
+console.log(result);
 // grid-template-areas: "header header" "sidebar main";
 // grid-template-rows: 50px 1fr;
 // grid-template-columns: 200px 1fr;
@@ -164,7 +162,7 @@ The module exposes a single function which takes CSS declaration strings and ret
 const expand = require('b_short');
 
 // Single declaration
-const result = expand('background: url(image.png) no-repeat #ff0;');
+const {ok, result, issues} = expand('background: url(image.png) no-repeat #ff0;');
 
 // Multiple declarations
 const results = expand(`
@@ -179,7 +177,7 @@ const results = expand(`
 import expand, { ExpandOptions } from 'b_short';
 
 // Default: returns CSS string
-const result = expand('background: url(image.png) no-repeat #ff0;');
+const {ok, result, issues} = expand('background: url(image.png) no-repeat #ff0;');
 // background-image: url(image.png);
 // background-repeat: no-repeat;
 // background-color: #ff0;
@@ -213,7 +211,17 @@ The `expand` function accepts an optional second parameter with formatting optio
 - `indent`: `number` - Indentation for CSS output (default: `0`)
 - `separator`: `string` - Separator between CSS declarations (default: `'\n'`)
 
-## Output Formats
+## Return Value & Error Handling
+
+The `expand` function returns a structured object with comprehensive error handling and validation:
+
+```typescript
+interface ExpandResult {
+  ok: boolean;           // true if no CSS validation errors
+  result: string | Record<string, string> | undefined;  // The expanded CSS
+  issues: BStyleWarning[];  // Array of warnings and errors
+}
+```
 
 ### CSS String (default)
 
@@ -255,7 +263,7 @@ const results = expand(`
 
 ```javascript
 // Multiple declarations with JS format
-const result = expand(`
+const {ok, result, issues} = expand(`
   margin: 10px;
   padding: 5px;
 `, { format: 'js' });
@@ -274,6 +282,99 @@ const result = expand(`
 
 > **Note**: When using `format: 'js'` with multiple declarations, properties are merged into a single object. Later declarations override earlier ones following standard CSS cascade rules. Declarations with `!important` are preserved as-is with appropriate warnings.
 
+## Issues & Validation System
+
+The `issues` array provides comprehensive feedback about CSS processing, helping you identify potential problems and handle edge cases gracefully.
+
+### Issue Types
+
+#### 1. **CSS Validation Errors** (`ok: false`)
+
+Serious CSS syntax errors that prevent proper parsing:
+
+```javascript
+const {ok, result, issues} = expand('background: url(image.png) no-repeat #ff0; margin: ;', { format: 'js' });
+// ok: false (CSS syntax error in margin declaration)
+// issues: [{ name: 'css-syntax-error', property: 'margin', ... }]
+```
+
+#### 2. **Expansion Warnings** (`ok: true`)
+
+Non-critical issues where processing continues but with warnings:
+
+```javascript
+// !important flag detected
+const {ok, result, issues} = expand('margin: 10px !important;', { format: 'js' });
+// ok: true
+// result: { margin: '10px !important' }
+// issues: [{ name: 'important-detected', property: 'margin' }]
+
+// Unparseable shorthand
+const {ok, result, issues} = expand('background: invalid-value;', { format: 'js' });
+// ok: true
+// result: { background: 'invalid-value' }
+// issues: [{ name: 'expansion-failed', property: 'background' }]
+```
+
+### Issue Structure
+
+Each issue in the `issues` array contains:
+
+```typescript
+interface BStyleWarning {
+  property: string;        // CSS property name
+  name: string;           // Issue type identifier
+  formattedWarning: string; // Human-readable message
+}
+```
+
+### Common Issue Types
+
+| Issue Name | Description | Example |
+|------------|-------------|---------|
+| `important-detected` | `!important` flag found | `margin: 10px !important` |
+| `expansion-failed` | Shorthand couldn't be parsed | `background: invalid-value` |
+| `css-syntax-error` | Invalid CSS syntax | `margin: ;` |
+
+### Best Practices
+
+#### Check `ok` status first
+
+```javascript
+const {ok, result, issues} = expand(cssString);
+
+if (!ok) {
+  // Handle CSS syntax errors
+  console.error(issues);
+  return;
+}
+
+// Process successful expansion
+console.log('Expanded CSS:', result);
+
+// Check for warnings (non-blocking)
+if (issues) {
+  console.warn(issues);
+}
+```
+
+#### Handle specific issue types
+
+```javascript
+const {ok, result, issues} = expand(cssString);
+
+issues.forEach(issue => {
+  switch (issue.name) {
+    case 'important-detected':
+      console.log(`Property ${issue.property} has !important - review if needed`);
+      break;
+    case 'expansion-failed':
+      console.log(`Property ${issue.property} couldn't be expanded - using as-is`);
+      break;
+  }
+});
+```
+
 ## ⚠️ Limitations
 
 ### !important Flag Handling
@@ -281,13 +382,13 @@ const result = expand(`
 The `!important` flag is detected and preserved. A warning is added to the `issues` array, but the declaration is left untouched:
 
 ```javascript
-const result = expand('margin: 10px !important; margin-top: 5px;', { format: 'js' });
-// result.ok: true
-// result.result: {
+const {ok, result, issues} = expand('margin: 10px !important; margin-top: 5px;', { format: 'js' });
+// ok: true
+// result: {
 //   'margin': '10px !important',    // Shorthand preserved with !important
 //   'margin-top': '5px'             // Longhand declarations still processed
 // }
-// result.issues: [{ property: 'margin', name: 'important-detected', ... }]
+// issues: [{ property: 'margin', name: 'important-detected', ... }]
 ```
 
 **Rationale**: The `!important` flag indicates a deliberate authoring choice that should be preserved. Shorthand properties with `!important` are left as-is to maintain the author's intent, while allowing normal processing of other declarations.
@@ -297,24 +398,24 @@ const result = expand('margin: 10px !important; margin-top: 5px;', { format: 'js
 If a shorthand property cannot be parsed (invalid syntax or unsupported pattern), the original shorthand is returned as-is with a warning:
 
 ```javascript
-const result = expand('background: invalid-value;', { format: 'js' });
-// result.ok: true (no syntax errors from css-tree)
-// result.result: { background: 'invalid-value' }
-// result.issues: [{ property: 'background', name: 'expansion-failed', ... }]
+const {ok, result, issues} = expand('background: invalid-value;', { format: 'js' });
+// ok: true (no syntax errors from css-tree)
+// result: { background: 'invalid-value' }
+// issues: [{ property: 'background', name: 'expansion-failed', ... }]
 ```
 
 This allows the CSS to pass through while alerting you to potential issues:
 
 ```javascript
-const result = expand('background: invalid; margin: 10px;', { format: 'js' });
-// result.result: {
+const {ok, result, issues} = expand('background: invalid; margin: 10px;', { format: 'js' });
+// result: {
 //   background: 'invalid',
 //   'margin-top': '10px',
 //   'margin-right': '10px',
 //   'margin-bottom': '10px',
 //   'margin-left': '10px'
 // }
-// result.issues: [{ property: 'background', name: 'expansion-failed', ... }]
+// issues: [{ property: 'background', name: 'expansion-failed', ... }]
 ```
 
 ## 🎯 Supported Properties
