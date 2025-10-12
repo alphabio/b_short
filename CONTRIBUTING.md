@@ -20,7 +20,7 @@ We welcome contributions from everyone. This document provides guidelines and in
 
 ### Prerequisites
 
-- Node.js 14+
+- Node.js 16+
 - pnpm (recommended) or npm/yarn
 
 ### Commands
@@ -46,7 +46,30 @@ just format
 
 # Fix linting issues
 just fix
+
+# Run benchmarks
+pnpm bench
+
+# Check for outdated dependencies
+pnpm outdated
+
+# Audit dependencies
+pnpm audit
 ```
+
+### Git Hooks
+
+This project uses [Husky](https://typicode.github.io/husky/) to run pre-commit checks:
+
+- **Pre-commit**: Runs linting, type checking, and tests before each commit
+- Ensures code quality and prevents broken commits
+- Automatically installed when running `pnpm install`
+
+If you need to skip hooks temporarily (not recommended):
+```bash
+git commit --no-verify
+```
+
 
 ## 📝 Code Style
 

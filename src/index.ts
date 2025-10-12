@@ -174,7 +174,7 @@ const shorthand: Record<string, (value: string) => Record<string, string> | unde
   transition: transition,
 };
 
-export const PROPERTY_ORDER_MAP: Record<string, number> = {
+const PROPERTY_ORDER_MAP: Record<string, number> = {
   // Grid properties (indices 0-11)
   "grid-row-start": 0,
   "grid-row-end": 1,
@@ -337,11 +337,23 @@ export const PROPERTY_ORDER_MAP: Record<string, number> = {
 };
 
 /**
- * Sorts an object's properties according to CSS specification order defined in PROPERTY_ORDER_MAP
+ * Sorts an object's properties according to CSS specification order defined in PROPERTY_ORDER_MAP.
+ *
  * @param obj - Object with CSS properties to sort
  * @param grouping - Grouping strategy: "by-property" (default) or "by-side"
+ * @returns New object with properties sorted according to the specified strategy
+ *
+ * @example
+ * // by-property: groups all properties of same type together
+ * sortProperties({ 'margin-top': '5px', 'border-top-width': '1px' })
+ * // → { 'border-top-width': '1px', 'margin-top': '5px' }
+ *
+ * @example
+ * // by-side: groups all properties of same side together
+ * sortProperties({ 'margin-bottom': '5px', 'border-top-width': '1px' }, 'by-side')
+ * // → { 'border-top-width': '1px', 'margin-bottom': '5px' } (top before bottom)
  */
-export function sortProperties(
+function sortProperties(
   obj: Record<string, string>,
   grouping: "by-property" | "by-side" = "by-property"
 ): Record<string, string> {
@@ -352,7 +364,19 @@ export function sortProperties(
 }
 
 /**
- * Helper to extract property metadata for directional grouping
+ * Helper to extract property metadata for directional grouping.
+ * Identifies the side (top/right/bottom/left) and base property name.
+ *
+ * @param prop - CSS property name to analyze
+ * @returns Metadata object with side, sideIndex, and base property
+ *
+ * @example
+ * getPropertyMetadata('border-top-width')
+ * // → { side: 'top', sideIndex: 0, base: 'border' }
+ *
+ * @example
+ * getPropertyMetadata('font-size')
+ * // → { side: null, sideIndex: -1, base: 'font' }
  */
 function getPropertyMetadata(prop: string): {
   side: string | null;
@@ -369,8 +393,11 @@ function getPropertyMetadata(prop: string): {
 }
 
 /**
- * Sort properties by property type (default CSS spec order)
- * Groups all properties of the same type together (e.g., all margins, then all borders)
+ * Sort properties by property type (default CSS spec order).
+ * Groups all properties of the same type together (e.g., all margins, then all borders).
+ *
+ * @param obj - Object with CSS properties to sort
+ * @returns New object with properties sorted by type
  */
 function sortPropertiesByProperty(obj: Record<string, string>): Record<string, string> {
   const sortedEntries = Object.entries(obj).sort(([a], [b]) => {
@@ -389,8 +416,12 @@ function sortPropertiesByProperty(obj: Record<string, string>): Record<string, s
 }
 
 /**
- * Sort properties by directional side
- * Groups all properties of the same side together (e.g., all top properties, then all right properties)
+ * Sort properties by directional side.
+ * Groups all properties of the same side together (e.g., all top properties, then all right properties).
+ * Useful for debugging and understanding box model relationships.
+ *
+ * @param obj - Object with CSS properties to sort
+ * @returns New object with properties sorted by side
  */
 function sortPropertiesBySide(obj: Record<string, string>): Record<string, string> {
   const sortedEntries = Object.entries(obj).sort(([a], [b]) => {
@@ -447,7 +478,27 @@ function objectToCss(
   return sortedEntries.map(([key, value]) => `${indentStr}${key}: ${value};`).join(separator);
 }
 
-export default function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
+/**
+ * Expands CSS shorthand properties into their longhand equivalents.
+ *
+ * @param input - CSS declaration(s) to expand (e.g., "margin: 10px 20px;")
+ * @param options - Configuration options for expansion behavior
+ * @returns Object containing expansion result, success status, and any issues
+ *
+ * @example
+ * // Basic expansion
+ * expand('margin: 10px 20px;')
+ * // → { ok: true, result: 'margin-top: 10px;\nmargin-right: 20px;...', issues: [] }
+ *
+ * // JavaScript object format
+ * expand('padding: 1rem;', { format: 'js' })
+ * // → { ok: true, result: { 'padding-top': '1rem', ... }, issues: [] }
+ *
+ * // Multiple declarations with conflict resolution
+ * expand('margin: 10px; margin-top: 20px;', { format: 'js' })
+ * // → { ok: true, result: { 'margin-top': '20px', 'margin-right': '10px', ... }, issues: [] }
+ */
+function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
   // Merge partial options with defaults from schema
   const {
     format = "css",
@@ -518,7 +569,25 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
     resultMetadata.push({ isShorthand: true, properties: new Set(Object.keys(result)) });
   }
 
-  // Conflict resolution function to handle shorthand/longhand property overrides
+  /**
+   * Resolves conflicts between shorthand and longhand properties according to CSS cascade rules.
+   *
+   * When a longhand property (e.g., margin-top) appears after a shorthand (e.g., margin),
+   * the longhand overrides that specific property from the shorthand expansion.
+   * When a shorthand appears after a longhand, the shorthand replaces all related longhands.
+   *
+   * @param results - Array of CSS declaration objects (either objects or strings)
+   * @param metadata - Array of metadata describing each result (shorthand vs longhand, properties affected)
+   * @returns Cleaned array with conflicts resolved
+   *
+   * @example
+   * // Input: ['margin: 10px', 'margin-top: 20px']
+   * // Output: margin-top from the shorthand is removed, replaced by explicit margin-top: 20px
+   *
+   * @example
+   * // Input: ['margin-top: 20px', 'margin: 10px']
+   * // Output: margin-top: 20px is removed, replaced by margin: 10px expansion
+   */
   function removeConflictingProperties(
     results: (Record<string, string> | string)[],
     metadata: Array<{ isShorthand: boolean; properties: Set<string> }>
@@ -709,4 +778,21 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
   };
 }
 
-export { expand, validate };
+// Export named functions only (no default export to avoid CJS/ESM ambiguity)
+export { expand, validate, sortProperties, PROPERTY_ORDER_MAP };
+
+// Re-export types for convenience
+export type {
+  AnimationLayer,
+  AnimationResult,
+  BackgroundLayer,
+  BackgroundResult,
+  BStyleWarning,
+  ExpandOptions,
+  ExpandResult,
+  MaskLayer,
+  MaskResult,
+  StylesheetValidation,
+  TransitionLayer,
+  TransitionResult,
+} from "./schema";

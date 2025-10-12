@@ -12,10 +12,12 @@ biome.json
 tsconfig.json
 justfile
 pnpm-lock.yaml
+.husky/
 
 # Documentation (keep README and LICENSE)
 CHANGELOG.md
 CONTRIBUTING.md
+ENHANCEMENTS.md
 
 # Git
 .gitignore
@@ -25,3 +27,7 @@ benchmarks/
 
 # Scripts
 scripts/
+
+# Test artifacts
+coverage/
+vitest.config.mts

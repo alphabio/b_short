@@ -46,5 +46,19 @@
   // ---------- UI polish ----------
   "errorLens.enabled": true,
   "errorLens.margin": "90",
-  "git.autofetch": true
+  "git.autofetch": true,
+
+  // copilot
+  "chat.agent.maxRequests": 300,
+  "chat.tools.terminal.enableAutoApprove": true,
+  "chat.tools.terminal.autoApprove": {
+    "rm": false,
+    "rmdir": false,
+    "del": false,
+    "kill": false,
+    "eval": false,
+    "chmod": false,
+    "chown": false,
+    "/^Remove-Item\\b/i": false
+  }
 }

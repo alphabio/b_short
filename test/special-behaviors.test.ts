@@ -1,6 +1,6 @@
 // b_path:: test/special-behaviors.test.ts
 import { describe, expect, it } from "vitest";
-import expand from "../src/index";
+import { expand } from "../src/index";
 import { assertNoDuplicateProperties } from "./helpers/assertions";
 
 describe("!important handling", () => {
