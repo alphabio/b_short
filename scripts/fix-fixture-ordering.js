@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// b_path:: scripts/fix-fixture-ordering.js
 
 // Script to fix property ordering in test fixture files
 const fs = require("node:fs");

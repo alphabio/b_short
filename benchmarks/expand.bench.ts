@@ -1,3 +1,4 @@
+// b_path:: benchmarks/expand.bench.ts
 import { Bench } from "tinybench";
 import expand from "../src/index";
 

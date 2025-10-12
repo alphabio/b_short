@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### 🐛 Bug Fixes
+
+- **Fixed missing default properties in text-decoration shorthand expansion**
+  - The `text-decoration` shorthand now outputs all four properties with defaults
+  - Per CSS specification, shorthand properties reset all constituent properties to their initial values
+  - `text-decoration-style` defaults to `solid` when not specified
+  - `text-decoration-color` defaults to `currentColor` when not specified
+  - `text-decoration-thickness` defaults to `auto` when not specified
+  - Examples:
+    - `text-decoration: underline wavy red` → includes `text-decoration-thickness: auto`
+    - `text-decoration: underline 2px dotted` → includes `text-decoration-color: currentColor`
+    - `text-decoration: underline line-through` → includes all three defaults
+    - `text-decoration: none` → includes all three defaults
+
 ## [1.2.1] - 2025-01-12
 
 ### 🔒 Security

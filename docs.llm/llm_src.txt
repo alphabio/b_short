@@ -1,6 +1,6 @@
-Excluding patterns:
+Excluding patterns: 
 Documentation for LLMs
-Excluding patterns:
+Excluding patterns: 
 Excluding patterns: -not -path */__pycache__/* -not -path */.venv/* -not -path */.next/* -not -path */venv/* -not -path */node_modules/* -not -path */build/* -not -path */dist/* -not -path */.git/* -not -path */.idea/* -not -path */.vscode/*
 === File: src/animation-layers.ts ===
 // b_path:: src/animation-layers.ts
@@ -1048,7 +1048,7 @@ export function reconstructLayers(
 === File: src/background.ts ===
 // b_path:: src/background.ts
 
-import { needsAdvancedParser, parseBackgroundLayers, reconstructLayers } from "./background-layers";
+import { parseBackgroundLayers, reconstructLayers } from "./background-layers";
 import { cssUrlRegex } from "./color-utils";
 import isColor from "./is-color";
 import isLength from "./is-length";
@@ -1080,16 +1080,18 @@ const normalizeUrl = (value: string): string =>
   );
 
 export default function background(value: string): Record<string, string> | undefined {
-  // Check if this needs advanced multi-layer parsing
-  if (needsAdvancedParser(value)) {
-    const layeredResult = parseBackgroundLayers(value);
-    if (layeredResult) {
-      return reconstructLayers(layeredResult.layers, layeredResult.color);
-    }
-    return undefined; // Advanced parsing failed
+  // Use advanced parsing for all cases - it handles both simple and complex syntax better
+  const layeredResult = parseBackgroundLayers(value);
+  if (layeredResult) {
+    return reconstructLayers(layeredResult.layers, layeredResult.color);
   }
 
-  // Use existing single-layer parsing logic
+  // Fallback to simple parsing if advanced parsing fails
+  return simpleBackgroundParser(value);
+}
+
+function simpleBackgroundParser(value: string): Record<string, string> | undefined {
+  // Use existing single-layer parsing logic as fallback
   const result: BackgroundResult = {};
   const values = normalizeUrl(normalizeColor(value))
     .replace(/\(.*\/.*\)|(\/)+/g, (match: string, group1: string) => (!group1 ? match : " / "))
@@ -1191,32 +1193,60 @@ export default function background(value: string): Record<string, string> | unde
 
 === File: src/border-radius.ts ===
 // b_path:: src/border-radius.ts
-const directional = (value: string): Record<string, string> | undefined => {
-  const values = value.split(/\s+/);
 
-  if (values.length === 1) values.splice(0, 1, ...Array.from({ length: 4 }, () => values[0]));
-  else if (values.length === 2) values.push(...values);
-  else if (values.length === 3) values.push(values[1]);
-  else if (values.length > 4) return;
-
-  return ["top-left", "top-right", "bottom-right", "bottom-left"].reduce(
-    (acc: Record<string, string>, direction: string, i: number) => {
-      acc[direction] = values[i];
-      return acc;
-    },
-    {}
-  );
+/**
+ * Expand 1-4 values following CSS box model (top-left, top-right, bottom-right, bottom-left)
+ */
+const expandFourValues = (values: string[]): string[] => {
+  if (values.length === 1) return [values[0], values[0], values[0], values[0]];
+  if (values.length === 2) return [values[0], values[1], values[0], values[1]];
+  if (values.length === 3) return [values[0], values[1], values[2], values[1]];
+  if (values.length === 4) return values;
+  return []; // Invalid
 };
 
 const borderRadius = (value: string): Record<string, string> | undefined => {
-  const longhand = directional(value);
+  // Check if there's a slash separator for horizontal/vertical radii
+  const slashIndex = value.indexOf("/");
 
-  if (!longhand) return;
+  if (slashIndex !== -1) {
+    // Split horizontal and vertical radii
+    const horizontalPart = value.slice(0, slashIndex).trim();
+    const verticalPart = value.slice(slashIndex + 1).trim();
 
-  const result: Record<string, string> = {};
-  for (const key in longhand) {
-    result[`border-${key}-radius`] = longhand[key];
+    const horizontalValues = horizontalPart.split(/\s+/).filter((v) => v);
+    const verticalValues = verticalPart.split(/\s+/).filter((v) => v);
+
+    // Expand both sets to 4 values
+    const horizontal = expandFourValues(horizontalValues);
+    const vertical = expandFourValues(verticalValues);
+
+    if (horizontal.length === 0 || vertical.length === 0) return;
+
+    // Combine into corner-specific values
+    const corners = ["top-left", "top-right", "bottom-right", "bottom-left"];
+    const result: Record<string, string> = {};
+
+    for (let i = 0; i < 4; i++) {
+      result[`border-${corners[i]}-radius`] = `${horizontal[i]} ${vertical[i]}`;
+    }
+
+    return result;
   }
+
+  // No slash - simple case with uniform horizontal and vertical radii
+  const values = value.split(/\s+/).filter((v) => v);
+  const expanded = expandFourValues(values);
+
+  if (expanded.length === 0) return;
+
+  const corners = ["top-left", "top-right", "bottom-right", "bottom-left"];
+  const result: Record<string, string> = {};
+
+  for (let i = 0; i < 4; i++) {
+    result[`border-${corners[i]}-radius`] = expanded[i];
+  }
+
   return result;
 };
 
@@ -1226,6 +1256,7 @@ export default borderRadius;
 === File: src/border.ts ===
 // b_path:: src/border.ts
 import directional from "./directional";
+import { sortProperties } from "./index";
 import isColor from "./is-color";
 import isLength from "./is-length";
 import normalizeColor from "./normalize-color";
@@ -1238,6 +1269,10 @@ interface BorderProperties {
   width?: string;
   style?: string;
   color?: string;
+}
+
+interface BorderResult extends BorderProperties {
+  boxSizing?: string;
 }
 
 type BorderFunction = {
@@ -1262,7 +1297,7 @@ const suffix =
     for (const key in longhand) {
       result[`border-${key}-${suffix}`] = longhand[key];
     }
-    return result;
+    return sortProperties(result);
   };
 
 const direction =
@@ -1274,16 +1309,38 @@ const direction =
 
     const filtered: Record<string, string> = {};
     for (const key in longhand) {
-      if (longhand[key as keyof BorderProperties]) {
+      if (key === "boxSizing" && longhand[key]) {
+        filtered[key] = longhand[key];
+      } else if (longhand[key as keyof BorderProperties]) {
         filtered[`border-${direction}-${key}`] = longhand[key as keyof BorderProperties] as string;
       }
     }
-    return filtered;
+    return sortProperties(filtered);
   };
 
-const all = (value: string): BorderProperties | undefined => {
+const all = (value: string): BorderResult | undefined => {
   const values = normalizeColor(value).split(/\s+/);
   const first = values[0];
+
+  // Handle special case: border values with box-sizing
+  if (values.length === 4) {
+    const [width, style, color, boxSizing] = values;
+
+    // Check if first 3 values are valid border values and 4th is valid box-sizing
+    if (
+      (WIDTH.test(width) || isLength(width)) &&
+      STYLE.test(style) &&
+      isColor(color) &&
+      (boxSizing === "border-box" || boxSizing === "content-box")
+    ) {
+      return {
+        width,
+        style,
+        color,
+        boxSizing,
+      };
+    }
+  }
 
   if (values.length > 3) return;
   if (values.length === 1 && KEYWORD.test(first)) {
@@ -1321,19 +1378,28 @@ const border: BorderFunction = (value: string): Record<string, string> | undefin
   if (!longhand) return;
 
   const result: Record<string, string> = {};
-  for (const key of Object.keys(longhand) as (keyof BorderProperties)[]) {
-    const propFunction = border[key as keyof BorderFunction] as (
-      value: string
-    ) => Record<string, string> | undefined;
-    const propValue = longhand[key];
+
+  // Handle box-sizing separately
+  if (longhand.boxSizing) {
+    result["box-sizing"] = longhand.boxSizing;
+  }
+
+  // Handle border properties
+  for (const key in longhand) {
+    if (key === "boxSizing") continue; // Already handled above
+
+    const propValue = longhand[key as keyof BorderProperties];
     if (propValue) {
+      const propFunction = border[key as keyof BorderFunction] as (
+        value: string
+      ) => Record<string, string> | undefined;
       const props = propFunction(propValue);
       if (props) {
         Object.assign(result, props);
       }
     }
   }
-  return result;
+  return sortProperties(result);
 };
 
 border.width = suffix("width");
@@ -1544,6 +1610,7 @@ export function rgbaRegex(options?: { exact?: boolean }): RegExp {
 
 === File: src/column-rule.ts ===
 // b_path:: src/column-rule.ts
+import { sortProperties } from "./index";
 import isColor from "./is-color";
 import isLength from "./is-length";
 import normalizeColor from "./normalize-color";
@@ -1557,11 +1624,11 @@ export default function columnRule(value: string): Record<string, string> | unde
 
   if (values.length > 3) return;
   if (values.length === 1 && KEYWORD.test(values[0])) {
-    return {
+    return sortProperties({
       "column-rule-width": values[0],
       "column-rule-style": values[0],
       "column-rule-color": values[0],
-    };
+    });
   }
 
   const result: Record<string, string> = {};
@@ -1582,21 +1649,22 @@ export default function columnRule(value: string): Record<string, string> | unde
     }
   }
 
-  return result;
+  return sortProperties(result);
 }
 
 
 === File: src/columns.ts ===
 // b_path:: src/columns.ts
+import { sortProperties } from "./index";
 import isLength from "./is-length";
 
 export default (value: string): Record<string, string> | undefined => {
   // Handle global CSS keywords
   if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
+    return sortProperties({
       "column-width": value,
       "column-count": value,
-    };
+    });
   }
 
   // Split values on whitespace
@@ -1620,10 +1688,10 @@ export default (value: string): Record<string, string> | undefined => {
   for (const val of values) {
     if (KEYWORD.test(val)) {
       autoValues.push(val);
-    } else if (INTEGER.test(val)) {
-      specificValues.push({ value: val, type: "count" });
     } else if (isLength(val)) {
       specificValues.push({ value: val, type: "width" });
+    } else if (INTEGER.test(val)) {
+      specificValues.push({ value: val, type: "count" });
     } else {
       return undefined; // Invalid value
     }
@@ -1639,9 +1707,6 @@ export default (value: string): Record<string, string> | undefined => {
 
   // Assign specific values first
   for (const { value, type } of specificValues) {
-    if (type === "count" && value === "0") {
-      return undefined; // column-count cannot be 0
-    }
     result[`column-${type}`] = value;
   }
 
@@ -1656,7 +1721,7 @@ export default (value: string): Record<string, string> | undefined => {
     }
   }
 
-  return result;
+  return sortProperties(result);
 };
 
 
@@ -1891,6 +1956,12 @@ export default function (value: string): Record<string, string> | undefined {
         "flex-shrink": "1",
         "flex-basis": second.value,
       };
+    } else if (first.type === "basis" && second.type === "number") {
+      return {
+        "flex-grow": second.value,
+        "flex-shrink": "1",
+        "flex-basis": first.value,
+      };
     } else {
       return undefined;
     }
@@ -1916,6 +1987,8 @@ export default function (value: string): Record<string, string> | undefined {
 /**
  * Copied from https://github.com/bramstein/css-font-parser
  */
+
+import { sortProperties } from "./index";
 
 /**
  * @enum {number}
@@ -2011,7 +2084,7 @@ function parse(input: string): FontResult | null {
 
 export default function font(input: string): Record<string, string> | undefined {
   if (/^(inherit|initial)$/.test(input)) {
-    return {
+    return sortProperties({
       "font-size": input,
       "line-height": input,
       "font-style": input,
@@ -2019,7 +2092,7 @@ export default function font(input: string): Record<string, string> | undefined 
       "font-variant": input,
       "font-stretch": input,
       "font-family": input,
-    };
+    });
   }
 
   input = input.replace(/\s*\/\s*/, "/");
@@ -2027,6 +2100,20 @@ export default function font(input: string): Record<string, string> | undefined 
 
   if (result) {
     const finalResult: Record<string, string> = {};
+
+    // Set defaults for properties that should always be present
+    // Per CSS spec, font shorthand resets these to initial values if not specified
+    const defaults = {
+      "font-style": "normal",
+      "font-variant": "normal",
+      "font-weight": "normal",
+      "font-stretch": "normal",
+    };
+
+    // Apply defaults first
+    Object.assign(finalResult, defaults);
+
+    // Then override with parsed values
     for (const key in result) {
       if (key === "font-family") {
         finalResult[key] = result[key]
@@ -2038,7 +2125,7 @@ export default function font(input: string): Record<string, string> | undefined 
         finalResult[key] = result[key as keyof FontResult] as string;
       }
     }
-    return finalResult;
+    return sortProperties(finalResult);
   }
 
   return undefined;
@@ -2290,6 +2377,8 @@ export const GRID_DEFAULTS = {
   "grid-auto-rows": "auto",
   "grid-auto-columns": "auto",
   "grid-auto-flow": "row",
+  "row-gap": "normal",
+  "column-gap": "normal",
 } as const;
 
 /**
@@ -2524,6 +2613,8 @@ function parseTemplateForm(
     "grid-auto-rows": GRID_DEFAULTS["grid-auto-rows"],
     "grid-auto-columns": GRID_DEFAULTS["grid-auto-columns"],
     "grid-auto-flow": GRID_DEFAULTS["grid-auto-flow"],
+    "row-gap": GRID_DEFAULTS["row-gap"],
+    "column-gap": GRID_DEFAULTS["column-gap"],
   };
 }
 
@@ -2599,6 +2690,8 @@ function parseExplicitRowsForm(
     "grid-auto-rows": GRID_DEFAULTS["grid-auto-rows"],
     "grid-auto-columns": autoColumns || GRID_DEFAULTS["grid-auto-columns"],
     "grid-auto-flow": autoFlow,
+    "row-gap": GRID_DEFAULTS["row-gap"],
+    "column-gap": GRID_DEFAULTS["column-gap"],
   };
 }
 
@@ -2674,6 +2767,8 @@ function parseExplicitColumnsForm(
     "grid-auto-rows": autoRows || GRID_DEFAULTS["grid-auto-rows"],
     "grid-auto-columns": GRID_DEFAULTS["grid-auto-columns"],
     "grid-auto-flow": autoFlow,
+    "row-gap": GRID_DEFAULTS["row-gap"],
+    "column-gap": GRID_DEFAULTS["column-gap"],
   };
 }
 
@@ -2687,6 +2782,8 @@ export default (value: string): Record<string, string> | undefined => {
       "grid-auto-rows": value,
       "grid-auto-columns": value,
       "grid-auto-flow": value,
+      "row-gap": value,
+      "column-gap": value,
     };
   }
 
@@ -2742,18 +2839,89 @@ import overflow from "./overflow";
 import placeContent from "./place-content";
 import placeItems from "./place-items";
 import placeSelf from "./place-self";
-import type { ExpandOptions, ExpandResult } from "./schema";
+import type { BStyleWarning, ExpandOptions, ExpandResult } from "./schema";
 import textDecoration from "./text-decoration";
 import textEmphasis from "./text-emphasis";
 import transition from "./transition";
 import { validate } from "./validate";
 
 function parseInputString(input: string): string[] {
-  // Split on semicolons and filter out empty declarations
-  return input
-    .split(";")
-    .map((decl) => decl.trim())
-    .filter((decl) => decl.length > 0);
+  const declarations: string[] = [];
+  let current = "";
+  let i = 0;
+
+  while (i < input.length) {
+    const char = input[i];
+    const nextChar = input[i + 1];
+
+    // Handle escaped characters
+    if (char === "\\" && nextChar) {
+      current += char + nextChar;
+      i += 2;
+      continue;
+    }
+
+    // Track context
+    if (char === '"' || char === "'") {
+      // Find the closing quote, handling escaped quotes
+      let quoteEnd = i + 1;
+      while (quoteEnd < input.length) {
+        if (input[quoteEnd] === char && input[quoteEnd - 1] !== "\\") {
+          break;
+        }
+        quoteEnd++;
+      }
+      if (quoteEnd < input.length) {
+        current += input.substring(i, quoteEnd + 1);
+        i = quoteEnd + 1;
+        continue;
+      }
+    }
+
+    // Handle parentheses (for functions like url(), calc(), etc.)
+    if (char === "(") {
+      let parenCount = 1;
+      let parenEnd = i + 1;
+      while (parenEnd < input.length && parenCount > 0) {
+        if (input[parenEnd] === "(") parenCount++;
+        if (input[parenEnd] === ")") parenCount--;
+        parenEnd++;
+      }
+      if (parenCount === 0) {
+        current += input.substring(i, parenEnd);
+        i = parenEnd;
+        continue;
+      }
+    }
+
+    // Handle square brackets (for attribute selectors, etc.)
+    if (char === "[") {
+      const bracketEnd = input.indexOf("]", i + 1);
+      if (bracketEnd !== -1) {
+        current += input.substring(i, bracketEnd + 1);
+        i = bracketEnd + 1;
+        continue;
+      }
+    }
+
+    // Split on semicolons only when not in any special context
+    if (char === ";") {
+      declarations.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+
+    i++;
+  }
+
+  // Add the last declaration if it exists
+  if (current.trim()) {
+    declarations.push(current.trim());
+  }
+
+  // Filter out empty declarations
+  return declarations.filter((decl) => decl.length > 0);
 }
 
 function parseCssDeclaration(declaration: string): { property: string; value: string } | null {
@@ -2822,22 +2990,295 @@ const shorthand: Record<string, (value: string) => Record<string, string> | unde
   transition: transition,
 };
 
-function objectToCss(obj: Record<string, string>, indent: number, separator: string): string {
-  const indentStr = " ".repeat(indent);
-  return Object.entries(obj)
-    .map(([key, value]) => `${indentStr}${key}: ${value};`)
-    .join(separator);
+export const PROPERTY_ORDER_MAP: Record<string, number> = {
+  // Grid properties (indices 0-11)
+  "grid-row-start": 0,
+  "grid-row-end": 1,
+  "grid-column-start": 2,
+  "grid-column-end": 3,
+  "grid-template-rows": 4,
+  "grid-template-columns": 5,
+  "grid-template-areas": 6,
+  "grid-auto-rows": 7,
+  "grid-auto-columns": 8,
+  "grid-auto-flow": 9,
+  "row-gap": 10,
+  "column-gap": 11,
+
+  // Animation properties (indices 20-27)
+  "animation-name": 20,
+  "animation-duration": 21,
+  "animation-timing-function": 22,
+  "animation-delay": 23,
+  "animation-iteration-count": 24,
+  "animation-direction": 25,
+  "animation-fill-mode": 26,
+  "animation-play-state": 27,
+
+  // Transition properties (indices 30-33)
+  "transition-property": 30,
+  "transition-duration": 31,
+  "transition-timing-function": 32,
+  "transition-delay": 33,
+
+  // Background properties (indices 40-47)
+  "background-image": 40,
+  "background-position": 41,
+  "background-size": 42,
+  "background-repeat": 43,
+  "background-attachment": 44,
+  "background-origin": 45,
+  "background-clip": 46,
+  "background-color": 47,
+
+  // Font properties (indices 50-56)
+  "font-style": 50,
+  "font-variant": 51,
+  "font-weight": 52,
+  "font-stretch": 53,
+  "font-size": 54,
+  "line-height": 55,
+  "font-family": 56,
+
+  // Flex properties (indices 60-64)
+  "flex-grow": 60,
+  "flex-shrink": 61,
+  "flex-basis": 62,
+  "flex-direction": 63,
+  "flex-wrap": 64,
+
+  // Border directional properties (indices 70-84)
+  "border-top-width": 70,
+  "border-top-style": 71,
+  "border-top-color": 72,
+  "border-right-width": 73,
+  "border-right-style": 74,
+  "border-right-color": 75,
+  "border-bottom-width": 76,
+  "border-bottom-style": 77,
+  "border-bottom-color": 78,
+  "border-left-width": 79,
+  "border-left-style": 80,
+  "border-left-color": 81,
+  "border-width": 82,
+  "border-style": 83,
+  "border-color": 84,
+
+  // Border-radius properties (indices 90-93)
+  "border-top-left-radius": 90,
+  "border-top-right-radius": 91,
+  "border-bottom-right-radius": 92,
+  "border-bottom-left-radius": 93,
+
+  // Outline properties (indices 100-102)
+  "outline-width": 100,
+  "outline-style": 101,
+  "outline-color": 102,
+
+  // Column-rule properties (indices 110-112)
+  "column-rule-width": 110,
+  "column-rule-style": 111,
+  "column-rule-color": 112,
+
+  // Columns properties (indices 115-116)
+  "column-width": 115,
+  "column-count": 116,
+
+  // List-style properties (indices 120-122)
+  "list-style-type": 120,
+  "list-style-position": 121,
+  "list-style-image": 122,
+
+  // Text-decoration properties (indices 130-133)
+  "text-decoration-line": 130,
+  "text-decoration-style": 131,
+  "text-decoration-color": 132,
+  "text-decoration-thickness": 133,
+
+  // Overflow properties (indices 140-141)
+  "overflow-x": 140,
+  "overflow-y": 141,
+
+  // Place properties (indices 150-155)
+  "align-items": 150,
+  "justify-items": 151,
+  "align-content": 152,
+  "justify-content": 153,
+  "align-self": 154,
+  "justify-self": 155,
+
+  // Directional properties - margin (indices 200-203)
+  "margin-top": 200,
+  "margin-right": 201,
+  "margin-bottom": 202,
+  "margin-left": 203,
+
+  // Directional properties - padding (indices 210-213)
+  "padding-top": 210,
+  "padding-right": 211,
+  "padding-bottom": 212,
+  "padding-left": 213,
+
+  // Directional properties - inset (indices 220-223)
+  top: 220,
+  right: 221,
+  bottom: 222,
+  left: 223,
+
+  // Mask properties (indices 230-237)
+  "mask-image": 230,
+  "mask-mode": 231,
+  "mask-position": 232,
+  "mask-size": 233,
+  "mask-repeat": 234,
+  "mask-origin": 235,
+  "mask-clip": 236,
+  "mask-composite": 237,
+
+  // Offset properties (indices 240-244)
+  "offset-position": 240,
+  "offset-path": 241,
+  "offset-distance": 242,
+  "offset-rotate": 243,
+  "offset-anchor": 244,
+
+  // Text-emphasis properties (indices 250-252)
+  "text-emphasis-style": 250,
+  "text-emphasis-color": 251,
+  "text-emphasis-position": 252,
+
+  // Contain-intrinsic-size properties (indices 260-261)
+  "contain-intrinsic-width": 260,
+  "contain-intrinsic-height": 261,
+};
+
+/**
+ * Sorts an object's properties according to CSS specification order defined in PROPERTY_ORDER_MAP
+ * @param obj - Object with CSS properties to sort
+ * @param grouping - Grouping strategy: "by-property" (default) or "by-side"
+ */
+export function sortProperties(
+  obj: Record<string, string>,
+  grouping: "by-property" | "by-side" = "by-property"
+): Record<string, string> {
+  if (grouping === "by-side") {
+    return sortPropertiesBySide(obj);
+  }
+  return sortPropertiesByProperty(obj);
+}
+
+/**
+ * Helper to extract property metadata for directional grouping
+ */
+function getPropertyMetadata(prop: string): {
+  side: string | null;
+  sideIndex: number;
+  base: string;
+} {
+  const parts = prop.split("-");
+  const sides = ["top", "right", "bottom", "left"];
+  const side = parts.find((p) => sides.includes(p)) || null;
+  const sideIndex = side ? sides.indexOf(side) : -1;
+  const base = parts[0];
+
+  return { side, sideIndex, base };
+}
+
+/**
+ * Sort properties by property type (default CSS spec order)
+ * Groups all properties of the same type together (e.g., all margins, then all borders)
+ */
+function sortPropertiesByProperty(obj: Record<string, string>): Record<string, string> {
+  const sortedEntries = Object.entries(obj).sort(([a], [b]) => {
+    const orderA = PROPERTY_ORDER_MAP[a];
+    const orderB = PROPERTY_ORDER_MAP[b];
+
+    if (orderA !== undefined && orderB !== undefined) {
+      return orderA - orderB;
+    }
+    if (orderA !== undefined) return -1;
+    if (orderB !== undefined) return 1;
+    return a.localeCompare(b);
+  });
+
+  return Object.fromEntries(sortedEntries);
+}
+
+/**
+ * Sort properties by directional side
+ * Groups all properties of the same side together (e.g., all top properties, then all right properties)
+ */
+function sortPropertiesBySide(obj: Record<string, string>): Record<string, string> {
+  const sortedEntries = Object.entries(obj).sort(([a], [b]) => {
+    const metaA = getPropertyMetadata(a);
+    const metaB = getPropertyMetadata(b);
+
+    // Both have sides - sort by side first, then by property order within that side
+    if (metaA.side && metaB.side) {
+      if (metaA.sideIndex !== metaB.sideIndex) {
+        return metaA.sideIndex - metaB.sideIndex;
+      }
+      // Same side - sort by CSS spec order to maintain proper ordering within the side
+      const orderA = PROPERTY_ORDER_MAP[a] ?? 999999;
+      const orderB = PROPERTY_ORDER_MAP[b] ?? 999999;
+      return orderA - orderB;
+    }
+
+    // If only one has a side, non-directional properties come first (by their spec order)
+    // This handles mixed cases like font-size mixed with margin-top
+    if (!metaA.side && metaB.side) {
+      const orderA = PROPERTY_ORDER_MAP[a] ?? 999999;
+      // Put non-directional before directional if they have lower spec order
+      if (orderA < 200) return -1; // Most non-directional properties are < 200
+      return 1;
+    }
+    if (metaA.side && !metaB.side) {
+      const orderB = PROPERTY_ORDER_MAP[b] ?? 999999;
+      if (orderB < 200) return 1;
+      return -1;
+    }
+
+    // Neither has sides - use normal property order
+    const orderA = PROPERTY_ORDER_MAP[a] ?? 999999;
+    const orderB = PROPERTY_ORDER_MAP[b] ?? 999999;
+    if (orderA !== orderB) return orderA - orderB;
+    return a.localeCompare(b);
+  });
+
+  return Object.fromEntries(sortedEntries);
+}
+
+function objectToCss(
+  obj: Record<string, string>,
+  indent: number,
+  separator: string,
+  propertyGrouping: "by-property" | "by-side" = "by-property"
+): string {
+  const indentStr = "  ".repeat(indent);
+
+  // Sort properties using the specified grouping strategy
+  const sorted = sortProperties(obj, propertyGrouping);
+  const sortedEntries = Object.entries(sorted);
+
+  return sortedEntries.map(([key, value]) => `${indentStr}${key}: ${value};`).join(separator);
 }
 
 export default function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
   // Merge partial options with defaults from schema
-  const { format = "css", indent = 0, separator = "\n" } = options;
+  const {
+    format = "css",
+    indent = 0,
+    separator = "\n",
+    propertyGrouping = "by-property",
+  } = options;
 
   // Validate the input CSS directly (assume it's valid CSS)
   const validation = validate(input);
 
   const inputs = parseInputString(input);
   const results: (Record<string, string> | string)[] = [];
+  const issues: BStyleWarning[] = [];
+  const resultMetadata: Array<{ isShorthand: boolean; properties: Set<string> }> = [];
 
   for (const item of inputs) {
     const parsed = parseCssDeclaration(item);
@@ -2847,69 +3288,244 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
 
     const { property, value } = parsed;
     const normalized = value.trim();
-    const important = /\s+!important$/.test(normalized);
-    const cleanValue = normalized.replace(/\s+!important$/, "");
+    // Safe check for !important without ReDoS vulnerability
+    const important = normalized.endsWith("!important") && /\s/.test(normalized.slice(-11, -10));
+
+    // Handle !important detection and warning
+    if (important) {
+      issues.push({
+        property,
+        name: "important-detected",
+        formattedWarning: `!important flag detected in '${property}' and has been ignored. Shorthand expansion does not support !important.`,
+      });
+
+      const result: Record<string, string> = {};
+      result[property] = normalized;
+      results.push(result);
+      resultMetadata.push({ isShorthand: false, properties: new Set([property]) });
+      continue;
+    }
 
     const parse = shorthand[property];
-    const longhand = parse?.(cleanValue);
+    const longhand = parse?.(normalized);
 
     if (!longhand) {
       // For non-shorthand properties, still include them in the result
       // but as-is (no expansion needed) - validation will catch invalid ones
+
       const result: Record<string, string> = {};
       result[property] = normalized;
-      results.push(format === "css" ? objectToCss(result, indent, separator) : result);
+      results.push(result);
+      resultMetadata.push({ isShorthand: false, properties: new Set([property]) });
+
+      // Add warning for unparseable shorthands only if CSS is actually invalid
+      if (property in shorthand) {
+        issues.push({
+          property,
+          name: "expansion-failed",
+          formattedWarning: `Could not expand shorthand property '${property}' with value '${normalized}'. Returning original shorthand.`,
+        });
+      }
       continue;
     }
 
-    let result: Record<string, string>;
-    if (important) {
-      result = {};
-      for (const key in longhand) {
-        result[key] = `${longhand[key]} !important`;
-      }
-    } else {
-      result = longhand;
-    }
-
-    if (format === "css") {
-      results.push(objectToCss(result, indent, separator));
-    } else {
-      results.push(result);
-    }
+    const result: Record<string, string> = longhand;
+    results.push(result);
+    resultMetadata.push({ isShorthand: true, properties: new Set(Object.keys(result)) });
   }
 
-  let finalResult:
-    | Record<string, string>
-    | string
-    | (Record<string, string> | string)[]
-    | undefined;
+  // Conflict resolution function to handle shorthand/longhand property overrides
+  function removeConflictingProperties(
+    results: (Record<string, string> | string)[],
+    metadata: Array<{ isShorthand: boolean; properties: Set<string> }>
+  ): (Record<string, string> | string)[] {
+    const cleanedResults: (Record<string, string> | string)[] = [];
+    // Maintain a running map of property name to the index of the last setting result
+    const propertyToResultIndex = new Map<string, number>();
 
-  if (results.length === 0) {
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+      const meta = metadata[i];
+
+      // For CSS strings, we need to convert them back to objects for conflict resolution
+      let resultObj: Record<string, string>;
+      if (typeof result === "string") {
+        // Parse CSS string back to object for conflict resolution
+        resultObj = {};
+        const cssLines = result.split(";").filter((line) => line.trim());
+        for (const line of cssLines) {
+          const colonIndex = line.indexOf(":");
+          if (colonIndex !== -1) {
+            const prop = line.slice(0, colonIndex).trim();
+            const value = line.slice(colonIndex + 1).trim();
+            resultObj[prop] = value;
+          }
+        }
+      } else {
+        resultObj = { ...result };
+      }
+
+      // Handle conflicts based on whether current result is from shorthand expansion
+      if (!meta.isShorthand) {
+        // Current result is NOT from shorthand expansion - check for conflicts with earlier shorthand results
+        for (const prop of meta.properties) {
+          const earlierIndex = propertyToResultIndex.get(prop);
+          if (earlierIndex !== undefined) {
+            const earlierResult = cleanedResults[earlierIndex];
+            const earlierMeta = metadata[earlierIndex];
+
+            // Only check earlier shorthand results for conflicts
+            if (earlierMeta.isShorthand && earlierMeta.properties.has(prop)) {
+              // Remove the conflicting property from the earlier shorthand result
+              if (typeof earlierResult === "string") {
+                // Parse, remove property, and convert back to CSS string
+                const earlierObj: Record<string, string> = {};
+                const cssLines = earlierResult.split(";").filter((line) => line.trim());
+                for (const line of cssLines) {
+                  const colonIndex = line.indexOf(":");
+                  if (colonIndex !== -1) {
+                    const earlierProp = line.slice(0, colonIndex).trim();
+                    const value = line.slice(colonIndex + 1).trim();
+                    if (earlierProp !== prop) {
+                      earlierObj[earlierProp] = value;
+                    }
+                  }
+                }
+                cleanedResults[earlierIndex] = objectToCss(
+                  earlierObj,
+                  indent,
+                  separator,
+                  propertyGrouping
+                );
+              } else {
+                delete earlierResult[prop];
+              }
+              // Update metadata to remove the property
+              earlierMeta.properties.delete(prop);
+            }
+          }
+        }
+      } else {
+        // Current result IS from shorthand expansion - check for conflicts with earlier non-shorthand results
+        // Gate this behind CSS format only to mirror JS merge behavior
+        if (format === "css") {
+          for (const prop of meta.properties) {
+            const earlierIndex = propertyToResultIndex.get(prop);
+            if (earlierIndex !== undefined) {
+              const earlierResult = cleanedResults[earlierIndex];
+              const earlierMeta = metadata[earlierIndex];
+
+              // Only check earlier non-shorthand results for conflicts
+              if (!earlierMeta.isShorthand && earlierMeta.properties.has(prop)) {
+                // Remove the conflicting property from the earlier non-shorthand result
+                if (typeof earlierResult === "string") {
+                  // Parse, remove property, and convert back to CSS string
+                  const earlierObj: Record<string, string> = {};
+                  const cssLines = earlierResult.split(";").filter((line) => line.trim());
+                  for (const line of cssLines) {
+                    const colonIndex = line.indexOf(":");
+                    if (colonIndex !== -1) {
+                      const earlierProp = line.slice(0, colonIndex).trim();
+                      const value = line.slice(colonIndex + 1).trim();
+                      if (earlierProp !== prop) {
+                        earlierObj[earlierProp] = value;
+                      }
+                    }
+                  }
+                  cleanedResults[earlierIndex] = objectToCss(
+                    earlierObj,
+                    indent,
+                    separator,
+                    propertyGrouping
+                  );
+                } else {
+                  delete earlierResult[prop];
+                }
+                // Update metadata to remove the property
+                earlierMeta.properties.delete(prop);
+              }
+            }
+          }
+        }
+      }
+
+      // Add the current result (CSS string or object)
+      cleanedResults.push(result);
+
+      // Update the property map with the current result index for all properties in this result
+      for (const prop of meta.properties) {
+        propertyToResultIndex.set(prop, cleanedResults.length - 1);
+      }
+    }
+
+    return cleanedResults;
+  }
+
+  let finalResult: Record<string, string> | string | undefined;
+
+  // Apply conflict resolution for shorthand/longhand property overrides
+  const cleanedResults = removeConflictingProperties(results, resultMetadata);
+
+  if (cleanedResults.length === 0) {
     finalResult = undefined;
-  } else if (results.length === 1) {
-    finalResult = results[0];
+  } else if (cleanedResults.length === 1) {
+    const result = cleanedResults[0];
+    finalResult =
+      format === "css" && typeof result === "object"
+        ? objectToCss(result, indent, separator, propertyGrouping)
+        : result;
   } else {
-    // For CSS format, join multiple results into a single string
     if (format === "css") {
-      finalResult = results.join(separator);
+      // For CSS format with multiple declarations, we need to merge objects first
+      // then convert to CSS to respect property grouping across declarations
+      const mergedObject: Record<string, string> = {};
+
+      for (const result of cleanedResults) {
+        if (typeof result === "object" && result) {
+          Object.assign(mergedObject, result);
+        }
+      }
+
+      // If we have a merged object, convert it to CSS with proper grouping
+      if (Object.keys(mergedObject).length > 0) {
+        finalResult = objectToCss(mergedObject, indent, separator, propertyGrouping);
+      } else {
+        // Fallback for non-object results (shouldn't normally happen)
+        const cssResults = cleanedResults.map((result) =>
+          typeof result === "object"
+            ? objectToCss(result, indent, separator, propertyGrouping)
+            : result
+        );
+        finalResult = cssResults.join(separator);
+      }
     } else {
-      finalResult = results;
+      // format === "js" - merge objects with simple "later wins" logic
+      const mergedResult: Record<string, string> = {};
+      for (const result of cleanedResults) {
+        if (typeof result === "object" && result) {
+          Object.assign(mergedResult, result);
+        }
+      }
+
+      // Sort the merged result according to the specified grouping strategy
+      finalResult = sortProperties(mergedResult, options.propertyGrouping || "by-property");
     }
   }
 
   // Determine ok status: false if errors, true if warnings only or no issues
   const ok = validation.errors.length === 0;
 
-  // Combine errors and warnings into issues - use proper typing from schemas
-  const issues = [...validation.errors, ...validation.warnings];
+  // Combine errors, warnings, and our custom issues
+  const allIssues = [...validation.errors, ...validation.warnings, ...issues];
 
   return {
     ok,
     result: finalResult,
-    issues,
+    issues: allIssues,
   };
 }
+
+export { expand, validate };
 
 
 === File: src/is-angle.ts ===
@@ -3019,6 +3635,7 @@ export default function isTimingFunction(value: string): boolean {
 === File: src/list-style.ts ===
 // b_path:: src/list-style.ts
 import { cssUrlRegex } from "./color-utils";
+import { sortProperties } from "./index";
 import normalizeColor from "./normalize-color";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
@@ -3032,50 +3649,67 @@ const STRING_VALUE = /^["'].*["']$/;
 export default function listStyle(value: string): Record<string, string> | undefined {
   const normalizedValue = normalizeColor(value);
 
-  // Special case: "none" alone sets both type and image to none
+  // Special case: "none" alone sets both type and image to none, position to default
   if (normalizedValue === "none") {
-    return {
+    return sortProperties({
       "list-style-type": "none",
+      "list-style-position": "outside",
       "list-style-image": "none",
-    };
+    });
   }
 
   const values = normalizedValue.split(/\s+/);
 
   if (values.length === 1 && KEYWORD.test(values[0])) {
-    return {
+    return sortProperties({
       "list-style-type": values[0],
       "list-style-position": values[0],
       "list-style-image": values[0],
-    };
+    });
   }
 
-  const result: Record<string, string> = {};
+  // Start with defaults - list-style shorthand resets all properties
+  const result: Record<string, string> = {
+    "list-style-type": "disc",
+    "list-style-position": "outside",
+    "list-style-image": "none",
+  };
+
+  // Track what was explicitly set to detect duplicates
+  const explicitlySet = {
+    type: false,
+    position: false,
+    image: false,
+  };
 
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
 
     if (POSITION.test(v)) {
-      if (result["list-style-position"]) return;
+      if (explicitlySet.position) return;
       result["list-style-position"] = v;
+      explicitlySet.position = true;
     } else if (IMAGE.test(v)) {
-      if (result["list-style-image"]) return;
+      if (explicitlySet.image) return;
       result["list-style-image"] = v;
+      explicitlySet.image = true;
     } else if (COMMON_TYPE.test(v)) {
-      if (result["list-style-type"]) return;
+      if (explicitlySet.type) return;
       result["list-style-type"] = v;
+      explicitlySet.type = true;
     } else {
       // Custom counter-style identifier or string value
       if (IDENT.test(v) || STRING_VALUE.test(v)) {
-        if (result["list-style-type"]) return;
+        if (explicitlySet.type) return;
         result["list-style-type"] = v;
+        explicitlySet.type = true;
       } else {
         return;
       }
     }
   }
 
-  return result;
+  return sortProperties(result);
 }
 
 
@@ -3493,7 +4127,7 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
       const name = (child as csstree.Identifier).name;
       if (name === "no-clip") {
         if (!result.clip) {
-          result.clip = "no-clip";
+          result.clip = "border-box"; // no-clip maps to border-box per CSS spec
         }
         i++;
         continue;
@@ -3506,9 +4140,9 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
   }
 
   // Special handling for origin/clip: if a layer specifies only one box value,
-  // it applies to both origin and clip
+  // it applies to both origin and clip (CSS Masking spec behavior)
   if (result.origin !== undefined && result.clip === undefined) {
-    result.clip = result.origin;
+    result.clip = MASK_DEFAULTS.clip; // Default to border-box, not origin value
   }
 
   return !hasUnrecognizedToken;
@@ -3878,6 +4512,7 @@ export default (value: string): Record<string, string> | undefined => {
 
 === File: src/outline.ts ===
 // b_path:: src/outline.ts
+import { sortProperties } from "./index";
 import isColor from "./is-color";
 import isLength from "./is-length";
 import normalizeColor from "./normalize-color";
@@ -3891,11 +4526,11 @@ export default function outline(value: string): Record<string, string> | undefin
 
   if (values.length > 3) return;
   if (values.length === 1 && KEYWORD.test(values[0])) {
-    return {
+    return sortProperties({
       "outline-width": values[0],
       "outline-style": values[0],
       "outline-color": values[0],
-    };
+    });
   }
 
   const result: Record<string, string> = {};
@@ -3916,7 +4551,7 @@ export default function outline(value: string): Record<string, string> | undefin
     }
   }
 
-  return result;
+  return sortProperties(result);
 }
 
 
@@ -4217,6 +4852,13 @@ export const ExpandOptionsSchema = z
     format: z.enum(["js", "css"]).default("css").optional().describe("Output format"),
     indent: z.number().min(0).default(0).optional().describe("Indentation for CSS output"),
     separator: z.string().default("\n").optional().describe("Separator between CSS declarations"),
+    propertyGrouping: z
+      .enum(["by-property", "by-side"])
+      .default("by-property")
+      .optional()
+      .describe(
+        "Property grouping strategy: 'by-property' groups by property type (e.g., all margins, then all borders), 'by-side' groups by directional side (e.g., all top properties, then all right properties)"
+      ),
   })
   .describe("Options for CSS expansion");
 
@@ -4380,11 +5022,12 @@ export const ExpandResultSchema = z
     ok: z.boolean().describe("Whether expansion was successful (no syntax errors)"),
     result: z
       .union([
-        z.record(z.string(), z.string()).describe("JavaScript object format result"),
-        z.string().describe("CSS string format result"),
         z
-          .array(z.union([z.record(z.string(), z.string()), z.string()]))
-          .describe("Array of results for multiple declarations"),
+          .record(z.string(), z.string())
+          .describe(
+            "JavaScript object format result (multiple declarations are merged, with later properties overriding earlier ones)"
+          ),
+        z.string().describe("CSS string format result (multiple declarations are joined)"),
         z.undefined().describe("No result when input is empty or invalid"),
       ])
       .describe("The expanded CSS result"),
@@ -4444,6 +5087,7 @@ export const schemas = {
 
 === File: src/text-decoration.ts ===
 // b_path:: src/text-decoration.ts
+import { sortProperties } from "./index";
 import isColor from "./is-color";
 import isLength from "./is-length";
 import normalizeColor from "./normalize-color";
@@ -4457,16 +5101,26 @@ export default function textDecoration(value: string): Record<string, string> | 
   const values = normalizeColor(value).split(/\s+/);
 
   if (values.length === 1 && KEYWORD.test(values[0])) {
-    return {
+    return sortProperties({
       "text-decoration-line": values[0],
       "text-decoration-style": values[0],
       "text-decoration-color": values[0],
       "text-decoration-thickness": values[0],
-    };
+    });
   }
 
-  const result: Record<string, string> = {};
+  // Initialize with defaults - text-decoration shorthand resets all properties
+  const result: Record<string, string> = {
+    "text-decoration-line": "none",
+    "text-decoration-style": "solid",
+    "text-decoration-color": "currentColor",
+    "text-decoration-thickness": "auto",
+  };
+
   const lines: string[] = [];
+  let hasStyle = false;
+  let hasColor = false;
+  let hasThickness = false;
 
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
@@ -4474,14 +5128,17 @@ export default function textDecoration(value: string): Record<string, string> | 
     if (LINE.test(v)) {
       lines.push(v);
     } else if (STYLE.test(v)) {
-      if (result["text-decoration-style"]) return;
+      if (hasStyle) return; // Duplicate style
       result["text-decoration-style"] = v;
+      hasStyle = true;
     } else if (isColor(v)) {
-      if (result["text-decoration-color"]) return;
+      if (hasColor) return; // Duplicate color
       result["text-decoration-color"] = v;
+      hasColor = true;
     } else if (THICKNESS.test(v) || isLength(v)) {
-      if (result["text-decoration-thickness"]) return;
+      if (hasThickness) return; // Duplicate thickness
       result["text-decoration-thickness"] = v;
+      hasThickness = true;
     } else {
       return;
     }
@@ -4494,12 +5151,13 @@ export default function textDecoration(value: string): Record<string, string> | 
     result["text-decoration-line"] = lines.join(" ");
   }
 
-  return result;
+  return sortProperties(result);
 }
 
 
 === File: src/text-emphasis.ts ===
 // b_path:: src/text-emphasis.ts
+import { sortProperties } from "./index";
 import isColor from "./is-color";
 import normalizeColor from "./normalize-color";
 
@@ -4512,10 +5170,10 @@ export default function textEmphasis(value: string): Record<string, string> | un
   const values = normalizeColor(value).split(/\s+/);
 
   if (values.length === 1 && KEYWORD.test(values[0])) {
-    return {
+    return sortProperties({
       "text-emphasis-style": values[0],
       "text-emphasis-color": values[0],
-    };
+    });
   }
 
   const result: Record<string, string> = {};
@@ -4538,7 +5196,12 @@ export default function textEmphasis(value: string): Record<string, string> | un
       }
     } else if (SHAPE.test(v)) {
       if (result["text-emphasis-style"]) return;
-      result["text-emphasis-style"] = v;
+      if (i + 1 < values.length && FILL.test(values[i + 1])) {
+        result["text-emphasis-style"] = `${values[i + 1]} ${v}`;
+        i++;
+      } else {
+        result["text-emphasis-style"] = v;
+      }
     } else if (isColor(v)) {
       if (result["text-emphasis-color"]) return;
       result["text-emphasis-color"] = v;
@@ -4547,7 +5210,7 @@ export default function textEmphasis(value: string): Record<string, string> | un
     }
   }
 
-  return result;
+  return sortProperties(result);
 }
 
 
