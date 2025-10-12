@@ -58,10 +58,10 @@ function incrementVersion(version, type) {
       return `${major + 1}.0.0`;
     case "minor":
       return `${major}.${minor + 1}.0`;
-    // biome-ignore lint/complexity/noUselessSwitchCase: intentional fallthrough
     case "patch":
-    // The fallthrough to default case is intentional for patch version increments.
+      return `${major}.${minor}.${patch + 1}`;
     default:
+      // If an unknown type is provided, default to patch increment
       return `${major}.${minor}.${patch + 1}`;
   }
 }
