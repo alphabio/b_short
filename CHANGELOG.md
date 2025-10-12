@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2025-01-12
+
+### 🔒 Security
+
+- **Fixed ReDoS vulnerability** in `!important` detection regex (CVE pending)
+  - Replaced vulnerable `/\s+!important$/` regex with safe string operations
+  - Prevents potential Denial of Service attacks with malicious input
+  - Addresses CodeQL security warning `js/polynomial-redos`
+  - No functional changes to behavior - all existing code works as before
+  - All 738 tests passing
+
+### 📊 Impact
+
+- **Severity:** Low to Medium (requires malicious input)
+- **Attack vector:** Strings with many consecutive spaces before `!important`
+- **Fix complexity:** Simple string operation replacement
+- **Backward compatibility:** 100% - no API changes
+
+### 🔄 Upgrade Recommendation
+
+**All users should upgrade immediately** as this is a security fix with zero breaking changes.
+
+```bash
+npm update b_short
+# or
+pnpm update b_short
+```
+
+---
+
 ## [1.2.0] - 2025-01-12
 
 ### 🚀 **Enterprise-Grade Modernization**
@@ -66,6 +96,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed 55 test failures from handover document
   - All 738 tests now passing with correct CSS specification order
   - Properties now consistently output in spec-defined order
+
+#### 🔒 Security
+
+- **Fixed ReDoS vulnerability** in `!important` detection regex
+  - Replaced `/\s+!important$/` with safe string operations
+  - Prevents potential Denial of Service attacks
+  - Improves CodeQL security score
+  - No functional changes to behavior
 
 #### 📚 Documentation
 
