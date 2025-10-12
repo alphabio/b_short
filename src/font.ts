@@ -3,6 +3,8 @@
  * Copied from https://github.com/bramstein/css-font-parser
  */
 
+import { sortProperties } from "./index";
+
 /**
  * @enum {number}
  */
@@ -97,7 +99,7 @@ function parse(input: string): FontResult | null {
 
 export default function font(input: string): Record<string, string> | undefined {
   if (/^(inherit|initial)$/.test(input)) {
-    return {
+    return sortProperties({
       "font-size": input,
       "line-height": input,
       "font-style": input,
@@ -105,7 +107,7 @@ export default function font(input: string): Record<string, string> | undefined 
       "font-variant": input,
       "font-stretch": input,
       "font-family": input,
-    };
+    });
   }
 
   input = input.replace(/\s*\/\s*/, "/");
@@ -124,7 +126,7 @@ export default function font(input: string): Record<string, string> | undefined 
         finalResult[key] = result[key as keyof FontResult] as string;
       }
     }
-    return finalResult;
+    return sortProperties(finalResult);
   }
 
   return undefined;

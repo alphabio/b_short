@@ -38,21 +38,21 @@
     "font-family": "sans-serif"
   },
   "oblique 500 small-caps semi-expanded 20% / 2em monospace, \"Times New Roman\", Helvetica": {
+    "font-style": "oblique",
+    "font-variant": "small-caps",
+    "font-weight": "500",
+    "font-stretch": "semi-expanded",
     "font-size": "20%",
     "line-height": "2em",
-    "font-style": "oblique",
-    "font-weight": "500",
-    "font-variant": "small-caps",
-    "font-stretch": "semi-expanded",
     "font-family": "monospace, \"Times New Roman\", \"Helvetica\""
   },
   "inherit": {
+    "font-style": "inherit",
+    "font-variant": "inherit",
+    "font-weight": "inherit",
+    "font-stretch": "inherit",
     "font-size": "inherit",
     "line-height": "inherit",
-    "font-style": "inherit",
-    "font-weight": "inherit",
-    "font-variant": "inherit",
-    "font-stretch": "inherit",
     "font-family": "inherit"
   }
 }

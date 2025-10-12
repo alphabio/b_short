@@ -27,7 +27,7 @@ import type { BStyleWarning, ExpandOptions, ExpandResult } from "./schema";
 import textDecoration from "./text-decoration";
 import textEmphasis from "./text-emphasis";
 import transition from "./transition";
-import { validateStylesheet } from "./validate";
+import { validate } from "./validate";
 
 function parseInputString(input: string): string[] {
   const declarations: string[] = [];
@@ -174,89 +174,290 @@ const shorthand: Record<string, (value: string) => Record<string, string> | unde
   transition: transition,
 };
 
-function objectToCss(obj: Record<string, string>, indent: number, separator: string): string {
-  const indentStr = " ".repeat(indent);
+export const PROPERTY_ORDER_MAP: Record<string, number> = {
+  // Grid properties (indices 0-11)
+  "grid-row-start": 0,
+  "grid-row-end": 1,
+  "grid-column-start": 2,
+  "grid-column-end": 3,
+  "grid-template-rows": 4,
+  "grid-template-columns": 5,
+  "grid-template-areas": 6,
+  "grid-auto-rows": 7,
+  "grid-auto-columns": 8,
+  "grid-auto-flow": 9,
+  "row-gap": 10,
+  "column-gap": 11,
 
-  // Sort properties in a consistent CSS-like order
+  // Animation properties (indices 20-27)
+  "animation-name": 20,
+  "animation-duration": 21,
+  "animation-timing-function": 22,
+  "animation-delay": 23,
+  "animation-iteration-count": 24,
+  "animation-direction": 25,
+  "animation-fill-mode": 26,
+  "animation-play-state": 27,
+
+  // Transition properties (indices 30-33)
+  "transition-property": 30,
+  "transition-duration": 31,
+  "transition-timing-function": 32,
+  "transition-delay": 33,
+
+  // Background properties (indices 40-47)
+  "background-image": 40,
+  "background-position": 41,
+  "background-size": 42,
+  "background-repeat": 43,
+  "background-attachment": 44,
+  "background-origin": 45,
+  "background-clip": 46,
+  "background-color": 47,
+
+  // Font properties (indices 50-56)
+  "font-style": 50,
+  "font-variant": 51,
+  "font-weight": 52,
+  "font-stretch": 53,
+  "font-size": 54,
+  "line-height": 55,
+  "font-family": 56,
+
+  // Flex properties (indices 60-64)
+  "flex-grow": 60,
+  "flex-shrink": 61,
+  "flex-basis": 62,
+  "flex-direction": 63,
+  "flex-wrap": 64,
+
+  // Border directional properties (indices 70-84)
+  "border-top-width": 70,
+  "border-top-style": 71,
+  "border-top-color": 72,
+  "border-right-width": 73,
+  "border-right-style": 74,
+  "border-right-color": 75,
+  "border-bottom-width": 76,
+  "border-bottom-style": 77,
+  "border-bottom-color": 78,
+  "border-left-width": 79,
+  "border-left-style": 80,
+  "border-left-color": 81,
+  "border-width": 82,
+  "border-style": 83,
+  "border-color": 84,
+
+  // Border-radius properties (indices 90-93)
+  "border-top-left-radius": 90,
+  "border-top-right-radius": 91,
+  "border-bottom-right-radius": 92,
+  "border-bottom-left-radius": 93,
+
+  // Outline properties (indices 100-102)
+  "outline-width": 100,
+  "outline-style": 101,
+  "outline-color": 102,
+
+  // Column-rule properties (indices 110-112)
+  "column-rule-width": 110,
+  "column-rule-style": 111,
+  "column-rule-color": 112,
+
+  // Columns properties (indices 115-116)
+  "column-width": 115,
+  "column-count": 116,
+
+  // List-style properties (indices 120-122)
+  "list-style-type": 120,
+  "list-style-position": 121,
+  "list-style-image": 122,
+
+  // Text-decoration properties (indices 130-133)
+  "text-decoration-line": 130,
+  "text-decoration-style": 131,
+  "text-decoration-color": 132,
+  "text-decoration-thickness": 133,
+
+  // Overflow properties (indices 140-141)
+  "overflow-x": 140,
+  "overflow-y": 141,
+
+  // Place properties (indices 150-155)
+  "align-items": 150,
+  "justify-items": 151,
+  "align-content": 152,
+  "justify-content": 153,
+  "align-self": 154,
+  "justify-self": 155,
+
+  // Directional properties - margin (indices 200-203)
+  "margin-top": 200,
+  "margin-right": 201,
+  "margin-bottom": 202,
+  "margin-left": 203,
+
+  // Directional properties - padding (indices 210-213)
+  "padding-top": 210,
+  "padding-right": 211,
+  "padding-bottom": 212,
+  "padding-left": 213,
+
+  // Directional properties - inset (indices 220-223)
+  top: 220,
+  right: 221,
+  bottom: 222,
+  left: 223,
+
+  // Mask properties (indices 230-237)
+  "mask-image": 230,
+  "mask-mode": 231,
+  "mask-position": 232,
+  "mask-size": 233,
+  "mask-repeat": 234,
+  "mask-origin": 235,
+  "mask-clip": 236,
+  "mask-composite": 237,
+
+  // Offset properties (indices 240-244)
+  "offset-position": 240,
+  "offset-path": 241,
+  "offset-distance": 242,
+  "offset-rotate": 243,
+  "offset-anchor": 244,
+
+  // Text-emphasis properties (indices 250-252)
+  "text-emphasis-style": 250,
+  "text-emphasis-color": 251,
+  "text-emphasis-position": 252,
+
+  // Contain-intrinsic-size properties (indices 260-261)
+  "contain-intrinsic-width": 260,
+  "contain-intrinsic-height": 261,
+};
+
+/**
+ * Sorts an object's properties according to CSS specification order defined in PROPERTY_ORDER_MAP
+ * @param obj - Object with CSS properties to sort
+ * @param grouping - Grouping strategy: "by-property" (default) or "by-side"
+ */
+export function sortProperties(
+  obj: Record<string, string>,
+  grouping: "by-property" | "by-side" = "by-property"
+): Record<string, string> {
+  if (grouping === "by-side") {
+    return sortPropertiesBySide(obj);
+  }
+  return sortPropertiesByProperty(obj);
+}
+
+/**
+ * Helper to extract property metadata for directional grouping
+ */
+function getPropertyMetadata(prop: string): {
+  side: string | null;
+  sideIndex: number;
+  base: string;
+} {
+  const parts = prop.split("-");
+  const sides = ["top", "right", "bottom", "left"];
+  const side = parts.find((p) => sides.includes(p)) || null;
+  const sideIndex = side ? sides.indexOf(side) : -1;
+  const base = parts[0];
+
+  return { side, sideIndex, base };
+}
+
+/**
+ * Sort properties by property type (default CSS spec order)
+ * Groups all properties of the same type together (e.g., all margins, then all borders)
+ */
+function sortPropertiesByProperty(obj: Record<string, string>): Record<string, string> {
   const sortedEntries = Object.entries(obj).sort(([a], [b]) => {
-    // Define property order groups (CSS-like ordering)
-    const orderGroups = [
-      // Positioning and layout
-      /^(position|z-index|display|float|clear)$/,
-      // Box model - directional properties first (top, right, bottom, left)
-      /^(top|right|bottom|left)$/,
-      // Box model - margin and padding (full properties)
-      /^(margin|padding)$/,
-      // Box model - margin and padding (directional)
-      /^(margin|padding)-(top|right|bottom|left)$/,
-      // Box model - border, width, height
-      /^(border|width|height|min-|max-)/,
-      // Typography
-      /^(font|text-|letter-|word-|line-)/,
-      // Visual
-      /^(color|background|opacity|visibility|overflow)/,
-      // Animation and transition
-      /^(animation|transition|transform)/,
-      // Other properties
-      /^.*/,
-    ];
+    const orderA = PROPERTY_ORDER_MAP[a];
+    const orderB = PROPERTY_ORDER_MAP[b];
 
-    // Find the group index for each property
-    const getGroupIndex = (prop: string) => {
-      for (let i = 0; i < orderGroups.length; i++) {
-        if (orderGroups[i].test(prop)) {
-          return i;
-        }
-      }
-      return orderGroups.length;
-    };
-
-    const groupA = getGroupIndex(a);
-    const groupB = getGroupIndex(b);
-
-    // First sort by group
-    if (groupA !== groupB) {
-      return groupA - groupB;
+    if (orderA !== undefined && orderB !== undefined) {
+      return orderA - orderB;
     }
-
-    // Within directional properties group, sort by direction (top, right, bottom, left)
-    if (groupA === 1) {
-      const directionOrder = { top: 0, right: 1, bottom: 2, left: 3 };
-      const dirA = directionOrder[a as keyof typeof directionOrder] ?? 4;
-      const dirB = directionOrder[b as keyof typeof directionOrder] ?? 4;
-      if (dirA !== dirB) {
-        return dirA - dirB;
-      }
-    }
-
-    // Within margin/padding directional group, prioritize top if it was explicitly overridden
-    if (groupA === 3) {
-      const directionOrder = { top: 0, right: 1, bottom: 2, left: 3 };
-      const dirA = directionOrder[a.split("-")[1] as keyof typeof directionOrder] ?? 4;
-      const dirB = directionOrder[b.split("-")[1] as keyof typeof directionOrder] ?? 4;
-
-      // If one is margin-top or padding-top, prioritize it (it might be explicitly overridden)
-      if (a === "margin-top" || a === "padding-top") return -1;
-      if (b === "margin-top" || b === "padding-top") return 1;
-
-      if (dirA !== dirB) {
-        return dirA - dirB;
-      }
-    }
-
-    // Within the same group, sort alphabetically
+    if (orderA !== undefined) return -1;
+    if (orderB !== undefined) return 1;
     return a.localeCompare(b);
   });
+
+  return Object.fromEntries(sortedEntries);
+}
+
+/**
+ * Sort properties by directional side
+ * Groups all properties of the same side together (e.g., all top properties, then all right properties)
+ */
+function sortPropertiesBySide(obj: Record<string, string>): Record<string, string> {
+  const sortedEntries = Object.entries(obj).sort(([a], [b]) => {
+    const metaA = getPropertyMetadata(a);
+    const metaB = getPropertyMetadata(b);
+
+    // Both have sides - sort by side first, then by property order within that side
+    if (metaA.side && metaB.side) {
+      if (metaA.sideIndex !== metaB.sideIndex) {
+        return metaA.sideIndex - metaB.sideIndex;
+      }
+      // Same side - sort by CSS spec order to maintain proper ordering within the side
+      const orderA = PROPERTY_ORDER_MAP[a] ?? 999999;
+      const orderB = PROPERTY_ORDER_MAP[b] ?? 999999;
+      return orderA - orderB;
+    }
+
+    // If only one has a side, non-directional properties come first (by their spec order)
+    // This handles mixed cases like font-size mixed with margin-top
+    if (!metaA.side && metaB.side) {
+      const orderA = PROPERTY_ORDER_MAP[a] ?? 999999;
+      // Put non-directional before directional if they have lower spec order
+      if (orderA < 200) return -1; // Most non-directional properties are < 200
+      return 1;
+    }
+    if (metaA.side && !metaB.side) {
+      const orderB = PROPERTY_ORDER_MAP[b] ?? 999999;
+      if (orderB < 200) return 1;
+      return -1;
+    }
+
+    // Neither has sides - use normal property order
+    const orderA = PROPERTY_ORDER_MAP[a] ?? 999999;
+    const orderB = PROPERTY_ORDER_MAP[b] ?? 999999;
+    if (orderA !== orderB) return orderA - orderB;
+    return a.localeCompare(b);
+  });
+
+  return Object.fromEntries(sortedEntries);
+}
+
+function objectToCss(
+  obj: Record<string, string>,
+  indent: number,
+  separator: string,
+  propertyGrouping: "by-property" | "by-side" = "by-property"
+): string {
+  const indentStr = "  ".repeat(indent);
+
+  // Sort properties using the specified grouping strategy
+  const sorted = sortProperties(obj, propertyGrouping);
+  const sortedEntries = Object.entries(sorted);
 
   return sortedEntries.map(([key, value]) => `${indentStr}${key}: ${value};`).join(separator);
 }
 
 export default function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
   // Merge partial options with defaults from schema
-  const { format = "css", indent = 0, separator = "\n" } = options;
+  const {
+    format = "css",
+    indent = 0,
+    separator = "\n",
+    propertyGrouping = "by-property",
+  } = options;
 
   // Validate the input CSS directly (assume it's valid CSS)
-  const validation = validateStylesheet(input);
+  const validation = validate(input);
 
   const inputs = parseInputString(input);
   const results: (Record<string, string> | string)[] = [];
@@ -373,7 +574,12 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
                     }
                   }
                 }
-                cleanedResults[earlierIndex] = objectToCss(earlierObj, indent, separator);
+                cleanedResults[earlierIndex] = objectToCss(
+                  earlierObj,
+                  indent,
+                  separator,
+                  propertyGrouping
+                );
               } else {
                 delete earlierResult[prop];
               }
@@ -409,7 +615,12 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
                       }
                     }
                   }
-                  cleanedResults[earlierIndex] = objectToCss(earlierObj, indent, separator);
+                  cleanedResults[earlierIndex] = objectToCss(
+                    earlierObj,
+                    indent,
+                    separator,
+                    propertyGrouping
+                  );
                 } else {
                   delete earlierResult[prop];
                 }
@@ -444,13 +655,15 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
     const result = cleanedResults[0];
     finalResult =
       format === "css" && typeof result === "object"
-        ? objectToCss(result, indent, separator)
+        ? objectToCss(result, indent, separator, propertyGrouping)
         : result;
   } else {
     if (format === "css") {
       // Convert all objects to CSS strings and join them
       const cssResults = cleanedResults.map((result) =>
-        typeof result === "object" ? objectToCss(result, indent, separator) : result
+        typeof result === "object"
+          ? objectToCss(result, indent, separator, propertyGrouping)
+          : result
       );
       finalResult = cssResults.join(separator);
     } else {
@@ -461,7 +674,9 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
           Object.assign(mergedResult, result);
         }
       }
-      finalResult = mergedResult;
+
+      // Sort the merged result according to the specified grouping strategy
+      finalResult = sortProperties(mergedResult, options.propertyGrouping || "by-property");
     }
   }
 
@@ -478,4 +693,4 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
   };
 }
 
-export { expand, validateStylesheet };
+export { expand, validate };

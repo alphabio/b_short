@@ -1,26 +1,32 @@
 {
   "name": "b_short",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Lightning-fast CSS shorthand property expansion to longhand equivalents. Supports 35+ shorthands including flex, grid, animation, transition, mask, and more. TypeScript-first, minimal dependencies, perfect for CSS-in-JS and build tools.",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "module": "lib/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./lib/index.d.ts",
-      "import": "./lib/index.js",
-      "require": "./lib/index.js"
-    }
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
-    "lib",
+    "dist",
     "README.md",
     "LICENSE"
   ],
+  "sideEffects": false,
   "scripts": {
-    "build": "tsc",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "bench": "tsx benchmarks/expand.bench.ts",
+    "size": "size-limit",
     "type-check": "tsc --noEmit",
     "prepublishOnly": "pnpm run build && pnpm run test",
     "lint": "biome check .",
@@ -63,7 +69,7 @@
   "author": "alphabio",
   "license": "MIT",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   },
   "bugs": {
     "url": "https://github.com/alphabio/b_short/issues"
@@ -73,6 +79,18 @@
     "type": "github",
     "url": "https://github.com/sponsors/alphabio"
   },
+  "size-limit": [
+    {
+      "name": "ESM (import)",
+      "path": "dist/index.mjs",
+      "limit": "120 KB"
+    },
+    {
+      "name": "CJS (require)",
+      "path": "dist/index.js",
+      "limit": "125 KB"
+    }
+  ],
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -83,8 +101,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.5",
+    "@size-limit/preset-small-lib": "^11.2.0",
     "@types/css-tree": "^2.3.11",
     "@types/node": "^24.7.2",
+    "@vitest/coverage-v8": "^3.2.4",
+    "size-limit": "^11.2.0",
+    "tinybench": "^5.0.1",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.0",
     "vitest": "^3.2.4"
   }

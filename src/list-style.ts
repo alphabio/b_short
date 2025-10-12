@@ -1,5 +1,6 @@
 // b_path:: src/list-style.ts
 import { cssUrlRegex } from "./color-utils";
+import { sortProperties } from "./index";
 import normalizeColor from "./normalize-color";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
@@ -15,20 +16,20 @@ export default function listStyle(value: string): Record<string, string> | undef
 
   // Special case: "none" alone sets both type and image to none
   if (normalizedValue === "none") {
-    return {
+    return sortProperties({
       "list-style-type": "none",
       "list-style-image": "none",
-    };
+    });
   }
 
   const values = normalizedValue.split(/\s+/);
 
   if (values.length === 1 && KEYWORD.test(values[0])) {
-    return {
+    return sortProperties({
       "list-style-type": values[0],
       "list-style-position": values[0],
       "list-style-image": values[0],
-    };
+    });
   }
 
   const result: Record<string, string> = {};
@@ -56,5 +57,5 @@ export default function listStyle(value: string): Record<string, string> | undef
     }
   }
 
-  return result;
+  return sortProperties(result);
 }

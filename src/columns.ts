@@ -1,13 +1,14 @@
 // b_path:: src/columns.ts
+import { sortProperties } from "./index";
 import isLength from "./is-length";
 
 export default (value: string): Record<string, string> | undefined => {
   // Handle global CSS keywords
   if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
+    return sortProperties({
       "column-width": value,
       "column-count": value,
-    };
+    });
   }
 
   // Split values on whitespace
@@ -64,5 +65,5 @@ export default (value: string): Record<string, string> | undefined => {
     }
   }
 
-  return result;
+  return sortProperties(result);
 };

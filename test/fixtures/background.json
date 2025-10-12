@@ -73,23 +73,23 @@
     "background-clip": "border-box"
   },
   "fixed padding-box url(image.png) rgb(255, 255, 0) 10px top / cover repeat-x": {
-    "background-attachment": "fixed",
-    "background-clip": "padding-box",
     "background-image": "url(image.png)",
-    "background-repeat": "repeat-x",
-    "background-color": "rgb(255,255,0)",
     "background-position": "10px top",
     "background-size": "cover",
-    "background-origin": "padding-box"
+    "background-repeat": "repeat-x",
+    "background-attachment": "fixed",
+    "background-origin": "padding-box",
+    "background-clip": "padding-box",
+    "background-color": "rgb(255,255,0)"
   },
   "inherit": {
-    "background-attachment": "scroll",
-    "background-clip": "border-box",
     "background-image": "none",
-    "background-repeat": "repeat",
     "background-position": "0% 0%",
     "background-size": "auto auto",
-    "background-origin": "padding-box"
+    "background-repeat": "repeat",
+    "background-attachment": "scroll",
+    "background-origin": "padding-box",
+    "background-clip": "border-box"
   },
   "conic-gradient(at 83.333333% 33.333333%, #999999 0 120deg, #0000 0), conic-gradient(from -120deg at 16.666667% 33.333333%, #cdcbcc 0 120deg, #0000 0), conic-gradient(from 120deg at 33.333333% 83.333333%, #f2f2f2 0 120deg, #0000 0), conic-gradient(from 120deg at 66.666667% 83.333333%, #f2f2f2 0 120deg, #0000 0), conic-gradient(from -180deg at 33.333333% 50%, #cdcbcc 60deg, #f2f2f2 0 120deg, #0000 0), conic-gradient(from 60deg at 66.666667% 50%, #f2f2f2 60deg, #999999 0 120deg, #0000 0), conic-gradient(from -60deg at 50% 33.333333%, #f2f2f2 120deg, #cdcbcc 0 240deg, #999999 0)": {
     "background-image": "conic-gradient(at 83.333333% 33.333333%,#999999 0 120deg,#0000 0), conic-gradient(from -120deg at 16.666667% 33.333333%,#cdcbcc 0 120deg,#0000 0), conic-gradient(from 120deg at 33.333333% 83.333333%,#f2f2f2 0 120deg,#0000 0), conic-gradient(from 120deg at 66.666667% 83.333333%,#f2f2f2 0 120deg,#0000 0), conic-gradient(from -180deg at 33.333333% 50%,#cdcbcc 60deg,#f2f2f2 0 120deg,#0000 0), conic-gradient(from 60deg at 66.666667% 50%,#f2f2f2 60deg,#999999 0 120deg,#0000 0), conic-gradient(from -60deg at 50% 33.333333%,#f2f2f2 120deg,#cdcbcc 0 240deg,#999999 0)",

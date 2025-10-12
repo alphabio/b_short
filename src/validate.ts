@@ -73,7 +73,7 @@ interface FormattedLine {
  * @param css - The CSS string to validate
  * @returns StylesheetValidation object containing validation results
  */
-export function validateStylesheet(css: string): StylesheetValidation {
+export function validate(css: string): StylesheetValidation {
   const errors: csstree.SyntaxParseError[] = [];
   const warnings: BStyleMatchError[] = [];
   const declarations: Declaration[] = [];
@@ -184,7 +184,7 @@ export function validateStylesheet(css: string): StylesheetValidation {
 
 export function validateDeclaration(value: string, prop: string): StylesheetValidation {
   const css = `.class {${prop}: ${value};}`;
-  const result = validateStylesheet(css);
+  const result = validate(css);
   return result;
 }
 

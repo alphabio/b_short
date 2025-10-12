@@ -48,12 +48,12 @@
     "list-style-position": "inside"
   },
   "url(bullet.png) inside": {
-    "list-style-image": "url(bullet.png)",
-    "list-style-position": "inside"
+    "list-style-position": "inside",
+    "list-style-image": "url(bullet.png)"
   },
   "inside url(bullet.png)": {
-    "list-style-image": "url(bullet.png)",
-    "list-style-position": "inside"
+    "list-style-position": "inside",
+    "list-style-image": "url(bullet.png)"
   },
   "georgian outside": {
     "list-style-type": "georgian",
@@ -61,13 +61,13 @@
   },
   "lower-roman url(\"icons/bullet.svg\") outside": {
     "list-style-type": "lower-roman",
-    "list-style-image": "url(\"icons/bullet.svg\")",
-    "list-style-position": "outside"
+    "list-style-position": "outside",
+    "list-style-image": "url(\"icons/bullet.svg\")"
   },
   "url(\"icons/bullet.svg\") inside square": {
     "list-style-type": "square",
-    "list-style-image": "url(\"icons/bullet.svg\")",
-    "list-style-position": "inside"
+    "list-style-position": "inside",
+    "list-style-image": "url(\"icons/bullet.svg\")"
   },
   "custom-counter": {
     "list-style-type": "custom-counter"
@@ -109,8 +109,8 @@
   },
   "url(bullet.png) disc outside": {
     "list-style-type": "disc",
-    "list-style-image": "url(bullet.png)",
-    "list-style-position": "outside"
+    "list-style-position": "outside",
+    "list-style-image": "url(bullet.png)"
   },
   "emoji": {
     "list-style-type": "emoji"

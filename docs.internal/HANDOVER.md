@@ -54,13 +54,13 @@ quick next steps I’d line up:
 
 1. wire the validator
 
-* call `validateStylesheet()` on import; surface `errors[].loc/pretty` in your editor gutter + codeframe.
+* call `validate()` on import; surface `errors[].loc/pretty` in your editor gutter + codeframe.
 * on click, use `deriveLayerFocusFromError()` to auto-select the offending background layer + highlight `absStart..absEnd`.
 
 2. keep both: raw + IR
 
 * store `{ raw_css, ir, diagnostics, parserVersion, webrefVersion }` per rule.
-* on edit, IR → emit CSS → run `validateStylesheet` again for sanity.
+* on edit, IR → emit CSS → run `validate` again for sanity.
 
 3. extend beyond `background`
 

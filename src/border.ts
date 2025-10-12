@@ -1,5 +1,6 @@
 // b_path:: src/border.ts
 import directional from "./directional";
+import { sortProperties } from "./index";
 import isColor from "./is-color";
 import isLength from "./is-length";
 import normalizeColor from "./normalize-color";
@@ -40,7 +41,7 @@ const suffix =
     for (const key in longhand) {
       result[`border-${key}-${suffix}`] = longhand[key];
     }
-    return result;
+    return sortProperties(result);
   };
 
 const direction =
@@ -58,7 +59,7 @@ const direction =
         filtered[`border-${direction}-${key}`] = longhand[key as keyof BorderProperties] as string;
       }
     }
-    return filtered;
+    return sortProperties(filtered);
   };
 
 const all = (value: string): BorderResult | undefined => {
@@ -142,7 +143,7 @@ const border: BorderFunction = (value: string): Record<string, string> | undefin
       }
     }
   }
-  return result;
+  return sortProperties(result);
 };
 
 border.width = suffix("width");

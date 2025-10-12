@@ -25,7 +25,7 @@ import placeSelf from "./fixtures/place-self.json";
 import textDecoration from "./fixtures/text-decoration.json";
 import textEmphasis from "./fixtures/text-emphasis.json";
 import transition from "./fixtures/transition.json";
-import { assertNoDuplicateProperties } from "./helpers/assertions";
+import { assertCorrectPropertyOrder, assertNoDuplicateProperties } from "./helpers/assertions";
 
 const testProperty = (name: string, fixture: Record<string, Record<string, string>>) => {
   describe(name, () => {
@@ -34,6 +34,7 @@ const testProperty = (name: string, fixture: Record<string, Record<string, strin
         const declaration = `${name}: ${key};`;
         const { result } = expand(declaration, { format: "js" });
         assertNoDuplicateProperties(result, `${name}: ${key}`);
+        assertCorrectPropertyOrder(result, `${name}: ${key}`, fixture[key]);
         expect(result).toEqual(fixture[key]);
       });
     });
