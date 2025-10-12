@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### 🐛 Bug Fixes
+
+- **Fixed missing `background-color` for hex color values**
+  - Hex colors (e.g., `#f0f8ff`, `#abc`, `#ff000080`) are now properly extracted from background shorthand
+  - Previously, only named colors (e.g., `red`) and functional colors (e.g., `rgb()`, `rgba()`) were recognized
+  - Issue was that css-tree parses hex colors as `Hash` type nodes, which weren't being checked
+  - Example: `background: url(image.png) no-repeat center/cover #f0f8ff content-box` now correctly includes `background-color: #f0f8ff`
+
+### ✨ New Features
+
+- **CSS comment stripping**
+  - All CSS comments (`/* ... */`) are now automatically removed before processing
+  - Handles comments in any position: inside functions, between values, multi-line, etc.
+  - Example: `background: url(/* comment */image.png) #fff` now parses correctly
+  - Prevents parsing errors that could occur with comments in certain positions
+
+### 🧪 Tests
+
+- Added test case for background shorthand with hex color and box value
+- Added comprehensive integration test covering comments, multiple shorthands, and complex values
+
 ## [2.1.0] - 2025-10-12
 
 ### ✨ New Features

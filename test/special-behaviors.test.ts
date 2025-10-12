@@ -153,3 +153,53 @@ describe("format options", () => {
     );
   });
 });
+
+describe("CSS comment handling", () => {
+  it("should strip simple comments", () => {
+    const result = expand("background: /* comment */ #fff;", { format: "js" });
+    expect(result.ok).toBe(true);
+    expect(result.result).toHaveProperty("backgroundColor", "#fff");
+  });
+
+  it("should strip multi-line comments", () => {
+    const result = expand(
+      `background: /* multi
+      line
+      comment */ #fff;`,
+      { format: "js" }
+    );
+    expect(result.ok).toBe(true);
+    expect(result.result).toHaveProperty("backgroundColor", "#fff");
+  });
+
+  it("should strip comments inside function arguments", () => {
+    const result = expand("background: url(/* comment */image.png) #fff;", { format: "js" });
+    expect(result.ok).toBe(true);
+    expect(result.result).toHaveProperty("backgroundImage", "url(image.png)");
+    expect(result.result).toHaveProperty("backgroundColor", "#fff");
+  });
+
+  it("should handle multiple comments", () => {
+    const result = expand(
+      "background: /* comment 1 */ url(image.png) /* comment 2 */ no-repeat /* comment 3 */ #fff;",
+      { format: "js" }
+    );
+    expect(result.ok).toBe(true);
+    expect(result.result).toHaveProperty("backgroundImage", "url(image.png)");
+    expect(result.result).toHaveProperty("backgroundRepeat", "no-repeat");
+    expect(result.result).toHaveProperty("backgroundColor", "#fff");
+  });
+
+  it("should handle unclosed comments gracefully", () => {
+    const result = expand("background: #fff /* unclosed comment", { format: "js" });
+    expect(result.ok).toBe(true);
+    expect(result.result).toHaveProperty("backgroundColor", "#fff");
+  });
+
+  it("should strip comments and preserve following declarations", () => {
+    const result = expand("margin: 10px; /* comment */ background: #fff;", { format: "js" });
+    expect(result.ok).toBe(true);
+    expect(result.result).toHaveProperty("marginTop", "10px");
+    expect(result.result).toHaveProperty("backgroundColor", "#fff");
+  });
+});

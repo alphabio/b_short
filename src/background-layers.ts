@@ -404,7 +404,7 @@ function processCssChildren(
     }
 
     // Handle colors
-    if (child.type === "Identifier" || child.type === "Function") {
+    if (child.type === "Identifier" || child.type === "Function" || child.type === "Hash") {
       const value = csstree.generate(child);
       if (isColor(value)) {
         result.color = value;

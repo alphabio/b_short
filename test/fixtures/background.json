@@ -82,6 +82,16 @@
     "backgroundClip": "padding-box",
     "backgroundColor": "rgb(255,255,0)"
   },
+  "url(image.png) no-repeat center/cover #f0f8ff content-box": {
+    "backgroundImage": "url(image.png)",
+    "backgroundPosition": "center",
+    "backgroundSize": "cover",
+    "backgroundRepeat": "no-repeat",
+    "backgroundAttachment": "scroll",
+    "backgroundOrigin": "content-box",
+    "backgroundClip": "content-box",
+    "backgroundColor": "#f0f8ff"
+  },
   "inherit": {
     "backgroundImage": "none",
     "backgroundPosition": "0% 0%",
