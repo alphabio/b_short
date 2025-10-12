@@ -1,63 +1,93 @@
 {
   "disc": {
-    "list-style-type": "disc"
+    "list-style-type": "disc",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "circle": {
-    "list-style-type": "circle"
+    "list-style-type": "circle",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "square": {
-    "list-style-type": "square"
+    "list-style-type": "square",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "decimal": {
-    "list-style-type": "decimal"
+    "list-style-type": "decimal",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "lower-roman": {
-    "list-style-type": "lower-roman"
+    "list-style-type": "lower-roman",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "upper-alpha": {
-    "list-style-type": "upper-alpha"
+    "list-style-type": "upper-alpha",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "georgian": {
-    "list-style-type": "georgian"
+    "list-style-type": "georgian",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "inside": {
-    "list-style-position": "inside"
+    "list-style-type": "disc",
+    "list-style-position": "inside",
+    "list-style-image": "none"
   },
   "outside": {
-    "list-style-position": "outside"
+    "list-style-type": "disc",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "url(bullet.png)": {
+    "list-style-type": "disc",
+    "list-style-position": "outside",
     "list-style-image": "url(bullet.png)"
   },
   "url(\"icons/bullet.svg\")": {
+    "list-style-type": "disc",
+    "list-style-position": "outside",
     "list-style-image": "url(\"icons/bullet.svg\")"
   },
   "url('icons/bullet.svg')": {
+    "list-style-type": "disc",
+    "list-style-position": "outside",
     "list-style-image": "url('icons/bullet.svg')"
   },
   "none": {
     "list-style-type": "none",
+    "list-style-position": "outside",
     "list-style-image": "none"
   },
   "square inside": {
     "list-style-type": "square",
-    "list-style-position": "inside"
+    "list-style-position": "inside",
+    "list-style-image": "none"
   },
   "inside square": {
     "list-style-type": "square",
-    "list-style-position": "inside"
+    "list-style-position": "inside",
+    "list-style-image": "none"
   },
   "url(bullet.png) inside": {
+    "list-style-type": "disc",
     "list-style-position": "inside",
     "list-style-image": "url(bullet.png)"
   },
   "inside url(bullet.png)": {
+    "list-style-type": "disc",
     "list-style-position": "inside",
     "list-style-image": "url(bullet.png)"
   },
   "georgian outside": {
     "list-style-type": "georgian",
-    "list-style-position": "outside"
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "lower-roman url(\"icons/bullet.svg\") outside": {
     "list-style-type": "lower-roman",
@@ -70,18 +100,24 @@
     "list-style-image": "url(\"icons/bullet.svg\")"
   },
   "custom-counter": {
-    "list-style-type": "custom-counter"
+    "list-style-type": "custom-counter",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "my-style inside": {
     "list-style-type": "my-style",
-    "list-style-position": "inside"
+    "list-style-position": "inside",
+    "list-style-image": "none"
   },
   "\"→\"": {
-    "list-style-type": "\"→\""
+    "list-style-type": "\"→\"",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "'※' inside": {
     "list-style-type": "'※'",
-    "list-style-position": "inside"
+    "list-style-position": "inside",
+    "list-style-image": "none"
   },
   "inherit": {
     "list-style-type": "inherit",
@@ -105,6 +141,7 @@
   },
   "disc url(bullet.png)": {
     "list-style-type": "disc",
+    "list-style-position": "outside",
     "list-style-image": "url(bullet.png)"
   },
   "url(bullet.png) disc outside": {
@@ -113,22 +150,28 @@
     "list-style-image": "url(bullet.png)"
   },
   "emoji": {
-    "list-style-type": "emoji"
+    "list-style-type": "emoji",
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "emoji inside": {
     "list-style-type": "emoji",
-    "list-style-position": "inside"
+    "list-style-position": "inside",
+    "list-style-image": "none"
   },
   "none outside": {
     "list-style-type": "none",
-    "list-style-position": "outside"
+    "list-style-position": "outside",
+    "list-style-image": "none"
   },
   "inside none": {
     "list-style-type": "none",
-    "list-style-position": "inside"
+    "list-style-position": "inside",
+    "list-style-image": "none"
   },
   "none url(a.png)": {
     "list-style-type": "none",
+    "list-style-position": "outside",
     "list-style-image": "url(a.png)"
   }
 }

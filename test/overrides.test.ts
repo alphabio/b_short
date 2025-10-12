@@ -107,8 +107,9 @@ describe("property override behavior", () => {
   it("should handle CSS format output with conflict resolution", () => {
     const { result } = expand("margin: 10px; margin-top: 20px;", { format: "css" });
     assertNoDuplicateProperties(result, "CSS format conflict resolution test");
+    // Properties should be sorted by CSS specification order (margin-top comes first)
     expect(result).toBe(
-      "margin-right: 10px;\nmargin-bottom: 10px;\nmargin-left: 10px;\nmargin-top: 20px;"
+      "margin-top: 20px;\nmargin-right: 10px;\nmargin-bottom: 10px;\nmargin-left: 10px;"
     );
   });
 

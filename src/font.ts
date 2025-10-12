@@ -115,6 +115,20 @@ export default function font(input: string): Record<string, string> | undefined 
 
   if (result) {
     const finalResult: Record<string, string> = {};
+
+    // Set defaults for properties that should always be present
+    // Per CSS spec, font shorthand resets these to initial values if not specified
+    const defaults = {
+      "font-style": "normal",
+      "font-variant": "normal",
+      "font-weight": "normal",
+      "font-stretch": "normal",
+    };
+
+    // Apply defaults first
+    Object.assign(finalResult, defaults);
+
+    // Then override with parsed values
     for (const key in result) {
       if (key === "font-family") {
         finalResult[key] = result[key]

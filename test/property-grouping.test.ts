@@ -150,6 +150,65 @@ describe("propertyGrouping option", () => {
   });
 
   describe("CSS format", () => {
+    it("should apply by-property grouping to CSS string output", () => {
+      const { result } = expand("border: 2px; margin: 2px;", {
+        format: "css",
+        propertyGrouping: "by-property",
+      });
+
+      // Border properties should all come before margin properties
+      const lines = (result as string).split("\n");
+      expect(lines).toEqual([
+        "border-top-width: 2px;",
+        "border-right-width: 2px;",
+        "border-bottom-width: 2px;",
+        "border-left-width: 2px;",
+        "margin-top: 2px;",
+        "margin-right: 2px;",
+        "margin-bottom: 2px;",
+        "margin-left: 2px;",
+      ]);
+    });
+
+    it("should apply by-side grouping to CSS string output", () => {
+      const { result } = expand("border: 2px; margin: 2px;", {
+        format: "css",
+        propertyGrouping: "by-side",
+      });
+
+      // Properties should be grouped by directional side
+      const lines = (result as string).split("\n");
+      expect(lines).toEqual([
+        "border-top-width: 2px;",
+        "margin-top: 2px;",
+        "border-right-width: 2px;",
+        "margin-right: 2px;",
+        "border-bottom-width: 2px;",
+        "margin-bottom: 2px;",
+        "border-left-width: 2px;",
+        "margin-left: 2px;",
+      ]);
+    });
+
+    it("should default to by-property for CSS format", () => {
+      const { result } = expand("border: 2px; margin: 2px;", {
+        format: "css",
+      });
+
+      // Should default to by-property grouping
+      const lines = (result as string).split("\n");
+      expect(lines).toEqual([
+        "border-top-width: 2px;",
+        "border-right-width: 2px;",
+        "border-bottom-width: 2px;",
+        "border-left-width: 2px;",
+        "margin-top: 2px;",
+        "margin-right: 2px;",
+        "margin-bottom: 2px;",
+        "margin-left: 2px;",
+      ]);
+    });
+
     it("should apply by-property grouping when merging JS format", () => {
       // In CSS format, each shorthand is processed separately
       // To test grouping, we need to use JS format to see merged results
