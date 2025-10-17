@@ -3,6 +3,61 @@
 import { CSS_DEFAULTS } from "./css-defaults";
 
 const DIRECTIONAL_SIDES = ["top", "right", "bottom", "left"] as const;
+const CORNER_POSITIONS = ["top-left", "top-right", "bottom-right", "bottom-left"] as const;
+
+/**
+ * Base key for grouping bare directional properties (top, right, bottom, left).
+ * These map to the CSS `inset` logical property group.
+ */
+const INSET_BASE_KEY = "inset";
+
+/**
+ * Base key for grouping border-radius corner properties.
+ * These share the same "border-radius" shorthand.
+ */
+const BORDER_RADIUS_BASE_KEY = "border-radius";
+
+/**
+ * Grouping information for side-based directional properties (top, right, bottom, left).
+ */
+interface DirectionalGroup {
+  prefix: string;
+  suffix: string;
+  sides: Set<string>;
+}
+
+/**
+ * Grouping information for corner-based properties (top-left, top-right, etc.).
+ */
+interface CornerGroup {
+  corners: Set<string>;
+}
+
+/**
+ * Builds a full CSS property name from prefix, side, and suffix components.
+ *
+ * @param prefix - Property prefix (e.g., "border-", "margin-", or "")
+ * @param side - Directional side (e.g., "top", "right", "bottom", "left")
+ * @param suffix - Property suffix (e.g., "-width", "-style", or "")
+ * @returns Full property name (e.g., "border-top-width", "margin-top", "top")
+ *
+ * @example
+ * buildPropertyName("border-", "top", "-width") // → "border-top-width"
+ * buildPropertyName("margin-", "top", "") // → "margin-top"
+ * buildPropertyName("", "top", "") // → "top"
+ */
+function buildPropertyName(prefix: string, side: string, suffix: string): string {
+  if (prefix === "" && suffix === "") {
+    // Just the side (top, right, bottom, left)
+    return side;
+  }
+  if (suffix === "") {
+    // prefix-side (e.g., "margin-top")
+    return `${prefix}${side}`;
+  }
+  // prefix-side-suffix (e.g., "border-top-width")
+  return `${prefix}${side}${suffix}`;
+}
 
 /**
  * Expands partial directional properties by filling in missing sides with CSS defaults.
@@ -25,10 +80,25 @@ const DIRECTIONAL_SIDES = ["top", "right", "bottom", "left"] as const;
 export function expandDirectionalProperties(
   result: Record<string, string>
 ): Record<string, string> {
-  const groups = new Map<string, { prefix: string; suffix: string; sides: Set<string> }>();
+  const groups = new Map<string, DirectionalGroup>();
+  const cornerGroups = new Map<string, CornerGroup>();
 
   // Detect directional properties and group by base
   for (const property of Object.keys(result)) {
+    // Check for border-radius corner properties first
+    const cornerMatch = property.match(
+      /^border-(top-left|top-right|bottom-right|bottom-left)-radius$/
+    );
+    if (cornerMatch) {
+      const corner = cornerMatch[1];
+      if (!cornerGroups.has(BORDER_RADIUS_BASE_KEY)) {
+        cornerGroups.set(BORDER_RADIUS_BASE_KEY, { corners: new Set() });
+      }
+      cornerGroups.get(BORDER_RADIUS_BASE_KEY)!.corners.add(corner);
+      continue;
+    }
+
+    // Then check for side-based directional properties
     for (const side of DIRECTIONAL_SIDES) {
       // Match the side as a complete word with hyphens
       const sidePattern = `-${side}-`;
@@ -39,7 +109,7 @@ export function expandDirectionalProperties(
         const sideIndex = property.indexOf(sidePattern);
         const prefix = property.slice(0, sideIndex + 1); // Include leading hyphen: "border-"
         const suffix = property.slice(sideIndex + side.length + 1); // After "-top": "-width"
-        const baseKey = prefix + suffix; // "border--width" (will be normalized)
+        const baseKey = `${prefix}|${suffix}`; // Normalized grouping key
 
         if (!groups.has(baseKey)) {
           groups.set(baseKey, { prefix, suffix, sides: new Set() });
@@ -48,11 +118,11 @@ export function expandDirectionalProperties(
         groups.get(baseKey)!.sides.add(side);
         break;
       } else if (property.endsWith(sideEnd)) {
-        // Side is at the end (e.g., margin-top, top)
+        // Side is at the end (e.g., margin-top)
         const sideIndex = property.lastIndexOf(sideEnd);
         const prefix = property.slice(0, sideIndex + 1); // "margin-" or empty
         const suffix = ""; // Nothing after the side
-        const baseKey = prefix || side; // Use side as base for properties like "top"
+        const baseKey = prefix || side; // Use prefix as key; fallback to side (bare sides handled below)
 
         if (!groups.has(baseKey)) {
           groups.set(baseKey, { prefix, suffix, sides: new Set() });
@@ -64,7 +134,7 @@ export function expandDirectionalProperties(
         // Property is just the side (e.g., "top")
         const prefix = "";
         const suffix = "";
-        const baseKey = "inset";
+        const baseKey = INSET_BASE_KEY;
 
         if (!groups.has(baseKey)) {
           groups.set(baseKey, { prefix, suffix, sides: new Set() });
@@ -77,11 +147,33 @@ export function expandDirectionalProperties(
   }
 
   // If no directional groups found, return as-is
-  if (groups.size === 0) {
+  if (groups.size === 0 && cornerGroups.size === 0) {
     return result;
   }
 
   const expanded: Record<string, string> = { ...result };
+
+  // Fill missing corners for border-radius
+  for (const [, group] of cornerGroups) {
+    const { corners } = group;
+
+    // If all 4 corners present, nothing to expand
+    if (corners.size === 4) {
+      continue;
+    }
+
+    // Add missing corners
+    for (const corner of CORNER_POSITIONS) {
+      if (!corners.has(corner)) {
+        const fullProperty = `border-${corner}-radius`;
+        const defaultValue = CSS_DEFAULTS[fullProperty];
+
+        if (defaultValue) {
+          expanded[fullProperty] = defaultValue;
+        }
+      }
+    }
+  }
 
   // Fill missing sides with defaults
   for (const [, group] of groups) {
@@ -95,19 +187,7 @@ export function expandDirectionalProperties(
     // Add missing sides
     for (const side of DIRECTIONAL_SIDES) {
       if (!sides.has(side)) {
-        // Build the full property name
-        let fullProperty: string;
-        if (prefix === "" && suffix === "") {
-          // Just the side (top, right, bottom, left)
-          fullProperty = side;
-        } else if (suffix === "") {
-          // prefix-side (e.g., "margin-top")
-          fullProperty = `${prefix}${side}`;
-        } else {
-          // prefix-side-suffix (e.g., "border-top-width")
-          fullProperty = `${prefix}${side}${suffix}`;
-        }
-
+        const fullProperty = buildPropertyName(prefix, side, suffix);
         const defaultValue = CSS_DEFAULTS[fullProperty];
 
         if (defaultValue) {
