@@ -3,6 +3,25 @@
 import { describe, expect, it } from "vitest";
 import { expand } from "../src/index";
 
+/**
+ * Type guard to assert that the result is a Record<string, string>.
+ * Provides better type safety than direct type assertions.
+ */
+function assertIsRecord(value: unknown): asserts value is Record<string, string> {
+  if (typeof value !== "object" || value === null) {
+    throw new Error("Expected result to be an object");
+  }
+}
+
+/**
+ * Helper to safely extract a Record<string, string> from expand result.
+ * Throws if the result is not an object, improving test failure messages.
+ */
+function getResultRecord(result: ReturnType<typeof expand>): Record<string, string> {
+  assertIsRecord(result.result);
+  return result.result;
+}
+
 describe("Partial Longhand Expansion", () => {
   describe("Disabled by default", () => {
     it("should not expand when flag is false", () => {
@@ -178,7 +197,7 @@ describe("Partial Longhand Expansion", () => {
         expandPartialLonghand: true,
       });
       expect(result.ok).toBe(true);
-      const res = result.result as Record<string, string>;
+      const res = getResultRecord(result);
       expect(res.borderTopColor).toBe("currentcolor");
       expect(res.borderRightColor).toBe("currentcolor");
       expect(res.borderBottomColor).toContain("rgb(0");
@@ -191,7 +210,7 @@ describe("Partial Longhand Expansion", () => {
         expandPartialLonghand: true,
       });
       expect(result.ok).toBe(true);
-      const res = result.result as Record<string, string>;
+      const res = getResultRecord(result);
       expect(res.borderTopColor).toBe("currentcolor");
       expect(res.borderRightColor).toBe("currentcolor");
       expect(res.borderBottomColor).toBe("currentcolor");
@@ -467,7 +486,7 @@ describe("Partial Longhand Expansion", () => {
         propertyGrouping: "by-property",
       });
       expect(result.ok).toBe(true);
-      const keys = Object.keys(result.result as Record<string, string>);
+      const keys = Object.keys(getResultRecord(result));
       expect(keys).toEqual([
         "borderTopWidth",
         "borderRightWidth",
@@ -483,7 +502,7 @@ describe("Partial Longhand Expansion", () => {
         propertyGrouping: "by-side",
       });
       expect(result.ok).toBe(true);
-      const keys = Object.keys(result.result as Record<string, string>);
+      const keys = Object.keys(getResultRecord(result));
       expect(keys).toEqual(["marginTop", "marginRight", "marginBottom", "marginLeft"]);
     });
   });
@@ -713,7 +732,7 @@ describe("Partial Longhand Expansion", () => {
       );
       expect(result.ok).toBe(true);
       // Should have exactly 4 properties, no extras
-      expect(Object.keys(result.result as Record<string, string>)).toHaveLength(4);
+      expect(Object.keys(getResultRecord(result))).toHaveLength(4);
       expect(result.result).toEqual({
         marginTop: "1px",
         marginRight: "2px",

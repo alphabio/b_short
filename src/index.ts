@@ -770,6 +770,13 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
     return cleanedResults;
   }
 
+  /**
+   * Helper to apply partial longhand expansion if enabled.
+   */
+  const applyPartialExpansion = (obj: Record<string, string>): Record<string, string> => {
+    return expandPartialLonghand ? expandDirectionalProperties(obj) : obj;
+  };
+
   let finalResult: Record<string, string> | string | undefined;
 
   // Apply conflict resolution for shorthand/longhand property overrides
@@ -780,12 +787,10 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
   } else if (cleanedResults.length === 1) {
     const result = cleanedResults[0];
     if (format === "css" && typeof result === "object") {
-      // Apply partial longhand expansion if enabled
-      const resultToProcess = expandPartialLonghand ? expandDirectionalProperties(result) : result;
+      const resultToProcess = applyPartialExpansion(result);
       finalResult = objectToCss(resultToProcess, indent, separator, propertyGrouping);
     } else if (format === "js" && typeof result === "object") {
-      // Apply partial longhand expansion if enabled
-      const resultToProcess = expandPartialLonghand ? expandDirectionalProperties(result) : result;
+      const resultToProcess = applyPartialExpansion(result);
       // Sort and convert to camelCase for JS format
       const sorted = sortProperties(resultToProcess, propertyGrouping);
       const camelCased: Record<string, string> = {};
@@ -810,10 +815,7 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
 
       // If we have a merged object, convert it to CSS with proper grouping
       if (Object.keys(mergedObject).length > 0) {
-        // Apply partial longhand expansion if enabled
-        const resultToProcess = expandPartialLonghand
-          ? expandDirectionalProperties(mergedObject)
-          : mergedObject;
+        const resultToProcess = applyPartialExpansion(mergedObject);
         finalResult = objectToCss(resultToProcess, indent, separator, propertyGrouping);
       } else {
         // Fallback for non-object results (shouldn't normally happen)
@@ -833,14 +835,10 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
         }
       }
 
-      // Apply partial longhand expansion if enabled
-      let resultToProcess = mergedResult;
-      if (expandPartialLonghand) {
-        resultToProcess = expandDirectionalProperties(mergedResult);
-      }
+      const resultToProcess = applyPartialExpansion(mergedResult);
 
       // Sort the merged result according to the specified grouping strategy
-      const sorted = sortProperties(resultToProcess, options.propertyGrouping || "by-property");
+      const sorted = sortProperties(resultToProcess, propertyGrouping);
 
       // Convert property names to camelCase for JavaScript
       const camelCased: Record<string, string> = {};
