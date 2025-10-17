@@ -30,9 +30,10 @@ b_short is a TypeScript-first library that expands CSS shorthand properties into
 - **📦 Lightweight**: ~15KB minified
 - **🎨 Complete**: Supports 35+ CSS shorthands including modern features
 - **🔒 Type-Safe**: Full TypeScript support with comprehensive type definitions
-- **✅ Reliable**: 750 tests ensuring 100% accuracy
+- **✅ Reliable**: 808 tests ensuring 100% accuracy
 - **🎛️ Flexible**: Multiple output formats (CSS string or JS object with camelCase)
 - **⚛️ React-Ready**: JS format returns camelCase properties perfect for inline styles
+- **🎯 Smart**: Optional partial longhand expansion with CSS defaults (36 directional properties)
 
 ## ✨ Features
 
@@ -170,6 +171,9 @@ interface ExpandOptions {
 
   /** Property ordering strategy */
   propertyGrouping?: 'by-property' | 'by-side';  // default: 'by-property'
+
+  /** Expand partial directional longhands with CSS defaults (e.g., margin-top → all 4 sides) */
+  expandPartialLonghand?: boolean;  // default: false
 }
 ```
 
@@ -418,6 +422,64 @@ expand('mask: url(mask.svg) center / contain, linear-gradient(black, transparent
 // }
 ```
 
+### Partial Longhand Expansion
+
+Optionally expand partial directional properties to show their complete state with CSS defaults:
+
+```typescript
+import { expand } from 'b_short';
+
+// Default behavior - passes through unchanged
+expand('margin-top: 10px;', { format: 'js' });
+// → { marginTop: '10px' }
+
+// With expansion enabled - fills in missing sides with CSS defaults
+expand('margin-top: 10px;', { format: 'js', expandPartialLonghand: true });
+// → {
+//   marginTop: '10px',
+//   marginRight: '0',
+//   marginBottom: '0',
+//   marginLeft: '0'
+// }
+
+// Works with border properties
+expand('border-top-width: 1px;', { format: 'js', expandPartialLonghand: true });
+// → {
+//   borderTopWidth: '1px',
+//   borderRightWidth: 'medium',  // CSS default
+//   borderBottomWidth: 'medium',
+//   borderLeftWidth: 'medium'
+// }
+
+// Multiple partial properties
+expand('padding-top: 5px; margin-left: 10px;', { format: 'js', expandPartialLonghand: true });
+// → {
+//   paddingTop: '5px',
+//   paddingRight: '0',
+//   paddingBottom: '0',
+//   paddingLeft: '0',
+//   marginTop: '0',
+//   marginRight: '0',
+//   marginBottom: '0',
+//   marginLeft: '10px'
+// }
+```
+
+**Supported Properties (36 total):**
+
+- Border properties: `border-{top|right|bottom|left}-{width|style|color}` (12)
+- Spacing: `margin-*`, `padding-*` (8)
+- Border radius: `border-{top-left|top-right|bottom-right|bottom-left}-radius` (4)
+- Positioning: `top`, `right`, `bottom`, `left` (4)
+- Scroll: `scroll-margin-*`, `scroll-padding-*` (8)
+
+**Use Cases:**
+
+- Design system normalization - generate complete token sets
+- Static analysis - identify which sides are explicitly set vs defaults
+- CSS debugging - visualize complete property state
+- Documentation generation - show full property expansion
+
 ### Property Overrides
 
 ```typescript
@@ -501,7 +563,7 @@ const tokens = {
 - **Fast**: Optimized TypeScript with memoization for repeated calls
 - **Small**: ~15KB minified, ~5KB gzipped
 - **Efficient**: LRU caching for frequently-used values
-- **Tested**: 750 comprehensive tests ensuring correctness
+- **Tested**: 808 comprehensive tests ensuring correctness
 
 ## 🔧 Development
 
