@@ -3,6 +3,61 @@
 import { CSS_DEFAULTS } from "./css-defaults";
 
 const DIRECTIONAL_SIDES = ["top", "right", "bottom", "left"] as const;
+const CORNER_POSITIONS = ["top-left", "top-right", "bottom-right", "bottom-left"] as const;
+
+/**
+ * Base key for grouping bare directional properties (top, right, bottom, left).
+ * These map to the CSS `inset` logical property group.
+ */
+const INSET_BASE_KEY = "inset";
+
+/**
+ * Base key for grouping border-radius corner properties.
+ * These share the same "border-radius" shorthand.
+ */
+const BORDER_RADIUS_BASE_KEY = "border-radius";
+
+/**
+ * Grouping information for side-based directional properties (top, right, bottom, left).
+ */
+interface DirectionalGroup {
+  prefix: string;
+  suffix: string;
+  sides: Set<string>;
+}
+
+/**
+ * Grouping information for corner-based properties (top-left, top-right, etc.).
+ */
+interface CornerGroup {
+  corners: Set<string>;
+}
+
+/**
+ * Builds a full CSS property name from prefix, side, and suffix components.
+ *
+ * @param prefix - Property prefix (e.g., "border-", "margin-", or "")
+ * @param side - Directional side (e.g., "top", "right", "bottom", "left")
+ * @param suffix - Property suffix (e.g., "-width", "-style", or "")
+ * @returns Full property name (e.g., "border-top-width", "margin-top", "top")
+ *
+ * @example
+ * buildPropertyName("border-", "top", "-width") // → "border-top-width"
+ * buildPropertyName("margin-", "top", "") // → "margin-top"
+ * buildPropertyName("", "top", "") // → "top"
+ */
+function buildPropertyName(prefix: string, side: string, suffix: string): string {
+  if (prefix === "" && suffix === "") {
+    // Just the side (top, right, bottom, left)
+    return side;
+  }
+  if (suffix === "") {
+    // prefix-side (e.g., "margin-top")
+    return `${prefix}${side}`;
+  }
+  // prefix-side-suffix (e.g., "border-top-width")
+  return `${prefix}${side}${suffix}`;
+}
 
 /**
  * Expands partial directional properties by filling in missing sides with CSS defaults.
@@ -25,63 +80,99 @@ const DIRECTIONAL_SIDES = ["top", "right", "bottom", "left"] as const;
 export function expandDirectionalProperties(
   result: Record<string, string>
 ): Record<string, string> {
-  const groups = new Map<string, { prefix: string; suffix: string; sides: Set<string> }>();
+  const groups = new Map<string, DirectionalGroup>();
+  const cornerGroups = new Map<string, CornerGroup>();
+
+  // Pre-compile regex for directional property matching (more efficient than string operations)
+  // Matches: -(top|right|bottom|left)- or -(top|right|bottom|left)$ or exact side
+  const directionalRegex = /^(.*)-(top|right|bottom|left)(-(.*))?$|^(top|right|bottom|left)$/;
 
   // Detect directional properties and group by base
   for (const property of Object.keys(result)) {
-    for (const side of DIRECTIONAL_SIDES) {
-      // Match the side as a complete word with hyphens
-      const sidePattern = `-${side}-`;
-      const sideEnd = `-${side}`;
+    // Check for border-radius corner properties first
+    const cornerMatch = property.match(
+      /^border-(top-left|top-right|bottom-right|bottom-left)-radius$/
+    );
+    if (cornerMatch) {
+      const corner = cornerMatch[1];
+      if (!cornerGroups.has(BORDER_RADIUS_BASE_KEY)) {
+        cornerGroups.set(BORDER_RADIUS_BASE_KEY, { corners: new Set() });
+      }
+      cornerGroups.get(BORDER_RADIUS_BASE_KEY)!.corners.add(corner);
+      continue;
+    }
 
-      if (property.includes(sidePattern)) {
-        // Side is in the middle (e.g., border-top-width)
-        const sideIndex = property.indexOf(sidePattern);
-        const prefix = property.slice(0, sideIndex + 1); // Include leading hyphen: "border-"
-        const suffix = property.slice(sideIndex + side.length + 1); // After "-top": "-width"
-        const baseKey = prefix + suffix; // "border--width" (will be normalized)
+    // Check for side-based directional properties using pre-compiled regex
+    const match = property.match(directionalRegex);
+    if (match) {
+      // match[1] = prefix (if side in middle or end), match[2] = side (if hyphenated),
+      // match[4] = suffix (if side in middle), match[5] = bare side
+      const side = match[2] || match[5]; // Side from hyphenated or bare match
 
-        if (!groups.has(baseKey)) {
-          groups.set(baseKey, { prefix, suffix, sides: new Set() });
-        }
+      if (!side) continue; // Shouldn't happen, but defensive check
 
-        groups.get(baseKey)!.sides.add(side);
-        break;
-      } else if (property.endsWith(sideEnd)) {
-        // Side is at the end (e.g., margin-top, top)
-        const sideIndex = property.lastIndexOf(sideEnd);
-        const prefix = property.slice(0, sideIndex + 1); // "margin-" or empty
-        const suffix = ""; // Nothing after the side
-        const baseKey = prefix || side; // Use side as base for properties like "top"
-
-        if (!groups.has(baseKey)) {
-          groups.set(baseKey, { prefix, suffix, sides: new Set() });
-        }
-
-        groups.get(baseKey)!.sides.add(side);
-        break;
-      } else if (property === side) {
-        // Property is just the side (e.g., "top")
+      if (match[5]) {
+        // Bare side property (e.g., "top")
         const prefix = "";
         const suffix = "";
-        const baseKey = "inset";
+        const baseKey = INSET_BASE_KEY;
 
         if (!groups.has(baseKey)) {
           groups.set(baseKey, { prefix, suffix, sides: new Set() });
         }
-
         groups.get(baseKey)!.sides.add(side);
-        break;
+      } else if (match[4] !== undefined) {
+        // Side in the middle (e.g., border-top-width)
+        const prefix = match[1] ? `${match[1]}-` : ""; // Include trailing hyphen
+        const suffix = match[4] ? `-${match[4]}` : ""; // Include leading hyphen
+        const baseKey = `${prefix}|${suffix}`; // Normalized grouping key
+
+        if (!groups.has(baseKey)) {
+          groups.set(baseKey, { prefix, suffix, sides: new Set() });
+        }
+        groups.get(baseKey)!.sides.add(side);
+      } else {
+        // Side at the end (e.g., margin-top)
+        const prefix = match[1] ? `${match[1]}-` : ""; // Include trailing hyphen
+        const suffix = "";
+        const baseKey = prefix || side; // Use prefix as key; fallback to side
+
+        if (!groups.has(baseKey)) {
+          groups.set(baseKey, { prefix, suffix, sides: new Set() });
+        }
+        groups.get(baseKey)!.sides.add(side);
       }
     }
   }
 
   // If no directional groups found, return as-is
-  if (groups.size === 0) {
+  if (groups.size === 0 && cornerGroups.size === 0) {
     return result;
   }
 
   const expanded: Record<string, string> = { ...result };
+
+  // Fill missing corners for border-radius
+  for (const [, group] of cornerGroups) {
+    const { corners } = group;
+
+    // If all 4 corners present, nothing to expand
+    if (corners.size === 4) {
+      continue;
+    }
+
+    // Add missing corners
+    for (const corner of CORNER_POSITIONS) {
+      if (!corners.has(corner)) {
+        const fullProperty = `border-${corner}-radius`;
+        const defaultValue = CSS_DEFAULTS[fullProperty];
+
+        if (defaultValue) {
+          expanded[fullProperty] = defaultValue;
+        }
+      }
+    }
+  }
 
   // Fill missing sides with defaults
   for (const [, group] of groups) {
@@ -95,19 +186,7 @@ export function expandDirectionalProperties(
     // Add missing sides
     for (const side of DIRECTIONAL_SIDES) {
       if (!sides.has(side)) {
-        // Build the full property name
-        let fullProperty: string;
-        if (prefix === "" && suffix === "") {
-          // Just the side (top, right, bottom, left)
-          fullProperty = side;
-        } else if (suffix === "") {
-          // prefix-side (e.g., "margin-top")
-          fullProperty = `${prefix}${side}`;
-        } else {
-          // prefix-side-suffix (e.g., "border-top-width")
-          fullProperty = `${prefix}${side}${suffix}`;
-        }
-
+        const fullProperty = buildPropertyName(prefix, side, suffix);
         const defaultValue = CSS_DEFAULTS[fullProperty];
 
         if (defaultValue) {
