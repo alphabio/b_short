@@ -19,6 +19,13 @@ export const ExpandOptionsSchema = z
       .describe(
         "Property grouping strategy: 'by-property' groups by property type (e.g., all margins, then all borders), 'by-side' groups by directional side (e.g., all top properties, then all right properties)"
       ),
+    expandPartialLonghand: z
+      .boolean()
+      .default(false)
+      .optional()
+      .describe(
+        "Expand partial directional longhand properties (e.g., margin-top) by filling in missing sides with CSS default values"
+      ),
   })
   .describe("Options for CSS expansion");
 
