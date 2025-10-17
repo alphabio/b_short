@@ -840,7 +840,7 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
       }
 
       // Sort the merged result according to the specified grouping strategy
-      const sorted = sortProperties(resultToProcess, options.propertyGrouping || "by-property");
+      const sorted = sortProperties(resultToProcess, propertyGrouping);
 
       // Convert property names to camelCase for JavaScript
       const camelCased: Record<string, string> = {};

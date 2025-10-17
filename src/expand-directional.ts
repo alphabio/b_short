@@ -3,6 +3,7 @@
 import { CSS_DEFAULTS } from "./css-defaults";
 
 const DIRECTIONAL_SIDES = ["top", "right", "bottom", "left"] as const;
+const CORNER_POSITIONS = ["top-left", "top-right", "bottom-right", "bottom-left"] as const;
 
 /**
  * Expands partial directional properties by filling in missing sides with CSS defaults.
@@ -26,9 +27,24 @@ export function expandDirectionalProperties(
   result: Record<string, string>
 ): Record<string, string> {
   const groups = new Map<string, { prefix: string; suffix: string; sides: Set<string> }>();
+  const cornerGroups = new Map<string, { corners: Set<string> }>();
 
   // Detect directional properties and group by base
   for (const property of Object.keys(result)) {
+    // Check for border-radius corner properties first
+    const cornerMatch = property.match(
+      /^border-(top-left|top-right|bottom-right|bottom-left)-radius$/
+    );
+    if (cornerMatch) {
+      const corner = cornerMatch[1];
+      if (!cornerGroups.has("border-radius")) {
+        cornerGroups.set("border-radius", { corners: new Set() });
+      }
+      cornerGroups.get("border-radius")!.corners.add(corner);
+      continue;
+    }
+
+    // Then check for side-based directional properties
     for (const side of DIRECTIONAL_SIDES) {
       // Match the side as a complete word with hyphens
       const sidePattern = `-${side}-`;
@@ -77,11 +93,33 @@ export function expandDirectionalProperties(
   }
 
   // If no directional groups found, return as-is
-  if (groups.size === 0) {
+  if (groups.size === 0 && cornerGroups.size === 0) {
     return result;
   }
 
   const expanded: Record<string, string> = { ...result };
+
+  // Fill missing corners for border-radius
+  for (const [, group] of cornerGroups) {
+    const { corners } = group;
+
+    // If all 4 corners present, nothing to expand
+    if (corners.size === 4) {
+      continue;
+    }
+
+    // Add missing corners
+    for (const corner of CORNER_POSITIONS) {
+      if (!corners.has(corner)) {
+        const fullProperty = `border-${corner}-radius`;
+        const defaultValue = CSS_DEFAULTS[fullProperty];
+
+        if (defaultValue) {
+          expanded[fullProperty] = defaultValue;
+        }
+      }
+    }
+  }
 
   // Fill missing sides with defaults
   for (const [, group] of groups) {
