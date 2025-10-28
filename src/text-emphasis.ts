@@ -18,39 +18,44 @@ export default function textEmphasis(value: string): Record<string, string> | un
     });
   }
 
-  const result: Record<string, string> = {};
+  const parsed: { style?: string; color?: string } = {};
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
 
     if (v === "none") {
-      if (result["text-emphasis-style"]) return;
-      result["text-emphasis-style"] = v;
+      if (parsed.style) return;
+      parsed.style = v;
     } else if (STRING_VALUE.test(v)) {
-      if (result["text-emphasis-style"]) return;
-      result["text-emphasis-style"] = v;
+      if (parsed.style) return;
+      parsed.style = v;
     } else if (FILL.test(v)) {
-      if (result["text-emphasis-style"]) return;
+      if (parsed.style) return;
       if (i + 1 < values.length && SHAPE.test(values[i + 1])) {
-        result["text-emphasis-style"] = `${v} ${values[i + 1]}`;
+        parsed.style = `${v} ${values[i + 1]}`;
         i++;
       } else {
-        result["text-emphasis-style"] = v;
+        parsed.style = v;
       }
     } else if (SHAPE.test(v)) {
-      if (result["text-emphasis-style"]) return;
+      if (parsed.style) return;
       if (i + 1 < values.length && FILL.test(values[i + 1])) {
-        result["text-emphasis-style"] = `${values[i + 1]} ${v}`;
+        parsed.style = `${values[i + 1]} ${v}`;
         i++;
       } else {
-        result["text-emphasis-style"] = v;
+        parsed.style = v;
       }
     } else if (isColor(v)) {
-      if (result["text-emphasis-color"]) return;
-      result["text-emphasis-color"] = v;
+      if (parsed.color) return;
+      parsed.color = v;
     } else {
       return;
     }
   }
 
-  return sortProperties(result);
+  // CSS spec: text-emphasis shorthand always sets style and color
+  // Use defaults for missing properties
+  return sortProperties({
+    "text-emphasis-style": parsed.style || "none",
+    "text-emphasis-color": parsed.color || "currentcolor",
+  });
 }

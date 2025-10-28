@@ -1,45 +1,59 @@
 {
   "none": {
-    "textEmphasisStyle": "none"
+    "textEmphasisStyle": "none",
+    "textEmphasisColor": "currentcolor"
   },
   "filled": {
-    "textEmphasisStyle": "filled"
+    "textEmphasisStyle": "filled",
+    "textEmphasisColor": "currentcolor"
   },
   "open": {
-    "textEmphasisStyle": "open"
+    "textEmphasisStyle": "open",
+    "textEmphasisColor": "currentcolor"
   },
   "red": {
+    "textEmphasisStyle": "none",
     "textEmphasisColor": "red"
   },
   "#ff0000": {
+    "textEmphasisStyle": "none",
     "textEmphasisColor": "#ff0000"
   },
   "filled dot": {
-    "textEmphasisStyle": "filled dot"
+    "textEmphasisStyle": "filled dot",
+    "textEmphasisColor": "currentcolor"
   },
   "open circle": {
-    "textEmphasisStyle": "open circle"
+    "textEmphasisStyle": "open circle",
+    "textEmphasisColor": "currentcolor"
   },
   "filled triangle": {
-    "textEmphasisStyle": "filled triangle"
+    "textEmphasisStyle": "filled triangle",
+    "textEmphasisColor": "currentcolor"
   },
   "open sesame": {
-    "textEmphasisStyle": "open sesame"
+    "textEmphasisStyle": "open sesame",
+    "textEmphasisColor": "currentcolor"
   },
   "dot filled": {
-    "textEmphasisStyle": "filled dot"
+    "textEmphasisStyle": "filled dot",
+    "textEmphasisColor": "currentcolor"
   },
   "circle open": {
-    "textEmphasisStyle": "open circle"
+    "textEmphasisStyle": "open circle",
+    "textEmphasisColor": "currentcolor"
   },
   "triangle filled": {
-    "textEmphasisStyle": "filled triangle"
+    "textEmphasisStyle": "filled triangle",
+    "textEmphasisColor": "currentcolor"
   },
   "sesame open": {
-    "textEmphasisStyle": "open sesame"
+    "textEmphasisStyle": "open sesame",
+    "textEmphasisColor": "currentcolor"
   },
   "double-circle filled": {
-    "textEmphasisStyle": "filled double-circle"
+    "textEmphasisStyle": "filled double-circle",
+    "textEmphasisColor": "currentcolor"
   },
   "filled red": {
     "textEmphasisStyle": "filled",
@@ -70,10 +84,12 @@
     "textEmphasisColor": "rgb(255,0,0)"
   },
   "\"*\"": {
-    "textEmphasisStyle": "\"*\""
+    "textEmphasisStyle": "\"*\"",
+    "textEmphasisColor": "currentcolor"
   },
   "'※'": {
-    "textEmphasisStyle": "'※'"
+    "textEmphasisStyle": "'※'",
+    "textEmphasisColor": "currentcolor"
   },
   "\"※\" red": {
     "textEmphasisStyle": "\"※\"",
@@ -96,6 +112,7 @@
     "textEmphasisColor": "revert"
   },
   "var(--my-color)": {
+    "textEmphasisStyle": "none",
     "textEmphasisColor": "var(--my-color)"
   },
   "filled var(--my-color)": {
