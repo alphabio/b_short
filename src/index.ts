@@ -48,6 +48,7 @@ export type {
 // ============================================================================
 
 export {
+  DEFAULT_EXPAND_OPTIONS,
   FORMAT_CSS,
   FORMAT_JS,
   FORMAT_VALUES,

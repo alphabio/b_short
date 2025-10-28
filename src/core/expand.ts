@@ -5,7 +5,7 @@ import { parseCssDeclaration, parseInputString, stripComments } from "../interna
 import { kebabToCamelCase, objectToCss, sortProperties } from "../internal/property-sorter";
 import { shorthand } from "../internal/shorthand-registry";
 import type { BStyleWarning, ExpandOptions, ExpandResult } from "./schema";
-import { FORMAT_CSS, FORMAT_JS, GROUPING_BY_PROPERTY } from "./schema";
+import { DEFAULT_EXPAND_OPTIONS, FORMAT_CSS, FORMAT_JS } from "./schema";
 import { validate } from "./validate";
 
 /**
@@ -33,12 +33,13 @@ import { validate } from "./validate";
 export function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
   const cleanedInput = stripComments(input);
 
+  // Apply defaults using DEFAULT_EXPAND_OPTIONS
   const {
-    format = FORMAT_CSS,
-    indent = 0,
-    separator = "\n",
-    propertyGrouping = GROUPING_BY_PROPERTY,
-    expandPartialLonghand = false,
+    format = DEFAULT_EXPAND_OPTIONS.format,
+    indent = DEFAULT_EXPAND_OPTIONS.indent,
+    separator = DEFAULT_EXPAND_OPTIONS.separator,
+    propertyGrouping = DEFAULT_EXPAND_OPTIONS.propertyGrouping,
+    expandPartialLonghand = DEFAULT_EXPAND_OPTIONS.expandPartialLonghand,
   } = options;
 
   const validation = validate(cleanedInput);
