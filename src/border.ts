@@ -128,21 +128,23 @@ const border: BorderFunction = (value: string): Record<string, string> | undefin
     result["box-sizing"] = longhand.boxSizing;
   }
 
-  // Handle border properties
-  for (const key in longhand) {
-    if (key === "boxSizing") continue; // Already handled above
+  // Use defaults for missing properties
+  // Per CSS spec, the default values for border shorthand are:
+  //   width: 'medium', style: 'none', color: 'currentcolor'
+  // See: https://drafts.csswg.org/css-backgrounds-3/#border-shorthand
+  const width = longhand.width || "medium";
+  const style = longhand.style || "none";
+  const color = longhand.color || "currentcolor";
 
-    const propValue = longhand[key as keyof BorderProperties];
-    if (propValue) {
-      const propFunction = border[key as keyof BorderFunction] as (
-        value: string
-      ) => Record<string, string> | undefined;
-      const props = propFunction(propValue);
-      if (props) {
-        Object.assign(result, props);
-      }
-    }
-  }
+  // Expand all three border properties
+  const widthProps = border.width(width);
+  const styleProps = border.style(style);
+  const colorProps = border.color(color);
+
+  if (widthProps) Object.assign(result, widthProps);
+  if (styleProps) Object.assign(result, styleProps);
+  if (colorProps) Object.assign(result, colorProps);
+
   return sortProperties(result);
 };
 

@@ -160,9 +160,17 @@ describe("propertyGrouping option", () => {
       const lines = (result as string).split("\n");
       expect(lines).toEqual([
         "border-top-width: 2px;",
+        "border-top-style: none;",
+        "border-top-color: currentcolor;",
         "border-right-width: 2px;",
+        "border-right-style: none;",
+        "border-right-color: currentcolor;",
         "border-bottom-width: 2px;",
+        "border-bottom-style: none;",
+        "border-bottom-color: currentcolor;",
         "border-left-width: 2px;",
+        "border-left-style: none;",
+        "border-left-color: currentcolor;",
         "margin-top: 2px;",
         "margin-right: 2px;",
         "margin-bottom: 2px;",
@@ -180,12 +188,20 @@ describe("propertyGrouping option", () => {
       const lines = (result as string).split("\n");
       expect(lines).toEqual([
         "border-top-width: 2px;",
+        "border-top-style: none;",
+        "border-top-color: currentcolor;",
         "margin-top: 2px;",
         "border-right-width: 2px;",
+        "border-right-style: none;",
+        "border-right-color: currentcolor;",
         "margin-right: 2px;",
         "border-bottom-width: 2px;",
+        "border-bottom-style: none;",
+        "border-bottom-color: currentcolor;",
         "margin-bottom: 2px;",
         "border-left-width: 2px;",
+        "border-left-style: none;",
+        "border-left-color: currentcolor;",
         "margin-left: 2px;",
       ]);
     });
@@ -199,9 +215,17 @@ describe("propertyGrouping option", () => {
       const lines = (result as string).split("\n");
       expect(lines).toEqual([
         "border-top-width: 2px;",
+        "border-top-style: none;",
+        "border-top-color: currentcolor;",
         "border-right-width: 2px;",
+        "border-right-style: none;",
+        "border-right-color: currentcolor;",
         "border-bottom-width: 2px;",
+        "border-bottom-style: none;",
+        "border-bottom-color: currentcolor;",
         "border-left-width: 2px;",
+        "border-left-style: none;",
+        "border-left-color: currentcolor;",
         "margin-top: 2px;",
         "margin-right: 2px;",
         "margin-bottom: 2px;",

@@ -15,13 +15,19 @@
     "columnRuleColor": "#000000"
   },
   "solid": {
-    "columnRuleStyle": "solid"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "currentcolor"
   },
   "black": {
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "none",
     "columnRuleColor": "black"
   },
   "1px": {
-    "columnRuleWidth": "1px"
+    "columnRuleWidth": "1px",
+    "columnRuleStyle": "none",
+    "columnRuleColor": "currentcolor"
   },
   "inherit": {
     "columnRuleWidth": "inherit",
@@ -44,77 +50,117 @@
     "columnRuleColor": "revert"
   },
   "2em": {
-    "columnRuleWidth": "2em"
+    "columnRuleWidth": "2em",
+    "columnRuleStyle": "none",
+    "columnRuleColor": "currentcolor"
   },
   "thin": {
-    "columnRuleWidth": "thin"
+    "columnRuleWidth": "thin",
+    "columnRuleStyle": "none",
+    "columnRuleColor": "currentcolor"
   },
   "medium": {
-    "columnRuleWidth": "medium"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "none",
+    "columnRuleColor": "currentcolor"
   },
   "thick": {
-    "columnRuleWidth": "thick"
+    "columnRuleWidth": "thick",
+    "columnRuleStyle": "none",
+    "columnRuleColor": "currentcolor"
   },
   "dotted": {
-    "columnRuleStyle": "dotted"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "dotted",
+    "columnRuleColor": "currentcolor"
   },
   "dashed": {
-    "columnRuleStyle": "dashed"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "dashed",
+    "columnRuleColor": "currentcolor"
   },
   "double": {
-    "columnRuleStyle": "double"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "double",
+    "columnRuleColor": "currentcolor"
   },
   "groove": {
-    "columnRuleStyle": "groove"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "groove",
+    "columnRuleColor": "currentcolor"
   },
   "ridge": {
-    "columnRuleStyle": "ridge"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "ridge",
+    "columnRuleColor": "currentcolor"
   },
   "inset": {
-    "columnRuleStyle": "inset"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "inset",
+    "columnRuleColor": "currentcolor"
   },
   "outset": {
-    "columnRuleStyle": "outset"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "outset",
+    "columnRuleColor": "currentcolor"
   },
   "none": {
-    "columnRuleStyle": "none"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "none",
+    "columnRuleColor": "currentcolor"
   },
   "hidden": {
-    "columnRuleStyle": "hidden"
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "hidden",
+    "columnRuleColor": "currentcolor"
   },
   "red": {
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "none",
     "columnRuleColor": "red"
   },
   "#ff0000": {
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "none",
     "columnRuleColor": "#ff0000"
   },
   "rgb(255, 0, 0)": {
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "none",
     "columnRuleColor": "rgb(255,0,0)"
   },
   "hsl(0, 100%, 50%)": {
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "none",
     "columnRuleColor": "hsl(0,100%,50%)"
   },
   "1px solid": {
     "columnRuleWidth": "1px",
-    "columnRuleStyle": "solid"
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "currentcolor"
   },
   "solid 1px": {
     "columnRuleWidth": "1px",
-    "columnRuleStyle": "solid"
+    "columnRuleStyle": "solid",
+    "columnRuleColor": "currentcolor"
   },
   "1px red": {
     "columnRuleWidth": "1px",
+    "columnRuleStyle": "none",
     "columnRuleColor": "red"
   },
   "red 1px": {
     "columnRuleWidth": "1px",
+    "columnRuleStyle": "none",
     "columnRuleColor": "red"
   },
   "solid red": {
+    "columnRuleWidth": "medium",
     "columnRuleStyle": "solid",
     "columnRuleColor": "red"
   },
   "red solid": {
+    "columnRuleWidth": "medium",
     "columnRuleStyle": "solid",
     "columnRuleColor": "red"
   },
@@ -129,6 +175,8 @@
     "columnRuleColor": "rgb(0,0,0)"
   },
   "var(--my-color)": {
+    "columnRuleWidth": "medium",
+    "columnRuleStyle": "none",
     "columnRuleColor": "var(--my-color)"
   },
   "1px solid var(--my-color)": {

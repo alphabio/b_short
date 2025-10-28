@@ -20,23 +20,31 @@ export default function columnRule(value: string): Record<string, string> | unde
     });
   }
 
-  const result: Record<string, string> = {};
+  const parsed: { width?: string; style?: string; color?: string } = {};
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
 
     if (isLength(v) || WIDTH.test(v)) {
-      if (result["column-rule-width"]) return;
-      result["column-rule-width"] = v;
+      if (parsed.width) return;
+      parsed.width = v;
     } else if (STYLE.test(v)) {
-      if (result["column-rule-style"]) return;
-      result["column-rule-style"] = v;
+      if (parsed.style) return;
+      parsed.style = v;
     } else if (isColor(v)) {
-      if (result["column-rule-color"]) return;
-      result["column-rule-color"] = v;
+      if (parsed.color) return;
+      parsed.color = v;
     } else {
       return;
     }
   }
 
-  return sortProperties(result);
+  // Use defaults for missing properties
+  // Per CSS spec, the default values for column-rule shorthand are:
+  //   width: 'medium', style: 'none', color: 'currentcolor'
+  // See: https://drafts.csswg.org/css-multicol-1/#propdef-column-rule
+  return sortProperties({
+    "column-rule-width": parsed.width || "medium",
+    "column-rule-style": parsed.style || "none",
+    "column-rule-color": parsed.color || "currentcolor",
+  });
 }

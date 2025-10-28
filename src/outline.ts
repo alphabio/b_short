@@ -20,23 +20,31 @@ export default function outline(value: string): Record<string, string> | undefin
     });
   }
 
-  const result: Record<string, string> = {};
+  const parsed: { width?: string; style?: string; color?: string } = {};
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
 
     if (isLength(v) || WIDTH.test(v)) {
-      if (result["outline-width"]) return;
-      result["outline-width"] = v;
+      if (parsed.width) return;
+      parsed.width = v;
     } else if (STYLE.test(v)) {
-      if (result["outline-style"]) return;
-      result["outline-style"] = v;
+      if (parsed.style) return;
+      parsed.style = v;
     } else if (isColor(v)) {
-      if (result["outline-color"]) return;
-      result["outline-color"] = v;
+      if (parsed.color) return;
+      parsed.color = v;
     } else {
       return;
     }
   }
 
-  return sortProperties(result);
+  // Use defaults for missing properties
+  // Per CSS spec, the default values for outline shorthand are:
+  //   width: 'medium', style: 'none', color: 'currentcolor'
+  // See: https://drafts.csswg.org/css-ui-4/#propdef-outline
+  return sortProperties({
+    "outline-width": parsed.width || "medium",
+    "outline-style": parsed.style || "none",
+    "outline-color": parsed.color || "currentcolor",
+  });
 }

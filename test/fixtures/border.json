@@ -1,50 +1,86 @@
 {
   "1px": {
     "borderTopWidth": "1px",
+    "borderTopStyle": "none",
+    "borderTopColor": "currentcolor",
     "borderRightWidth": "1px",
+    "borderRightStyle": "none",
+    "borderRightColor": "currentcolor",
     "borderBottomWidth": "1px",
-    "borderLeftWidth": "1px"
+    "borderBottomStyle": "none",
+    "borderBottomColor": "currentcolor",
+    "borderLeftWidth": "1px",
+    "borderLeftStyle": "none",
+    "borderLeftColor": "currentcolor"
   },
   "solid": {
+    "borderTopWidth": "medium",
     "borderTopStyle": "solid",
+    "borderTopColor": "currentcolor",
+    "borderRightWidth": "medium",
     "borderRightStyle": "solid",
+    "borderRightColor": "currentcolor",
+    "borderBottomWidth": "medium",
     "borderBottomStyle": "solid",
-    "borderLeftStyle": "solid"
+    "borderBottomColor": "currentcolor",
+    "borderLeftWidth": "medium",
+    "borderLeftStyle": "solid",
+    "borderLeftColor": "currentcolor"
   },
   "#ff0": {
+    "borderTopWidth": "medium",
+    "borderTopStyle": "none",
     "borderTopColor": "#ff0",
+    "borderRightWidth": "medium",
+    "borderRightStyle": "none",
     "borderRightColor": "#ff0",
+    "borderBottomWidth": "medium",
+    "borderBottomStyle": "none",
     "borderBottomColor": "#ff0",
+    "borderLeftWidth": "medium",
+    "borderLeftStyle": "none",
     "borderLeftColor": "#ff0"
   },
   "dashed 1em": {
     "borderTopWidth": "1em",
     "borderTopStyle": "dashed",
+    "borderTopColor": "currentcolor",
     "borderRightWidth": "1em",
     "borderRightStyle": "dashed",
+    "borderRightColor": "currentcolor",
     "borderBottomWidth": "1em",
     "borderBottomStyle": "dashed",
+    "borderBottomColor": "currentcolor",
     "borderLeftWidth": "1em",
-    "borderLeftStyle": "dashed"
+    "borderLeftStyle": "dashed",
+    "borderLeftColor": "currentcolor"
   },
   "rgb(0, 0, 0) dashed": {
+    "borderTopWidth": "medium",
     "borderTopStyle": "dashed",
     "borderTopColor": "rgb(0,0,0)",
+    "borderRightWidth": "medium",
     "borderRightStyle": "dashed",
     "borderRightColor": "rgb(0,0,0)",
+    "borderBottomWidth": "medium",
     "borderBottomStyle": "dashed",
     "borderBottomColor": "rgb(0,0,0)",
+    "borderLeftWidth": "medium",
     "borderLeftStyle": "dashed",
     "borderLeftColor": "rgb(0,0,0)"
   },
   "1em rgb(0, 0, 0)": {
     "borderTopWidth": "1em",
+    "borderTopStyle": "none",
     "borderTopColor": "rgb(0,0,0)",
     "borderRightWidth": "1em",
+    "borderRightStyle": "none",
     "borderRightColor": "rgb(0,0,0)",
     "borderBottomWidth": "1em",
+    "borderBottomStyle": "none",
     "borderBottomColor": "rgb(0,0,0)",
     "borderLeftWidth": "1em",
+    "borderLeftStyle": "none",
     "borderLeftColor": "rgb(0,0,0)"
   },
   "thin dotted hsl(120, 100%, 50%)": {
@@ -118,9 +154,17 @@
     "borderLeftColor": "revert"
   },
   "var(--my-color)": {
+    "borderTopWidth": "medium",
+    "borderTopStyle": "none",
     "borderTopColor": "var(--my-color)",
+    "borderRightWidth": "medium",
+    "borderRightStyle": "none",
     "borderRightColor": "var(--my-color)",
+    "borderBottomWidth": "medium",
+    "borderBottomStyle": "none",
     "borderBottomColor": "var(--my-color)",
+    "borderLeftWidth": "medium",
+    "borderLeftStyle": "none",
     "borderLeftColor": "var(--my-color)"
   },
   "1px solid var(--my-color)": {
@@ -168,12 +212,16 @@
   "2px dashed; border-style: solid": {
     "borderTopWidth": "2px",
     "borderTopStyle": "solid",
+    "borderTopColor": "currentcolor",
     "borderRightWidth": "2px",
     "borderRightStyle": "solid",
+    "borderRightColor": "currentcolor",
     "borderBottomWidth": "2px",
     "borderBottomStyle": "solid",
+    "borderBottomColor": "currentcolor",
     "borderLeftWidth": "2px",
-    "borderLeftStyle": "solid"
+    "borderLeftStyle": "solid",
+    "borderLeftColor": "currentcolor"
   },
   "thin dotted hsl(120, 100%, 50%); border-left-width: thick; border-right-style: solid": {
     "borderTopWidth": "thin",
