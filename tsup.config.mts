@@ -8,11 +8,12 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   treeshake: true,
+  minify: true,
   target: "es2020",
   outDir: "dist",
   outExtension({ format }) {
     return {
-      js: format === "cjs" ? ".js" : ".mjs",
+      js: format === "cjs" ? ".cjs" : ".mjs",
     };
   },
   esbuildOptions(options) {

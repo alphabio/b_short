@@ -128,8 +128,10 @@ const border: BorderFunction = (value: string): Record<string, string> | undefin
     result["box-sizing"] = longhand.boxSizing;
   }
 
-  // CSS spec: border shorthand always sets width, style, and color
   // Use defaults for missing properties
+  // Per CSS spec, the default values for border shorthand are:
+  //   width: 'medium', style: 'none', color: 'currentcolor'
+  // See: https://drafts.csswg.org/css-backgrounds-3/#border-shorthand
   const width = longhand.width || "medium";
   const style = longhand.style || "none";
   const color = longhand.color || "currentcolor";

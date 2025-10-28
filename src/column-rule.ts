@@ -38,8 +38,10 @@ export default function columnRule(value: string): Record<string, string> | unde
     }
   }
 
-  // CSS spec: column-rule shorthand always sets width, style, and color
   // Use defaults for missing properties
+  // Per CSS spec, the default values for column-rule shorthand are:
+  //   width: 'medium', style: 'none', color: 'currentcolor'
+  // See: https://drafts.csswg.org/css-multicol-1/#propdef-column-rule
   return sortProperties({
     "column-rule-width": parsed.width || "medium",
     "column-rule-style": parsed.style || "none",

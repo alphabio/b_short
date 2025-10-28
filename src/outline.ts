@@ -38,8 +38,10 @@ export default function outline(value: string): Record<string, string> | undefin
     }
   }
 
-  // CSS spec: outline shorthand always sets width, style, and color
   // Use defaults for missing properties
+  // Per CSS spec, the default values for outline shorthand are:
+  //   width: 'medium', style: 'none', color: 'currentcolor'
+  // See: https://drafts.csswg.org/css-ui-4/#propdef-outline
   return sortProperties({
     "outline-width": parsed.width || "medium",
     "outline-style": parsed.style || "none",

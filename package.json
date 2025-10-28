@@ -3,14 +3,14 @@
   "version": "2.3.0",
   "type": "module",
   "description": "Lightning-fast CSS shorthand property expansion to longhand equivalents. Supports 35+ shorthands including flex, grid, animation, transition, mask, and more. TypeScript-first, minimal dependencies, perfect for CSS-in-JS and build tools.",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -107,7 +107,7 @@
     },
     {
       "name": "CJS (require)",
-      "path": "dist/index.js",
+      "path": "dist/index.cjs",
       "limit": "125 KB"
     }
   ],

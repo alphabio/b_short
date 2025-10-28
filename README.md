@@ -26,8 +26,8 @@ b_short is a TypeScript-first library that expands CSS shorthand properties into
 
 ### Why b_short?
 
-- **🚀 Fast**: Zero-dependency core, optimized for performance
-- **📦 Lightweight**: ~15KB minified
+- **🚀 Fast**: Optimized for performance with efficient parsing
+- **📦 Lightweight**: ~107KB brotli with all dependencies (~18KB gzipped library code only)
 - **🎨 Complete**: Supports 35+ CSS shorthands including modern features
 - **🔒 Type-Safe**: Full TypeScript support with comprehensive type definitions
 - **✅ Reliable**: 808 tests ensuring 100% accuracy
@@ -609,7 +609,7 @@ const tokens = {
 ## ⚡ Performance
 
 - **Fast**: Optimized TypeScript with memoization for repeated calls
-- **Small**: ~15KB minified, ~5KB gzipped
+- **Small**: ~107KB brotli with all dependencies (ESM), ~118KB (CJS)
 - **Efficient**: LRU caching for frequently-used values
 - **Tested**: 808 comprehensive tests ensuring correctness
 
