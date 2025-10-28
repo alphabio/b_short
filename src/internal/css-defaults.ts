@@ -1,4 +1,4 @@
-// b_path:: src/css-defaults.ts
+// b_path:: src/internal/css-defaults.ts
 
 /**
  * CSS default values for directional properties (kebab-case).

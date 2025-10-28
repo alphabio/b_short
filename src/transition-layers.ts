@@ -1,10 +1,10 @@
 // b_path:: src/transition-layers.ts
 
 import * as csstree from "css-tree";
-import isTime from "./is-time";
-import isTimingFunction from "./is-timing-function";
-import { hasTopLevelCommas, parseLayersGeneric } from "./layer-parser-utils";
-import type { TransitionLayer, TransitionResult } from "./schema";
+import type { TransitionLayer, TransitionResult } from "./core/schema";
+import isTime from "./internal/is-time";
+import isTimingFunction from "./internal/is-timing-function";
+import { hasTopLevelCommas, parseLayersGeneric } from "./internal/layer-parser-utils";
 
 // CSS default values for transition properties
 export const TRANSITION_DEFAULTS = {

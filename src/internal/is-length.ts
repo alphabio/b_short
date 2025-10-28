@@ -1,4 +1,4 @@
-// b_path:: src/is-length.ts
+// b_path:: src/internal/is-length.ts
 const LENGTH = /^(\+|-)?([0-9]*\.)?[0-9]+(em|ex|ch|rem|vh|vw|vmin|vmax|px|mm|cm|in|pt|pc|%)$/i;
 const ZERO = /^(\+|-)?(0*\.)?0+$/;
 

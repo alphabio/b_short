@@ -1,4 +1,4 @@
-// b_path:: src/schema.ts
+// b_path:: src/core/schema.ts
 import { z } from "zod";
 
 /**

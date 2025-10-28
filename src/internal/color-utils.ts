@@ -1,4 +1,4 @@
-// b_path:: src/color-utils.ts
+// b_path:: src/internal/color-utils.ts
 // Color utility functions - replacing external dependencies for better self-containment
 
 export const CSS_COLOR_NAMES: Record<string, string> = {

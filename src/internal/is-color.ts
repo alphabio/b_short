@@ -1,4 +1,4 @@
-// b_path:: src/is-color.ts
+// b_path:: src/internal/is-color.ts
 import {
   CSS_COLOR_NAMES,
   hexColorRegex,

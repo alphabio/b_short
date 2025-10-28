@@ -1,4 +1,4 @@
-// b_path:: src/directional.ts
+// b_path:: src/internal/directional.ts
 
 /**
  * Cache for directional property expansion results.

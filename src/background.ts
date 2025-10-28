@@ -1,10 +1,10 @@
 // b_path:: src/background.ts
 
 import { parseBackgroundLayers, reconstructLayers } from "./background-layers";
-import { cssUrlRegex } from "./color-utils";
-import isColor from "./is-color";
-import isLength from "./is-length";
-import normalizeColor from "./normalize-color";
+import { cssUrlRegex } from "./internal/color-utils";
+import isColor from "./internal/is-color";
+import isLength from "./internal/is-length";
+import normalizeColor from "./internal/normalize-color";
 
 const ATTACHMENT = /^(fixed|local|scroll)$/;
 const BOX = /^(border-box|padding-box|content-box)$/;

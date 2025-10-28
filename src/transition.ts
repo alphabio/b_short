@@ -1,7 +1,7 @@
 // b_path:: src/transition.ts
 
-import isTime from "./is-time";
-import isTimingFunction from "./is-timing-function";
+import isTime from "./internal/is-time";
+import isTimingFunction from "./internal/is-timing-function";
 import { needsAdvancedParser, parseTransitionLayers, reconstructLayers } from "./transition-layers";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;

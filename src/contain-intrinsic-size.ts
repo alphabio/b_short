@@ -1,5 +1,5 @@
 // b_path:: src/contain-intrinsic-size.ts
-import isLength from "./is-length";
+import isLength from "./internal/is-length";
 
 export default (value: string): Record<string, string> | undefined => {
   // Handle global CSS keywords
