@@ -14,17 +14,11 @@ Wide keywords: inherit | initial | unset | revert | revert-layer. Your current s
 
  ---------------------
 
-
 Serializer s
-
-
 
  FILTERS!!!
 
-
 ---------------------
-
-
 
 Serializer polish
 Add preferColorOnly so color-only IR emits background-color: instead of background: none <color>.

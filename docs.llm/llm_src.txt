@@ -948,7 +948,7 @@ function processCssChildren(
     }
 
     // Handle colors
-    if (child.type === "Identifier" || child.type === "Function") {
+    if (child.type === "Identifier" || child.type === "Function" || child.type === "Hash") {
       const value = csstree.generate(child);
       if (isColor(value)) {
         result.color = value;
@@ -1036,10 +1036,8 @@ export function reconstructLayers(
     result[property] = values.join(", ");
   });
 
-  // Add color if specified
-  if (color) {
-    result["background-color"] = color;
-  }
+  // Add color (defaults to transparent if not specified)
+  result["background-color"] = color || "transparent";
 
   return result;
 }
@@ -1797,9 +1795,98 @@ export default (value: string): Record<string, string> | undefined => {
 };
 
 
+=== File: src/css-defaults.ts ===
+// b_path:: src/css-defaults.ts
+
+/**
+ * CSS default values for directional properties (kebab-case).
+ * Used for partial longhand expansion when expandPartialLonghand option is enabled.
+ */
+export const CSS_DEFAULTS: Record<string, string> = {
+  // Border width
+  "border-top-width": "medium",
+  "border-right-width": "medium",
+  "border-bottom-width": "medium",
+  "border-left-width": "medium",
+
+  // Border style
+  "border-top-style": "none",
+  "border-right-style": "none",
+  "border-bottom-style": "none",
+  "border-left-style": "none",
+
+  // Border color
+  "border-top-color": "currentcolor",
+  "border-right-color": "currentcolor",
+  "border-bottom-color": "currentcolor",
+  "border-left-color": "currentcolor",
+
+  // Border radius
+  "border-top-left-radius": "0",
+  "border-top-right-radius": "0",
+  "border-bottom-right-radius": "0",
+  "border-bottom-left-radius": "0",
+
+  // Margin
+  "margin-top": "0",
+  "margin-right": "0",
+  "margin-bottom": "0",
+  "margin-left": "0",
+
+  // Padding
+  "padding-top": "0",
+  "padding-right": "0",
+  "padding-bottom": "0",
+  "padding-left": "0",
+
+  // Positioning
+  top: "auto",
+  right: "auto",
+  bottom: "auto",
+  left: "auto",
+
+  // Scroll margin
+  "scroll-margin-top": "0",
+  "scroll-margin-right": "0",
+  "scroll-margin-bottom": "0",
+  "scroll-margin-left": "0",
+
+  // Scroll padding
+  "scroll-padding-top": "auto",
+  "scroll-padding-right": "auto",
+  "scroll-padding-bottom": "auto",
+  "scroll-padding-left": "auto",
+};
+
+
 === File: src/directional.ts ===
 // b_path:: src/directional.ts
+
+/**
+ * Cache for directional property expansion results.
+ * Improves performance for repeated calls with same values.
+ */
+const directionalCache = new Map<string, Record<string, string>>();
+const MAX_CACHE_SIZE = 1000;
+
+/**
+ * Expands directional values (top, right, bottom, left) from CSS shorthand notation.
+ * Supports 1-4 value syntax and caches results for performance.
+ *
+ * @param value - CSS value string with 1-4 space-separated values
+ * @returns Object with top, right, bottom, left properties, or undefined if invalid
+ *
+ * @example
+ * directional('10px') // { top: '10px', right: '10px', bottom: '10px', left: '10px' }
+ * directional('10px 20px') // { top: '10px', right: '20px', bottom: '10px', left: '20px' }
+ * directional('10px 20px 30px') // { top: '10px', right: '20px', bottom: '30px', left: '20px' }
+ * directional('10px 20px 30px 40px') // { top: '10px', right: '20px', bottom: '30px', left: '40px' }
+ */
 export default function directional(value: string): Record<string, string> | undefined {
+  // Check cache first
+  const cached = directionalCache.get(value);
+  if (cached) return cached;
+
   const values = value.split(/\s+/);
 
   if (values.length === 1) values.splice(0, 1, ...Array.from({ length: 4 }, () => values[0]));
@@ -1807,13 +1894,228 @@ export default function directional(value: string): Record<string, string> | und
   else if (values.length === 3) values.push(values[1]);
   else if (values.length > 4) return;
 
-  return ["top", "right", "bottom", "left"].reduce(
+  const result = ["top", "right", "bottom", "left"].reduce(
     (acc: Record<string, string>, direction: string, i: number) => {
       acc[direction] = values[i];
       return acc;
     },
     {}
   );
+
+  // Cache result with size limit
+  if (directionalCache.size >= MAX_CACHE_SIZE) {
+    // Remove oldest entry (first key)
+    const firstKey = directionalCache.keys().next().value;
+    if (firstKey !== undefined) {
+      directionalCache.delete(firstKey);
+    }
+  }
+  directionalCache.set(value, result);
+
+  return result;
+}
+
+
+=== File: src/expand-directional.ts ===
+// b_path:: src/expand-directional.ts
+
+import { CSS_DEFAULTS } from "./css-defaults";
+
+const DIRECTIONAL_SIDES = ["top", "right", "bottom", "left"] as const;
+const CORNER_POSITIONS = ["top-left", "top-right", "bottom-right", "bottom-left"] as const;
+
+/**
+ * Base key for grouping bare directional properties (top, right, bottom, left).
+ * These map to the CSS `inset` logical property group.
+ */
+const INSET_BASE_KEY = "inset";
+
+/**
+ * Base key for grouping border-radius corner properties.
+ * These share the same "border-radius" shorthand.
+ */
+const BORDER_RADIUS_BASE_KEY = "border-radius";
+
+/**
+ * Grouping information for side-based directional properties (top, right, bottom, left).
+ */
+interface DirectionalGroup {
+  prefix: string;
+  suffix: string;
+  sides: Set<string>;
+}
+
+/**
+ * Grouping information for corner-based properties (top-left, top-right, etc.).
+ */
+interface CornerGroup {
+  corners: Set<string>;
+}
+
+/**
+ * Builds a full CSS property name from prefix, side, and suffix components.
+ *
+ * @param prefix - Property prefix (e.g., "border-", "margin-", or "")
+ * @param side - Directional side (e.g., "top", "right", "bottom", "left")
+ * @param suffix - Property suffix (e.g., "-width", "-style", or "")
+ * @returns Full property name (e.g., "border-top-width", "margin-top", "top")
+ *
+ * @example
+ * buildPropertyName("border-", "top", "-width") // → "border-top-width"
+ * buildPropertyName("margin-", "top", "") // → "margin-top"
+ * buildPropertyName("", "top", "") // → "top"
+ */
+function buildPropertyName(prefix: string, side: string, suffix: string): string {
+  if (prefix === "" && suffix === "") {
+    // Just the side (top, right, bottom, left)
+    return side;
+  }
+  if (suffix === "") {
+    // prefix-side (e.g., "margin-top")
+    return `${prefix}${side}`;
+  }
+  // prefix-side-suffix (e.g., "border-top-width")
+  return `${prefix}${side}${suffix}`;
+}
+
+/**
+ * Expands partial directional properties by filling in missing sides with CSS defaults.
+ *
+ * Scans the result for directional keywords (top, right, bottom, left), groups them by
+ * base property, and fills in any missing sides with their CSS default values.
+ *
+ * @param result - Object with CSS properties (kebab-case)
+ * @returns New object with expanded directional properties
+ *
+ * @example
+ * expandDirectionalProperties({ 'border-top-width': '1px' })
+ * // → {
+ * //     'border-top-width': '1px',
+ * //     'border-right-width': 'medium',
+ * //     'border-bottom-width': 'medium',
+ * //     'border-left-width': 'medium'
+ * //   }
+ */
+export function expandDirectionalProperties(
+  result: Record<string, string>
+): Record<string, string> {
+  const groups = new Map<string, DirectionalGroup>();
+  const cornerGroups = new Map<string, CornerGroup>();
+
+  // Pre-compile regex for directional property matching (more efficient than string operations)
+  // Matches: -(top|right|bottom|left)- or -(top|right|bottom|left)$ or exact side
+  const directionalRegex = /^(.*)-(top|right|bottom|left)(-(.*))?$|^(top|right|bottom|left)$/;
+
+  // Detect directional properties and group by base
+  for (const property of Object.keys(result)) {
+    // Check for border-radius corner properties first
+    const cornerMatch = property.match(
+      /^border-(top-left|top-right|bottom-right|bottom-left)-radius$/
+    );
+    if (cornerMatch) {
+      const corner = cornerMatch[1];
+      if (!cornerGroups.has(BORDER_RADIUS_BASE_KEY)) {
+        cornerGroups.set(BORDER_RADIUS_BASE_KEY, { corners: new Set() });
+      }
+      cornerGroups.get(BORDER_RADIUS_BASE_KEY)!.corners.add(corner);
+      continue;
+    }
+
+    // Check for side-based directional properties using pre-compiled regex
+    const match = property.match(directionalRegex);
+    if (match) {
+      // match[1] = prefix (if side in middle or end), match[2] = side (if hyphenated),
+      // match[4] = suffix (if side in middle), match[5] = bare side
+      const side = match[2] || match[5]; // Side from hyphenated or bare match
+
+      if (!side) continue; // Shouldn't happen, but defensive check
+
+      if (match[5]) {
+        // Bare side property (e.g., "top")
+        const prefix = "";
+        const suffix = "";
+        const baseKey = INSET_BASE_KEY;
+
+        if (!groups.has(baseKey)) {
+          groups.set(baseKey, { prefix, suffix, sides: new Set() });
+        }
+        groups.get(baseKey)!.sides.add(side);
+      } else if (match[4] !== undefined) {
+        // Side in the middle (e.g., border-top-width)
+        const prefix = match[1] ? `${match[1]}-` : ""; // Include trailing hyphen
+        const suffix = match[4] ? `-${match[4]}` : ""; // Include leading hyphen
+        const baseKey = `${prefix}|${suffix}`; // Normalized grouping key
+
+        if (!groups.has(baseKey)) {
+          groups.set(baseKey, { prefix, suffix, sides: new Set() });
+        }
+        groups.get(baseKey)!.sides.add(side);
+      } else {
+        // Side at the end (e.g., margin-top)
+        const prefix = match[1] ? `${match[1]}-` : ""; // Include trailing hyphen
+        const suffix = "";
+        const baseKey = prefix || side; // Use prefix as key; fallback to side
+
+        if (!groups.has(baseKey)) {
+          groups.set(baseKey, { prefix, suffix, sides: new Set() });
+        }
+        groups.get(baseKey)!.sides.add(side);
+      }
+    }
+  }
+
+  // If no directional groups found, return as-is
+  if (groups.size === 0 && cornerGroups.size === 0) {
+    return result;
+  }
+
+  const expanded: Record<string, string> = { ...result };
+
+  // Fill missing corners for border-radius
+  for (const [, group] of cornerGroups) {
+    const { corners } = group;
+
+    // If all 4 corners present, nothing to expand
+    if (corners.size === 4) {
+      continue;
+    }
+
+    // Add missing corners
+    for (const corner of CORNER_POSITIONS) {
+      if (!corners.has(corner)) {
+        const fullProperty = `border-${corner}-radius`;
+        const defaultValue = CSS_DEFAULTS[fullProperty];
+
+        if (defaultValue) {
+          expanded[fullProperty] = defaultValue;
+        }
+      }
+    }
+  }
+
+  // Fill missing sides with defaults
+  for (const [, group] of groups) {
+    const { prefix, suffix, sides } = group;
+
+    // If all 4 sides present, nothing to expand
+    if (sides.size === 4) {
+      continue;
+    }
+
+    // Add missing sides
+    for (const side of DIRECTIONAL_SIDES) {
+      if (!sides.has(side)) {
+        const fullProperty = buildPropertyName(prefix, side, suffix);
+        const defaultValue = CSS_DEFAULTS[fullProperty];
+
+        if (defaultValue) {
+          expanded[fullProperty] = defaultValue;
+        }
+      }
+    }
+  }
+
+  return expanded;
 }
 
 
@@ -2824,6 +3126,7 @@ import columnRule from "./column-rule";
 import columns from "./columns";
 import containIntrinsicSize from "./contain-intrinsic-size";
 import directional from "./directional";
+import { expandDirectionalProperties } from "./expand-directional";
 import flex from "./flex";
 import flexFlow from "./flex-flow";
 import font from "./font";
@@ -2839,11 +3142,49 @@ import overflow from "./overflow";
 import placeContent from "./place-content";
 import placeItems from "./place-items";
 import placeSelf from "./place-self";
-import type { BStyleWarning, ExpandOptions, ExpandResult } from "./schema";
+import type { BStyleWarning, ExpandOptions, ExpandResult, PropertyGrouping } from "./schema";
+import { FORMAT_CSS, FORMAT_JS, GROUPING_BY_PROPERTY, GROUPING_BY_SIDE } from "./schema";
 import textDecoration from "./text-decoration";
 import textEmphasis from "./text-emphasis";
 import transition from "./transition";
 import { validate } from "./validate";
+
+/**
+ * Removes all CSS comments from the input string.
+ * Uses a character-by-character scanning approach that safely handles multi-line comments.
+ */
+function stripComments(css: string): string {
+  // Remove all CSS comments /* ... */
+  // This function scans character-by-character to handle multi-line comments safely
+  let result = "";
+  let i = 0;
+
+  while (i < css.length) {
+    // Check for comment start
+    if (css[i] === "/" && css[i + 1] === "*") {
+      // Find comment end
+      let j = i + 2;
+      while (j < css.length) {
+        if (css[j] === "*" && css[j + 1] === "/") {
+          // Skip the comment, replace with a space to preserve token boundaries
+          result += " ";
+          i = j + 2;
+          break;
+        }
+        j++;
+      }
+      // If we didn't find a closing */, treat rest of string as comment and stop
+      if (j >= css.length) {
+        i = css.length;
+      }
+    } else {
+      result += css[i];
+      i++;
+    }
+  }
+
+  return result;
+}
 
 function parseInputString(input: string): string[] {
   const declarations: string[] = [];
@@ -2990,7 +3331,7 @@ const shorthand: Record<string, (value: string) => Record<string, string> | unde
   transition: transition,
 };
 
-export const PROPERTY_ORDER_MAP: Record<string, number> = {
+const PROPERTY_ORDER_MAP: Record<string, number> = {
   // Grid properties (indices 0-11)
   "grid-row-start": 0,
   "grid-row-end": 1,
@@ -3153,22 +3494,60 @@ export const PROPERTY_ORDER_MAP: Record<string, number> = {
 };
 
 /**
- * Sorts an object's properties according to CSS specification order defined in PROPERTY_ORDER_MAP
- * @param obj - Object with CSS properties to sort
- * @param grouping - Grouping strategy: "by-property" (default) or "by-side"
+ * Converts a kebab-case CSS property name to camelCase for JavaScript.
+ *
+ * @param property - CSS property name in kebab-case (e.g., "margin-top")
+ * @returns Property name in camelCase (e.g., "marginTop")
+ *
+ * @example
+ * kebabToCamelCase('margin-top') // → 'marginTop'
+ * kebabToCamelCase('text-decoration-line') // → 'textDecorationLine'
  */
-export function sortProperties(
+function kebabToCamelCase(property: string): string {
+  return property.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+/**
+ * Sorts an object's properties according to CSS specification order defined in PROPERTY_ORDER_MAP.
+ *
+ * @param obj - Object with CSS properties to sort
+ * @param grouping - Grouping strategy from PropertyGrouping enum
+ * @returns New object with properties sorted according to the specified strategy
+ *
+ * @example
+ * // by-property: groups all properties of same type together
+ * sortProperties({ 'margin-top': '5px', 'border-top-width': '1px' })
+ * // → { 'border-top-width': '1px', 'margin-top': '5px' }
+ *
+ * @example
+ * // by-side: groups all properties of same side together
+ * sortProperties({ 'margin-bottom': '5px', 'border-top-width': '1px' }, 'by-side')
+ * // → { 'border-top-width': '1px', 'margin-bottom': '5px' } (top before bottom)
+ */
+function sortProperties(
   obj: Record<string, string>,
-  grouping: "by-property" | "by-side" = "by-property"
+  grouping: PropertyGrouping = GROUPING_BY_PROPERTY
 ): Record<string, string> {
-  if (grouping === "by-side") {
+  if (grouping === GROUPING_BY_SIDE) {
     return sortPropertiesBySide(obj);
   }
   return sortPropertiesByProperty(obj);
 }
 
 /**
- * Helper to extract property metadata for directional grouping
+ * Helper to extract property metadata for directional grouping.
+ * Identifies the side (top/right/bottom/left) and base property name.
+ *
+ * @param prop - CSS property name to analyze
+ * @returns Metadata object with side, sideIndex, and base property
+ *
+ * @example
+ * getPropertyMetadata('border-top-width')
+ * // → { side: 'top', sideIndex: 0, base: 'border' }
+ *
+ * @example
+ * getPropertyMetadata('font-size')
+ * // → { side: null, sideIndex: -1, base: 'font' }
  */
 function getPropertyMetadata(prop: string): {
   side: string | null;
@@ -3185,8 +3564,11 @@ function getPropertyMetadata(prop: string): {
 }
 
 /**
- * Sort properties by property type (default CSS spec order)
- * Groups all properties of the same type together (e.g., all margins, then all borders)
+ * Sort properties by property type (default CSS spec order).
+ * Groups all properties of the same type together (e.g., all margins, then all borders).
+ *
+ * @param obj - Object with CSS properties to sort
+ * @returns New object with properties sorted by type
  */
 function sortPropertiesByProperty(obj: Record<string, string>): Record<string, string> {
   const sortedEntries = Object.entries(obj).sort(([a], [b]) => {
@@ -3205,8 +3587,12 @@ function sortPropertiesByProperty(obj: Record<string, string>): Record<string, s
 }
 
 /**
- * Sort properties by directional side
- * Groups all properties of the same side together (e.g., all top properties, then all right properties)
+ * Sort properties by directional side.
+ * Groups all properties of the same side together (e.g., all top properties, then all right properties).
+ * Useful for debugging and understanding box model relationships.
+ *
+ * @param obj - Object with CSS properties to sort
+ * @returns New object with properties sorted by side
  */
 function sortPropertiesBySide(obj: Record<string, string>): Record<string, string> {
   const sortedEntries = Object.entries(obj).sort(([a], [b]) => {
@@ -3252,7 +3638,7 @@ function objectToCss(
   obj: Record<string, string>,
   indent: number,
   separator: string,
-  propertyGrouping: "by-property" | "by-side" = "by-property"
+  propertyGrouping: PropertyGrouping = GROUPING_BY_PROPERTY
 ): string {
   const indentStr = "  ".repeat(indent);
 
@@ -3263,19 +3649,43 @@ function objectToCss(
   return sortedEntries.map(([key, value]) => `${indentStr}${key}: ${value};`).join(separator);
 }
 
-export default function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
+/**
+ * Expands CSS shorthand properties into their longhand equivalents.
+ *
+ * @param input - CSS declaration(s) to expand (e.g., "margin: 10px 20px;")
+ * @param options - Configuration options for expansion behavior
+ * @returns Object containing expansion result, success status, and any issues
+ *
+ * @example
+ * // Basic expansion
+ * expand('margin: 10px 20px;')
+ * // → { ok: true, result: 'margin-top: 10px;\nmargin-right: 20px;...', issues: [] }
+ *
+ * // JavaScript object format
+ * expand('padding: 1rem;', { format: 'js' })
+ * // → { ok: true, result: { 'padding-top': '1rem', ... }, issues: [] }
+ *
+ * // Multiple declarations with conflict resolution
+ * expand('margin: 10px; margin-top: 20px;', { format: 'js' })
+ * // → { ok: true, result: { 'margin-top': '20px', 'margin-right': '10px', ... }, issues: [] }
+ */
+function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
+  // Strip comments first to avoid parsing issues
+  const cleanedInput = stripComments(input);
+
   // Merge partial options with defaults from schema
   const {
-    format = "css",
+    format = FORMAT_CSS,
     indent = 0,
     separator = "\n",
-    propertyGrouping = "by-property",
+    propertyGrouping = GROUPING_BY_PROPERTY,
+    expandPartialLonghand = false,
   } = options;
 
   // Validate the input CSS directly (assume it's valid CSS)
-  const validation = validate(input);
+  const validation = validate(cleanedInput);
 
-  const inputs = parseInputString(input);
+  const inputs = parseInputString(cleanedInput);
   const results: (Record<string, string> | string)[] = [];
   const issues: BStyleWarning[] = [];
   const resultMetadata: Array<{ isShorthand: boolean; properties: Set<string> }> = [];
@@ -3334,7 +3744,25 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
     resultMetadata.push({ isShorthand: true, properties: new Set(Object.keys(result)) });
   }
 
-  // Conflict resolution function to handle shorthand/longhand property overrides
+  /**
+   * Resolves conflicts between shorthand and longhand properties according to CSS cascade rules.
+   *
+   * When a longhand property (e.g., margin-top) appears after a shorthand (e.g., margin),
+   * the longhand overrides that specific property from the shorthand expansion.
+   * When a shorthand appears after a longhand, the shorthand replaces all related longhands.
+   *
+   * @param results - Array of CSS declaration objects (either objects or strings)
+   * @param metadata - Array of metadata describing each result (shorthand vs longhand, properties affected)
+   * @returns Cleaned array with conflicts resolved
+   *
+   * @example
+   * // Input: ['margin: 10px', 'margin-top: 20px']
+   * // Output: margin-top from the shorthand is removed, replaced by explicit margin-top: 20px
+   *
+   * @example
+   * // Input: ['margin-top: 20px', 'margin: 10px']
+   * // Output: margin-top: 20px is removed, replaced by margin: 10px expansion
+   */
   function removeConflictingProperties(
     results: (Record<string, string> | string)[],
     metadata: Array<{ isShorthand: boolean; properties: Set<string> }>
@@ -3408,7 +3836,7 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
       } else {
         // Current result IS from shorthand expansion - check for conflicts with earlier non-shorthand results
         // Gate this behind CSS format only to mirror JS merge behavior
-        if (format === "css") {
+        if (format === FORMAT_CSS) {
           for (const prop of meta.properties) {
             const earlierIndex = propertyToResultIndex.get(prop);
             if (earlierIndex !== undefined) {
@@ -3461,6 +3889,13 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
     return cleanedResults;
   }
 
+  /**
+   * Helper to apply partial longhand expansion if enabled.
+   */
+  const applyPartialExpansion = (obj: Record<string, string>): Record<string, string> => {
+    return expandPartialLonghand ? expandDirectionalProperties(obj) : obj;
+  };
+
   let finalResult: Record<string, string> | string | undefined;
 
   // Apply conflict resolution for shorthand/longhand property overrides
@@ -3470,12 +3905,23 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
     finalResult = undefined;
   } else if (cleanedResults.length === 1) {
     const result = cleanedResults[0];
-    finalResult =
-      format === "css" && typeof result === "object"
-        ? objectToCss(result, indent, separator, propertyGrouping)
-        : result;
+    if (format === FORMAT_CSS && typeof result === "object") {
+      const resultToProcess = applyPartialExpansion(result);
+      finalResult = objectToCss(resultToProcess, indent, separator, propertyGrouping);
+    } else if (format === FORMAT_JS && typeof result === "object") {
+      const resultToProcess = applyPartialExpansion(result);
+      // Sort and convert to camelCase for JS format
+      const sorted = sortProperties(resultToProcess, propertyGrouping);
+      const camelCased: Record<string, string> = {};
+      for (const [key, value] of Object.entries(sorted)) {
+        camelCased[kebabToCamelCase(key)] = value;
+      }
+      finalResult = camelCased;
+    } else {
+      finalResult = result;
+    }
   } else {
-    if (format === "css") {
+    if (format === FORMAT_CSS) {
       // For CSS format with multiple declarations, we need to merge objects first
       // then convert to CSS to respect property grouping across declarations
       const mergedObject: Record<string, string> = {};
@@ -3488,7 +3934,8 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
 
       // If we have a merged object, convert it to CSS with proper grouping
       if (Object.keys(mergedObject).length > 0) {
-        finalResult = objectToCss(mergedObject, indent, separator, propertyGrouping);
+        const resultToProcess = applyPartialExpansion(mergedObject);
+        finalResult = objectToCss(resultToProcess, indent, separator, propertyGrouping);
       } else {
         // Fallback for non-object results (shouldn't normally happen)
         const cssResults = cleanedResults.map((result) =>
@@ -3499,7 +3946,7 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
         finalResult = cssResults.join(separator);
       }
     } else {
-      // format === "js" - merge objects with simple "later wins" logic
+      // format === FORMAT_JS (js) - merge objects with simple "later wins" logic
       const mergedResult: Record<string, string> = {};
       for (const result of cleanedResults) {
         if (typeof result === "object" && result) {
@@ -3507,8 +3954,18 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
         }
       }
 
+      const resultToProcess = applyPartialExpansion(mergedResult);
+
       // Sort the merged result according to the specified grouping strategy
-      finalResult = sortProperties(mergedResult, options.propertyGrouping || "by-property");
+      const sorted = sortProperties(resultToProcess, propertyGrouping);
+
+      // Convert property names to camelCase for JavaScript
+      const camelCased: Record<string, string> = {};
+      for (const [key, value] of Object.entries(sorted)) {
+        camelCased[kebabToCamelCase(key)] = value;
+      }
+
+      finalResult = camelCased;
     }
   }
 
@@ -3525,7 +3982,35 @@ export default function expand(input: string, options: Partial<ExpandOptions> = 
   };
 }
 
-export { expand, validate };
+// Export named functions only (no default export to avoid CJS/ESM ambiguity)
+export { expand, validate, sortProperties, PROPERTY_ORDER_MAP };
+
+// Re-export types for convenience
+export type {
+  AnimationLayer,
+  AnimationResult,
+  BackgroundLayer,
+  BackgroundResult,
+  BStyleWarning,
+  ExpandOptions,
+  ExpandResult,
+  Format,
+  MaskLayer,
+  MaskResult,
+  PropertyGrouping,
+  StylesheetValidation,
+  TransitionLayer,
+  TransitionResult,
+} from "./schema";
+// Export enum values and constants for runtime use
+export {
+  FORMAT_CSS,
+  FORMAT_JS,
+  FORMAT_VALUES,
+  GROUPING_BY_PROPERTY,
+  GROUPING_BY_SIDE,
+  PROPERTY_GROUPING_VALUES,
+} from "./schema";
 
 
 === File: src/is-angle.ts ===
@@ -3555,24 +4040,61 @@ const HSL = hslRegex({ exact: true });
 const RGB = rgbRegex({ exact: true });
 const RGBA = rgbaRegex({ exact: true });
 
+/**
+ * Cache for color validation results.
+ * Improves performance for repeated color checks.
+ */
+const colorCache = new Map<string, boolean>();
+const MAX_CACHE_SIZE = 500;
+
+/**
+ * Checks if a string value represents a valid CSS color.
+ * Supports named colors, hex, rgb, rgba, hsl, hsla, and CSS custom properties.
+ * Results are cached for performance.
+ *
+ * @param value - The CSS value to check
+ * @returns true if the value is a valid color, false otherwise
+ *
+ * @example
+ * isColor('red') // true
+ * isColor('#ff0000') // true
+ * isColor('rgb(255, 0, 0)') // true
+ * isColor('var(--primary-color)') // true
+ * isColor('10px') // false
+ */
 export default function isColor(value: string): boolean {
-  value = value.toLowerCase();
+  // Check cache first
+  const cached = colorCache.get(value);
+  if (cached !== undefined) return cached;
+
+  const lowerValue = value.toLowerCase();
 
   // Support CSS custom property (var name)
-  if (/^var\(\s*--[a-zA-Z0-9-_]+\s*\)$/.test(value)) {
+  if (/^var\(\s*--[a-zA-Z0-9-_]+\s*\)$/.test(lowerValue)) {
+    colorCache.set(value, true);
     return true;
   }
 
-  return (
-    !!CSS_COLOR_NAMES[value] ||
-    value === "currentcolor" ||
-    value === "transparent" ||
-    HEX.test(value) ||
-    HSLA.test(value) ||
-    HSL.test(value) ||
-    RGB.test(value) ||
-    RGBA.test(value)
-  );
+  const result =
+    !!CSS_COLOR_NAMES[lowerValue] ||
+    lowerValue === "currentcolor" ||
+    lowerValue === "transparent" ||
+    HEX.test(lowerValue) ||
+    HSLA.test(lowerValue) ||
+    HSL.test(lowerValue) ||
+    RGB.test(lowerValue) ||
+    RGBA.test(lowerValue);
+
+  // Cache result with size limit
+  if (colorCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = colorCache.keys().next().value;
+    if (firstKey !== undefined) {
+      colorCache.delete(firstKey);
+    }
+  }
+  colorCache.set(value, result);
+
+  return result;
 }
 
 
@@ -4841,23 +5363,53 @@ export function consolidatePlaceTokens(
 // b_path:: src/schema.ts
 import { z } from "zod";
 
-// Base CSS value schemas
+/**
+ * Base CSS value schemas
+ */
 export const CssValueSchema = z.string().describe("CSS property value");
 export const CssPropertySchema = z.string().describe("CSS property name");
 export const CssDeclarationSchema = z.string().describe("CSS declaration string");
 
-// Format options schema
+/**
+ * Output format enum schema
+ * - 'css': Returns kebab-case CSS string (e.g., "margin-top: 10px;")
+ * - 'js': Returns camelCase JavaScript object (e.g., { marginTop: '10px' })
+ */
+export const FormatEnumSchema = z.enum(["css", "js"]);
+
+/**
+ * Property grouping strategy enum schema
+ * - 'by-property': Groups by property type (e.g., all margins, then all borders)
+ * - 'by-side': Groups by directional side (e.g., all top properties, then all right properties)
+ */
+export const PropertyGroupingEnumSchema = z.enum(["by-property", "by-side"]);
+
+// Derive enum arrays from schemas for runtime use
+export const FORMAT_VALUES = FormatEnumSchema.options;
+export const PROPERTY_GROUPING_VALUES = PropertyGroupingEnumSchema.options;
+
+// Named constants for better readability (derived directly from schema)
+export const FORMAT_CSS = "css" as const;
+export const FORMAT_JS = "js" as const;
+export const GROUPING_BY_PROPERTY = "by-property" as const;
+export const GROUPING_BY_SIDE = "by-side" as const;
+
+/**
+ * Options schema for CSS shorthand expansion
+ */
 export const ExpandOptionsSchema = z
   .object({
-    format: z.enum(["js", "css"]).default("css").optional().describe("Output format"),
-    indent: z.number().min(0).default(0).optional().describe("Indentation for CSS output"),
-    separator: z.string().default("\n").optional().describe("Separator between CSS declarations"),
-    propertyGrouping: z
-      .enum(["by-property", "by-side"])
-      .default("by-property")
-      .optional()
+    format: FormatEnumSchema.default("css").describe("Output format"),
+    indent: z.number().min(0).default(0).describe("Indentation for CSS output"),
+    separator: z.string().default("\n").describe("Separator between CSS declarations"),
+    propertyGrouping: PropertyGroupingEnumSchema.default("by-property").describe(
+      "Property grouping strategy: 'by-property' groups by property type (e.g., all margins, then all borders), 'by-side' groups by directional side (e.g., all top properties, then all right properties)"
+    ),
+    expandPartialLonghand: z
+      .boolean()
+      .default(false)
       .describe(
-        "Property grouping strategy: 'by-property' groups by property type (e.g., all margins, then all borders), 'by-side' groups by directional side (e.g., all top properties, then all right properties)"
+        "Expand partial directional longhand properties (e.g., margin-top) by filling in missing sides with CSS default values"
       ),
   })
   .describe("Options for CSS expansion");
@@ -5049,6 +5601,8 @@ export const StylesheetValidationSchema = z
   .describe("Result of CSS stylesheet validation");
 
 // Derived TypeScript types from schemas
+export type Format = z.infer<typeof FormatEnumSchema>;
+export type PropertyGrouping = z.infer<typeof PropertyGroupingEnumSchema>;
 export type ExpandOptions = z.infer<typeof ExpandOptionsSchema>;
 export type ExpandResult = z.infer<typeof ExpandResultSchema>;
 export type BackgroundLayer = z.infer<typeof BackgroundLayerSchema>;
@@ -5067,6 +5621,8 @@ export type CssDeclaration = z.infer<typeof CssDeclarationSchema>;
 
 // Export schemas for runtime validation
 export const schemas = {
+  Format: FormatEnumSchema,
+  PropertyGrouping: PropertyGroupingEnumSchema,
   ExpandOptions: ExpandOptionsSchema,
   ExpandResult: ExpandResultSchema,
   BackgroundLayer: BackgroundLayerSchema,
@@ -5604,7 +6160,7 @@ import {
 // Constants
 const DEFAULT_MAX_LINE_WIDTH = 80;
 const LINE_NUMBER_PADDING = 4;
-const CONTEXT_WINDOW_SIZE = 2; // Lines before and after error
+const DEFAULT_CONTEXT_WINDOW_SIZE = 2; // Lines before and after error
 
 export interface BStyleMatchError extends csstree.SyntaxMatchError {
   property: string;
@@ -5619,8 +6175,9 @@ export interface Declaration {
   node: csstree.CssNode;
 }
 
-interface ErrorFormatOptions {
+export interface ErrorFormatOptions {
   maxLineWidth: number;
+  contextWindowSize?: number;
 }
 
 interface TruncationBounds {
@@ -5758,12 +6315,22 @@ export function validateDeclaration(value: string, prop: string): StylesheetVali
 }
 
 // Helper functions
+/**
+ * Calculates the line window to display around an error line.
+ * Shows contextWindowSize lines before and after the error for better context.
+ *
+ * @param errorLine - The line number where the error occurred
+ * @param totalLines - Total number of lines in the CSS
+ * @param contextWindowSize - Number of lines to show before and after error (default: 2)
+ * @returns Object with start and end line numbers for the context window
+ */
 function calculateLineWindow(
   errorLine: number,
-  totalLines: number
+  totalLines: number,
+  contextWindowSize: number = DEFAULT_CONTEXT_WINDOW_SIZE
 ): { start: number; end: number } {
-  const start = Math.max(1, errorLine - CONTEXT_WINDOW_SIZE);
-  const end = Math.min(totalLines, errorLine + CONTEXT_WINDOW_SIZE);
+  const start = Math.max(1, errorLine - contextWindowSize);
+  const end = Math.min(totalLines, errorLine + contextWindowSize);
   return { start, end };
 }
 
@@ -5905,10 +6472,30 @@ function createPointerLine(prefixLength: number, column: number, length: number)
   return pointerPrefix + dashes + carets;
 }
 
+/**
+ * Formats and displays CSS validation errors with visual context.
+ * Shows the error line with surrounding context, line numbers, and pointer indicators.
+ *
+ * @param cssLines - Array of CSS source lines
+ * @param warning - The validation error/warning to format
+ * @param options - Formatting options (maxLineWidth, contextWindowSize)
+ * @returns Array of formatted strings representing the error display
+ *
+ * @example
+ * // Error at line 5, column 10:
+ * //   3 | .class {
+ * //   4 |   margin: 10px;
+ * //   5 |   color: notacolor;
+ * //       ---------^^^^^^^^^^^
+ * //   6 | }
+ */
 function formatErrorDisplay(
   cssLines: string[],
   warning: BStyleMatchError,
-  options: ErrorFormatOptions = { maxLineWidth: DEFAULT_MAX_LINE_WIDTH }
+  options: ErrorFormatOptions = {
+    maxLineWidth: DEFAULT_MAX_LINE_WIDTH,
+    contextWindowSize: DEFAULT_CONTEXT_WINDOW_SIZE,
+  }
 ): string[] {
   // Input validation
   if (!cssLines.length || warning.line < 1 || warning.line > cssLines.length) {
@@ -5917,8 +6504,9 @@ function formatErrorDisplay(
   const errorLine = warning.line;
   const errorColumn = warning.column;
   const mismatchLength = warning.mismatchLength ?? 1;
+  const contextWindowSize = options.contextWindowSize ?? DEFAULT_CONTEXT_WINDOW_SIZE;
 
-  const { start, end } = calculateLineWindow(errorLine, cssLines.length);
+  const { start, end } = calculateLineWindow(errorLine, cssLines.length, contextWindowSize);
   const maxLineNum = end;
   const linePrefix = formatLineNumber(1, maxLineNum);
   const prefixLength = linePrefix.length;

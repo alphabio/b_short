@@ -1,3 +1,4 @@
+// b_path:: test/performance.test.ts
 /**
  * Performance regression tests for b_short.
  * Ensures that performance stays within acceptable bounds.

@@ -33,6 +33,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundAttachment: "scroll, scroll",
       backgroundOrigin: "padding-box, padding-box",
       backgroundClip: "border-box, border-box",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -46,6 +47,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundAttachment: "scroll, scroll, scroll",
       backgroundOrigin: "padding-box, padding-box, padding-box",
       backgroundClip: "border-box, border-box, border-box",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -59,6 +61,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundAttachment: "scroll, scroll, scroll",
       backgroundOrigin: "padding-box, padding-box, padding-box",
       backgroundClip: "border-box, border-box, border-box",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -72,6 +75,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundAttachment: "scroll, scroll, scroll",
       backgroundOrigin: "padding-box, padding-box, padding-box",
       backgroundClip: "border-box, border-box, border-box",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -85,6 +89,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundRepeat: "repeat, repeat, repeat",
       backgroundOrigin: "padding-box, padding-box, padding-box",
       backgroundClip: "border-box, border-box, border-box",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -98,6 +103,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundSize: "auto auto, auto auto, auto auto",
       backgroundRepeat: "repeat, repeat, repeat",
       backgroundAttachment: "scroll, scroll, scroll",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -112,6 +118,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundAttachment: "scroll, scroll, scroll, scroll",
       backgroundOrigin: "padding-box, padding-box, padding-box, padding-box",
       backgroundClip: "border-box, border-box, border-box, border-box",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -182,6 +189,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundAttachment: "scroll, scroll, scroll",
       backgroundOrigin: "padding-box, padding-box, padding-box",
       backgroundClip: "border-box, border-box, border-box",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -195,6 +203,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundAttachment: "scroll, scroll, scroll",
       backgroundOrigin: "padding-box, padding-box, padding-box",
       backgroundClip: "border-box, border-box, border-box",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -208,6 +217,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundSize: "auto auto, auto auto, auto auto",
       backgroundRepeat: "repeat, repeat, repeat",
       backgroundAttachment: "scroll, scroll, scroll",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -221,6 +231,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundSize: "auto auto, auto auto, auto auto",
       backgroundRepeat: "repeat, repeat, repeat",
       backgroundAttachment: "scroll, scroll, scroll",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -234,6 +245,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundAttachment: "scroll, scroll",
       backgroundOrigin: "padding-box, padding-box",
       backgroundClip: "border-box, border-box",
+      backgroundColor: "transparent",
     },
   },
   {
@@ -247,6 +259,7 @@ const backgroundLayerTestFixtures: TestCase[] = [
       backgroundAttachment: "scroll, scroll",
       backgroundOrigin: "padding-box, padding-box",
       backgroundClip: "border-box, border-box",
+      backgroundColor: "transparent",
     },
   },
 ];

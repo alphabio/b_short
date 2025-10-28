@@ -381,6 +381,7 @@ describe("background (invalid cases)", () => {
       backgroundAttachment: "scroll, scroll",
       backgroundOrigin: "padding-box, padding-box",
       backgroundClip: "border-box, border-box",
+      backgroundColor: "transparent",
     });
   });
 
@@ -407,6 +408,7 @@ describe("background (invalid cases)", () => {
       backgroundAttachment: "scroll",
       backgroundOrigin: "padding-box",
       backgroundClip: "border-box",
+      backgroundColor: "transparent",
     });
   });
 

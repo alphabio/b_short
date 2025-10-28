@@ -39,6 +39,7 @@ describe("property override behavior", () => {
       backgroundAttachment: "scroll",
       backgroundOrigin: "padding-box",
       backgroundClip: "border-box",
+      backgroundColor: "transparent",
     });
   });
 
@@ -82,6 +83,7 @@ describe("property override behavior", () => {
       backgroundAttachment: "scroll",
       backgroundOrigin: "padding-box",
       backgroundClip: "border-box",
+      backgroundColor: "transparent",
     });
   });
 
