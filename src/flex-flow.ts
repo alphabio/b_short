@@ -1,5 +1,5 @@
 // b_path:: src/flex-flow.ts
-import { createPropertyHandler, type PropertyHandler } from "./property-handler";
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 
 /**
  * Property handler for the 'flex-flow' CSS shorthand property

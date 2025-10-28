@@ -1,5 +1,5 @@
 // b_path:: src/overflow.ts
-import { createPropertyHandler, type PropertyHandler } from "./property-handler";
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 
 /**
  * Property handler for the 'overflow' CSS shorthand property

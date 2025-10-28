@@ -1,8 +1,8 @@
 // b_path:: src/mask-layers.ts
 
 import * as csstree from "css-tree";
-import { hasTopLevelCommas, parseLayersGeneric } from "./layer-parser-utils";
-import type { MaskLayer, MaskResult } from "./schema";
+import type { MaskLayer, MaskResult } from "./core/schema";
+import { hasTopLevelCommas, parseLayersGeneric } from "./internal/layer-parser-utils";
 
 // CSS default values for mask properties
 export const MASK_DEFAULTS = {

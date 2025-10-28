@@ -1,4 +1,4 @@
-// b_path:: src/layer-parser-utils.ts
+// b_path:: src/internal/layer-parser-utils.ts
 
 /**
  * Shared utilities for parsing multi-layer CSS properties (background, mask, animation, transition).

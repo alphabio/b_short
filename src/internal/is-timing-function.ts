@@ -1,4 +1,4 @@
-// b_path:: src/is-timing-function.ts
+// b_path:: src/internal/is-timing-function.ts
 // Utility to detect CSS timing function values for transition-timing-function parsing
 const TIMING_KEYWORDS = /^(ease|linear|ease-in|ease-out|ease-in-out|step-start|step-end)$/i;
 const TIMING_FUNCTIONS = /^(cubic-bezier|steps)\s*\(/i;

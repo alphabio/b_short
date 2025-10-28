@@ -6,8 +6,8 @@ import {
   parseAnimationLayers,
   reconstructLayers,
 } from "./animation-layers";
-import isTime from "./is-time";
-import isTimingFunction from "./is-timing-function";
+import isTime from "./internal/is-time";
+import isTimingFunction from "./internal/is-timing-function";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
 const ITERATION_COUNT = /^(infinite|[0-9]+(\.[0-9]+)?)$/;

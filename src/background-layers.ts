@@ -1,9 +1,9 @@
 // b_path:: src/background-layers.ts
 
 import * as csstree from "css-tree";
-import isColor from "./is-color";
-import { hasTopLevelCommas, splitLayers } from "./layer-parser-utils";
-import type { BackgroundLayer, BackgroundResult } from "./schema";
+import type { BackgroundLayer, BackgroundResult } from "./core/schema";
+import isColor from "./internal/is-color";
+import { hasTopLevelCommas, splitLayers } from "./internal/layer-parser-utils";
 
 // CSS default values for background properties
 export const BACKGROUND_DEFAULTS = {

@@ -1,4 +1,4 @@
-// b_path:: src/property-handler.ts
+// b_path:: src/internal/property-handler.ts
 import { z } from "zod";
 
 /**

@@ -1,7 +1,7 @@
 // b_path:: src/place-self.ts
 
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 import { consolidatePlaceTokens } from "./place-utils";
-import { createPropertyHandler, type PropertyHandler } from "./property-handler";
 
 /**
  * Property handler for the 'place-self' CSS shorthand property

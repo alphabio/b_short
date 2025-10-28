@@ -53,6 +53,7 @@ words:
   - hsla
   - indianred
   - justfile
+  - larg
   - lavenderblush
   - lawngreen
   - lemonchiffon
@@ -86,6 +87,7 @@ words:
   - mintcream
   - mistyrose
   - navajowhite
+  - Neue
   - notacolor
   - npmjs
   - npmtrends
@@ -118,9 +120,12 @@ words:
   - springgreen
   - steelblue
   - tsconfig
+  - unitless
   - Unparseable
   - url
   - vitest
+  - vmax
+  - vmin
   - webdev
   - whitesmoke
   - xtend

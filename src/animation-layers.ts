@@ -1,10 +1,10 @@
 // b_path:: src/animation-layers.ts
 
 import * as csstree from "css-tree";
-import isTime from "./is-time";
-import isTimingFunction from "./is-timing-function";
-import { hasTopLevelCommas, parseLayersGeneric } from "./layer-parser-utils";
-import type { AnimationLayer, AnimationResult } from "./schema";
+import type { AnimationLayer, AnimationResult } from "./core/schema";
+import isTime from "./internal/is-time";
+import isTimingFunction from "./internal/is-timing-function";
+import { hasTopLevelCommas, parseLayersGeneric } from "./internal/layer-parser-utils";
 
 // CSS default values for animation properties
 export const ANIMATION_DEFAULTS = {
