@@ -1,4 +1,4 @@
-// b_path:: src/normalize-color.ts
+// b_path:: src/internal/normalize-color.ts
 import { hslaRegex, hslRegex, rgbaRegex, rgbRegex } from "./color-utils";
 
 const FUNCTIONS = [hslaRegex(), hslRegex(), rgbRegex(), rgbaRegex()];

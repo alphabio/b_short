@@ -1,7 +1,7 @@
 // b_path:: src/list-style.ts
-import { cssUrlRegex } from "./color-utils";
-import { sortProperties } from "./index";
-import normalizeColor from "./normalize-color";
+import { cssUrlRegex } from "./internal/color-utils";
+import normalizeColor from "./internal/normalize-color";
+import { sortProperties } from "./internal/property-sorter";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
 const POSITION = /^(inside|outside)$/i;

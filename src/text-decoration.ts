@@ -1,8 +1,9 @@
 // b_path:: src/text-decoration.ts
-import { sortProperties } from "./index";
-import isColor from "./is-color";
-import isLength from "./is-length";
-import normalizeColor from "./normalize-color";
+
+import isColor from "./internal/is-color";
+import isLength from "./internal/is-length";
+import normalizeColor from "./internal/normalize-color";
+import { sortProperties } from "./internal/property-sorter";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
 const LINE = /^(none|underline|overline|line-through|blink|spelling-error|grammar-error)$/i;

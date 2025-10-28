@@ -3,7 +3,7 @@
  * Copied from https://github.com/bramstein/css-font-parser
  */
 
-import { sortProperties } from "./index";
+import { sortProperties } from "./internal/property-sorter";
 
 /**
  * @enum {number}

@@ -1,5 +1,5 @@
 // b_path:: src/flex.ts
-import isLength from "./is-length";
+import isLength from "./internal/is-length";
 
 export default function (value: string): Record<string, string> | undefined {
   // Handle global CSS keywords

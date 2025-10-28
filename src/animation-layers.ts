@@ -1,9 +1,10 @@
 // b_path:: src/animation-layers.ts
 
 import * as csstree from "css-tree";
-import isTime from "./is-time";
-import isTimingFunction from "./is-timing-function";
-import type { AnimationLayer, AnimationResult } from "./schema";
+import type { AnimationLayer, AnimationResult } from "./core/schema";
+import isTime from "./internal/is-time";
+import isTimingFunction from "./internal/is-timing-function";
+import { hasTopLevelCommas, parseLayersGeneric } from "./internal/layer-parser-utils";
 
 // CSS default values for animation properties
 export const ANIMATION_DEFAULTS = {
@@ -21,103 +22,15 @@ export const ANIMATION_DEFAULTS = {
  * Detects if an animation value needs advanced parsing (multi-layer animations or complex functions)
  */
 export function needsAdvancedParser(value: string): boolean {
-  // Use advanced parsing for:
-  // 1. Multi-layer animations (comma-separated)
-  // 2. Complex timing functions with parentheses
-  // Must ignore commas inside parentheses/brackets (functions, rgba(), etc.)
-  let parenDepth = 0;
-  let bracketDepth = 0;
-  let hasFunctions = false;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-      hasFunctions = true;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this indicates multiple layers
-      return true;
-    }
-  }
-
-  // Use advanced parsing for complex timing functions
-  return hasFunctions;
-}
-
-/**
- * Splits an animation value into layers, respecting nested functions
- */
-function splitLayers(value: string): string[] {
-  const layers: string[] = [];
-  let currentLayer = "";
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this separates layers
-      layers.push(currentLayer.trim());
-      currentLayer = "";
-      continue;
-    }
-
-    currentLayer += char;
-  }
-
-  // Add the last layer
-  if (currentLayer.trim()) {
-    layers.push(currentLayer.trim());
-  }
-
-  return layers;
+  return hasTopLevelCommas(value, true);
 }
 
 /**
  * Parses a complex animation value using css-tree AST parsing
  */
 export function parseAnimationLayers(value: string): AnimationResult | undefined {
-  try {
-    // Split into layers
-    const layerStrings = splitLayers(value);
-    if (layerStrings.length === 0) {
-      return undefined;
-    }
-
-    // Parse each layer to extract all properties
-    const layers: AnimationLayer[] = [];
-
-    for (const layerStr of layerStrings) {
-      const parsedLayer = parseSingleLayer(layerStr);
-      if (!parsedLayer) {
-        return undefined; // Parsing failed for this layer
-      }
-      layers.push(parsedLayer);
-    }
-
-    return {
-      layers,
-    };
-  } catch (_error) {
-    // If parsing fails, return undefined to indicate invalid input
-    return undefined;
-  }
+  const layers = parseLayersGeneric(value, parseSingleLayer);
+  return layers ? { layers } : undefined;
 }
 
 /**

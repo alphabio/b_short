@@ -1,8 +1,9 @@
 // b_path:: src/column-rule.ts
-import { sortProperties } from "./index";
-import isColor from "./is-color";
-import isLength from "./is-length";
-import normalizeColor from "./normalize-color";
+
+import isColor from "./internal/is-color";
+import isLength from "./internal/is-length";
+import normalizeColor from "./internal/normalize-color";
+import { sortProperties } from "./internal/property-sorter";
 
 const WIDTH = /^(thin|medium|thick)$/;
 const STYLE = /^(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset)$/i;

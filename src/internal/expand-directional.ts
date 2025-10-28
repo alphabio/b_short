@@ -1,4 +1,4 @@
-// b_path:: src/expand-directional.ts
+// b_path:: src/internal/expand-directional.ts
 
 import { CSS_DEFAULTS } from "./css-defaults";
 

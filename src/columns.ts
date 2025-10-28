@@ -1,6 +1,7 @@
 // b_path:: src/columns.ts
-import { sortProperties } from "./index";
-import isLength from "./is-length";
+
+import isLength from "./internal/is-length";
+import { sortProperties } from "./internal/property-sorter";
 
 export default (value: string): Record<string, string> | undefined => {
   // Handle global CSS keywords

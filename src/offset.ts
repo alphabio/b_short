@@ -1,6 +1,6 @@
 // b_path:: src/offset.ts
-import isAngle from "./is-angle.js";
-import isLength from "./is-length.js";
+import isAngle from "./internal/is-angle";
+import isLength from "./internal/is-length";
 
 function splitTopLevelSlash(input: string): [string, string?] | null {
   let depth = 0;

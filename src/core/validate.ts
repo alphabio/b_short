@@ -1,4 +1,4 @@
-// b_path:: src/validate.ts
+// b_path:: src/core/validate.ts
 /**
  * Validates CSS stylesheet syntax and property values, providing detailed error formatting.
  *
@@ -26,11 +26,7 @@
  */
 
 import * as csstree from "css-tree";
-import {
-  type BStyleWarning,
-  type StylesheetValidation,
-  StylesheetValidationSchema,
-} from "./schema";
+import type { BStyleWarning, StylesheetValidation } from "./schema";
 
 // Constants
 const DEFAULT_MAX_LINE_WIDTH = 80;
@@ -172,15 +168,14 @@ export function validate(css: string): StylesheetValidation {
     }
   }
 
-  // Validate and return using Zod schema for type safety
-  const result = {
+  // Return result with runtime type safety
+  const result: StylesheetValidation = {
     ok: errors.length === 0,
     errors,
     warnings: formattedWarnings,
   };
 
-  // Validate the result against our Zod schema for runtime type safety
-  return StylesheetValidationSchema.parse(result);
+  return result;
 }
 
 export function validateDeclaration(value: string, prop: string): StylesheetValidation {

@@ -6,9 +6,10 @@ Excluding patterns: -not -path */__pycache__/* -not -path */.venv/* -not -path *
 // b_path:: src/animation-layers.ts
 
 import * as csstree from "css-tree";
-import isTime from "./is-time";
-import isTimingFunction from "./is-timing-function";
-import type { AnimationLayer, AnimationResult } from "./schema";
+import type { AnimationLayer, AnimationResult } from "./core/schema";
+import isTime from "./internal/is-time";
+import isTimingFunction from "./internal/is-timing-function";
+import { hasTopLevelCommas, parseLayersGeneric } from "./internal/layer-parser-utils";
 
 // CSS default values for animation properties
 export const ANIMATION_DEFAULTS = {
@@ -26,103 +27,15 @@ export const ANIMATION_DEFAULTS = {
  * Detects if an animation value needs advanced parsing (multi-layer animations or complex functions)
  */
 export function needsAdvancedParser(value: string): boolean {
-  // Use advanced parsing for:
-  // 1. Multi-layer animations (comma-separated)
-  // 2. Complex timing functions with parentheses
-  // Must ignore commas inside parentheses/brackets (functions, rgba(), etc.)
-  let parenDepth = 0;
-  let bracketDepth = 0;
-  let hasFunctions = false;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-      hasFunctions = true;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this indicates multiple layers
-      return true;
-    }
-  }
-
-  // Use advanced parsing for complex timing functions
-  return hasFunctions;
-}
-
-/**
- * Splits an animation value into layers, respecting nested functions
- */
-function splitLayers(value: string): string[] {
-  const layers: string[] = [];
-  let currentLayer = "";
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this separates layers
-      layers.push(currentLayer.trim());
-      currentLayer = "";
-      continue;
-    }
-
-    currentLayer += char;
-  }
-
-  // Add the last layer
-  if (currentLayer.trim()) {
-    layers.push(currentLayer.trim());
-  }
-
-  return layers;
+  return hasTopLevelCommas(value, true);
 }
 
 /**
  * Parses a complex animation value using css-tree AST parsing
  */
 export function parseAnimationLayers(value: string): AnimationResult | undefined {
-  try {
-    // Split into layers
-    const layerStrings = splitLayers(value);
-    if (layerStrings.length === 0) {
-      return undefined;
-    }
-
-    // Parse each layer to extract all properties
-    const layers: AnimationLayer[] = [];
-
-    for (const layerStr of layerStrings) {
-      const parsedLayer = parseSingleLayer(layerStr);
-      if (!parsedLayer) {
-        return undefined; // Parsing failed for this layer
-      }
-      layers.push(parsedLayer);
-    }
-
-    return {
-      layers,
-    };
-  } catch (_error) {
-    // If parsing fails, return undefined to indicate invalid input
-    return undefined;
-  }
+  const layers = parseLayersGeneric(value, parseSingleLayer);
+  return layers ? { layers } : undefined;
 }
 
 /**
@@ -412,8 +325,8 @@ import {
   parseAnimationLayers,
   reconstructLayers,
 } from "./animation-layers";
-import isTime from "./is-time";
-import isTimingFunction from "./is-timing-function";
+import isTime from "./internal/is-time";
+import isTimingFunction from "./internal/is-timing-function";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
 const ITERATION_COUNT = /^(infinite|[0-9]+(\.[0-9]+)?)$/;
@@ -545,8 +458,9 @@ export default function animation(value: string): Record<string, string> | undef
 // b_path:: src/background-layers.ts
 
 import * as csstree from "css-tree";
-import isColor from "./is-color";
-import type { BackgroundLayer, BackgroundResult } from "./schema";
+import type { BackgroundLayer, BackgroundResult } from "./core/schema";
+import isColor from "./internal/is-color";
+import { hasTopLevelCommas, splitLayers } from "./internal/layer-parser-utils";
 
 // CSS default values for background properties
 export const BACKGROUND_DEFAULTS = {
@@ -563,67 +477,7 @@ export const BACKGROUND_DEFAULTS = {
  * Detects if a background value needs advanced parsing (multi-layer backgrounds)
  */
 export function needsAdvancedParser(value: string): boolean {
-  // Only use advanced parsing for actual multi-layer backgrounds (comma-separated)
-  // Must ignore commas inside parentheses/brackets (functions, rgba(), etc.)
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this indicates multiple layers
-      return true;
-    }
-  }
-
-  return false;
-}
-
-/**
- * Splits a background value into layers, respecting nested functions
- */
-function splitLayers(value: string): string[] {
-  const layers: string[] = [];
-  let currentLayer = "";
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this separates layers
-      layers.push(currentLayer.trim());
-      currentLayer = "";
-      continue;
-    }
-
-    currentLayer += char;
-  }
-
-  // Add the last layer
-  if (currentLayer.trim()) {
-    layers.push(currentLayer.trim());
-  }
-
-  return layers;
+  return hasTopLevelCommas(value);
 }
 
 /**
@@ -1047,10 +901,10 @@ export function reconstructLayers(
 // b_path:: src/background.ts
 
 import { parseBackgroundLayers, reconstructLayers } from "./background-layers";
-import { cssUrlRegex } from "./color-utils";
-import isColor from "./is-color";
-import isLength from "./is-length";
-import normalizeColor from "./normalize-color";
+import { cssUrlRegex } from "./internal/color-utils";
+import isColor from "./internal/is-color";
+import isLength from "./internal/is-length";
+import normalizeColor from "./internal/normalize-color";
 
 const ATTACHMENT = /^(fixed|local|scroll)$/;
 const BOX = /^(border-box|padding-box|content-box)$/;
@@ -1253,11 +1107,11 @@ export default borderRadius;
 
 === File: src/border.ts ===
 // b_path:: src/border.ts
-import directional from "./directional";
-import { sortProperties } from "./index";
-import isColor from "./is-color";
-import isLength from "./is-length";
-import normalizeColor from "./normalize-color";
+import directional from "./internal/directional";
+import isColor from "./internal/is-color";
+import isLength from "./internal/is-length";
+import normalizeColor from "./internal/normalize-color";
+import { sortProperties } from "./internal/property-sorter";
 
 const WIDTH = /^(thin|medium|thick)$/;
 const STYLE = /^(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset)$/i;
@@ -1413,207 +1267,13 @@ border.left = direction("left");
 export default border;
 
 
-=== File: src/color-utils.ts ===
-// b_path:: src/color-utils.ts
-// Color utility functions - replacing external dependencies for better self-containment
-
-export const CSS_COLOR_NAMES: Record<string, string> = {
-  aliceblue: "#F0F8FF",
-  antiquewhite: "#FAEBD7",
-  aqua: "#00FFFF",
-  aquamarine: "#7FFFD4",
-  azure: "#F0FFFF",
-  beige: "#F5F5DC",
-  bisque: "#FFE4C4",
-  black: "#000000",
-  blanchedalmond: "#FFEBCD",
-  blue: "#0000FF",
-  blueviolet: "#8A2BE2",
-  brown: "#A52A2A",
-  burlywood: "#DEB887",
-  cadetblue: "#5F9EA0",
-  chartreuse: "#7FFF00",
-  chocolate: "#D2691E",
-  coral: "#FF7F50",
-  cornflowerblue: "#6495ED",
-  cornsilk: "#FFF8DC",
-  crimson: "#DC143C",
-  cyan: "#00FFFF",
-  darkblue: "#00008B",
-  darkcyan: "#008B8B",
-  darkgoldenrod: "#B8860B",
-  darkgray: "#A9A9A9",
-  darkgrey: "#A9A9A9",
-  darkgreen: "#006400",
-  darkkhaki: "#BDB76B",
-  darkmagenta: "#8B008B",
-  darkolivegreen: "#556B2F",
-  darkorange: "#FF8C00",
-  darkorchid: "#9932CC",
-  darkred: "#8B0000",
-  darksalmon: "#E9967A",
-  darkseagreen: "#8FBC8F",
-  darkslateblue: "#483D8B",
-  darkslategray: "#2F4F4F",
-  darkslategrey: "#2F4F4F",
-  darkturquoise: "#00CED1",
-  darkviolet: "#9400D3",
-  deeppink: "#FF1493",
-  deepskyblue: "#00BFFF",
-  dimgray: "#696969",
-  dimgrey: "#696969",
-  dodgerblue: "#1E90FF",
-  firebrick: "#B22222",
-  floralwhite: "#FFFAF0",
-  forestgreen: "#228B22",
-  fuchsia: "#FF00FF",
-  gainsboro: "#DCDCDC",
-  ghostwhite: "#F8F8FF",
-  gold: "#FFD700",
-  goldenrod: "#DAA520",
-  gray: "#808080",
-  grey: "#808080",
-  green: "#008000",
-  greenyellow: "#ADFF2F",
-  honeydew: "#F0FFF0",
-  hotpink: "#FF69B4",
-  indianred: "#CD5C5C",
-  indigo: "#4B0082",
-  ivory: "#FFFFF0",
-  khaki: "#F0E68C",
-  lavender: "#E6E6FA",
-  lavenderblush: "#FFF0F5",
-  lawngreen: "#7CFC00",
-  lemonchiffon: "#FFFACD",
-  lightblue: "#ADD8E6",
-  lightcoral: "#F08080",
-  lightcyan: "#E0FFFF",
-  lightgoldenrodyellow: "#FAFAD2",
-  lightgray: "#D3D3D3",
-  lightgrey: "#D3D3D3",
-  lightgreen: "#90EE90",
-  lightpink: "#FFB6C1",
-  lightsalmon: "#FFA07A",
-  lightseagreen: "#20B2AA",
-  lightskyblue: "#87CEFA",
-  lightslategray: "#778899",
-  lightslategrey: "#778899",
-  lightsteelblue: "#B0C4DE",
-  lightyellow: "#FFFFE0",
-  lime: "#00FF00",
-  limegreen: "#32CD32",
-  linen: "#FAF0E6",
-  magenta: "#FF00FF",
-  maroon: "#800000",
-  mediumaquamarine: "#66CDAA",
-  mediumblue: "#0000CD",
-  mediumorchid: "#BA55D3",
-  mediumpurple: "#9370DB",
-  mediumseagreen: "#3CB371",
-  mediumslateblue: "#7B68EE",
-  mediumspringgreen: "#00FA9A",
-  mediumturquoise: "#48D1CC",
-  mediumvioletred: "#C71585",
-  midnightblue: "#191970",
-  mintcream: "#F5FFFA",
-  mistyrose: "#FFE4E1",
-  moccasin: "#FFE4B5",
-  navajowhite: "#FFDEAD",
-  navy: "#000080",
-  oldlace: "#FDF5E6",
-  olive: "#808000",
-  olivedrab: "#6B8E23",
-  orange: "#FFA500",
-  orangered: "#FF4500",
-  orchid: "#DA70D6",
-  palegoldenrod: "#EEE8AA",
-  palegreen: "#98FB98",
-  paleturquoise: "#AFEEEE",
-  palevioletred: "#DB7093",
-  papayawhip: "#FFEFD5",
-  peachpuff: "#FFDAB9",
-  peru: "#CD853F",
-  pink: "#FFC0CB",
-  plum: "#DDA0DD",
-  powderblue: "#B0E0E6",
-  purple: "#800080",
-  rebeccapurple: "#663399",
-  red: "#FF0000",
-  rosybrown: "#BC8F8F",
-  royalblue: "#4169E1",
-  saddlebrown: "#8B4513",
-  salmon: "#FA8072",
-  sandybrown: "#F4A460",
-  seagreen: "#2E8B57",
-  seashell: "#FFF5EE",
-  sienna: "#A0522D",
-  silver: "#C0C0C0",
-  skyblue: "#87CEEB",
-  slateblue: "#6A5ACD",
-  slategray: "#708090",
-  slategrey: "#708090",
-  snow: "#FFFAFA",
-  springgreen: "#00FF7F",
-  steelblue: "#4682B4",
-  tan: "#D2B48C",
-  teal: "#008080",
-  thistle: "#D8BFD8",
-  tomato: "#FF6347",
-  turquoise: "#40E0D0",
-  violet: "#EE82EE",
-  wheat: "#F5DEB3",
-  white: "#FFFFFF",
-  whitesmoke: "#F5F5F5",
-  yellow: "#FFFF00",
-  yellowgreen: "#9ACD32",
-};
-
-export function cssUrlRegex(): RegExp {
-  return /url\((.*?)\)/gi;
-}
-
-export function hexColorRegex(opts?: { strict?: boolean }): RegExp {
-  opts = opts && typeof opts === "object" ? opts : {};
-  return opts.strict
-    ? /^#([a-f0-9]{3,4}|[a-f0-9]{4}(?:[a-f0-9]{2}){1,2})\b$/i
-    : /#([a-f0-9]{3}|[a-f0-9]{4}(?:[a-f0-9]{2}){0,2})\b/gi;
-}
-
-export function hslRegex(options?: { exact?: boolean }): RegExp {
-  options = options || {};
-  return options.exact
-    ? /^hsl\(\s*(\d+)\s*,\s*(\d*(?:\.\d+)?%)\s*,\s*(\d*(?:\.\d+)?%)\)$/
-    : /hsl\(\s*(\d+)\s*,\s*(\d*(?:\.\d+)?%)\s*,\s*(\d*(?:\.\d+)?%)\)/gi;
-}
-
-export function hslaRegex(options?: { exact?: boolean }): RegExp {
-  options = options || {};
-  return options.exact
-    ? /^hsla\((\d+),\s*([\d.]+)%,\s*([\d.]+)%,\s*(\d*(?:\.\d+)?)\)$/
-    : /hsla\((\d+),\s*([\d.]+)%,\s*([\d.]+)%,\s*(\d*(?:\.\d+)?)\)/gi;
-}
-
-export function rgbRegex(options?: { exact?: boolean }): RegExp {
-  options = options || {};
-  return options.exact
-    ? /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/
-    : /rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)/gi;
-}
-
-export function rgbaRegex(options?: { exact?: boolean }): RegExp {
-  options = options || {};
-  return options.exact
-    ? /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)$/
-    : /rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)/gi;
-}
-
-
 === File: src/column-rule.ts ===
 // b_path:: src/column-rule.ts
-import { sortProperties } from "./index";
-import isColor from "./is-color";
-import isLength from "./is-length";
-import normalizeColor from "./normalize-color";
+
+import isColor from "./internal/is-color";
+import isLength from "./internal/is-length";
+import normalizeColor from "./internal/normalize-color";
+import { sortProperties } from "./internal/property-sorter";
 
 const WIDTH = /^(thin|medium|thick)$/;
 const STYLE = /^(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset)$/i;
@@ -1663,8 +1323,9 @@ export default function columnRule(value: string): Record<string, string> | unde
 
 === File: src/columns.ts ===
 // b_path:: src/columns.ts
-import { sortProperties } from "./index";
-import isLength from "./is-length";
+
+import isLength from "./internal/is-length";
+import { sortProperties } from "./internal/property-sorter";
 
 export default (value: string): Record<string, string> | undefined => {
   // Handle global CSS keywords
@@ -1735,7 +1396,7 @@ export default (value: string): Record<string, string> | undefined => {
 
 === File: src/contain-intrinsic-size.ts ===
 // b_path:: src/contain-intrinsic-size.ts
-import isLength from "./is-length";
+import isLength from "./internal/is-length";
 
 export default (value: string): Record<string, string> | undefined => {
   // Handle global CSS keywords
@@ -1805,376 +1466,1117 @@ export default (value: string): Record<string, string> | undefined => {
 };
 
 
-=== File: src/css-defaults.ts ===
-// b_path:: src/css-defaults.ts
+=== File: src/core/expand.ts ===
+// b_path:: src/core/expand.ts
+
+import { expandDirectionalProperties } from "../internal/expand-directional";
+import { parseCssDeclaration, parseInputString, stripComments } from "../internal/parsers";
+import { kebabToCamelCase, objectToCss, sortProperties } from "../internal/property-sorter";
+import { shorthand } from "../internal/shorthand-registry";
+import type { BStyleWarning, ExpandOptions, ExpandResult } from "./schema";
+import { DEFAULT_EXPAND_OPTIONS, FORMAT_CSS, FORMAT_JS } from "./schema";
+import { validate } from "./validate";
 
 /**
- * CSS default values for directional properties (kebab-case).
- * Used for partial longhand expansion when expandPartialLonghand option is enabled.
- */
-export const CSS_DEFAULTS: Record<string, string> = {
-  // Border width
-  "border-top-width": "medium",
-  "border-right-width": "medium",
-  "border-bottom-width": "medium",
-  "border-left-width": "medium",
-
-  // Border style
-  "border-top-style": "none",
-  "border-right-style": "none",
-  "border-bottom-style": "none",
-  "border-left-style": "none",
-
-  // Border color
-  "border-top-color": "currentcolor",
-  "border-right-color": "currentcolor",
-  "border-bottom-color": "currentcolor",
-  "border-left-color": "currentcolor",
-
-  // Border radius
-  "border-top-left-radius": "0",
-  "border-top-right-radius": "0",
-  "border-bottom-right-radius": "0",
-  "border-bottom-left-radius": "0",
-
-  // Margin
-  "margin-top": "0",
-  "margin-right": "0",
-  "margin-bottom": "0",
-  "margin-left": "0",
-
-  // Padding
-  "padding-top": "0",
-  "padding-right": "0",
-  "padding-bottom": "0",
-  "padding-left": "0",
-
-  // Positioning
-  top: "auto",
-  right: "auto",
-  bottom: "auto",
-  left: "auto",
-
-  // Scroll margin
-  "scroll-margin-top": "0",
-  "scroll-margin-right": "0",
-  "scroll-margin-bottom": "0",
-  "scroll-margin-left": "0",
-
-  // Scroll padding
-  "scroll-padding-top": "auto",
-  "scroll-padding-right": "auto",
-  "scroll-padding-bottom": "auto",
-  "scroll-padding-left": "auto",
-};
-
-
-=== File: src/directional.ts ===
-// b_path:: src/directional.ts
-
-/**
- * Cache for directional property expansion results.
- * Improves performance for repeated calls with same values.
- */
-const directionalCache = new Map<string, Record<string, string>>();
-const MAX_CACHE_SIZE = 1000;
-
-/**
- * Expands directional values (top, right, bottom, left) from CSS shorthand notation.
- * Supports 1-4 value syntax and caches results for performance.
+ * Expands CSS shorthand properties into their longhand equivalents.
  *
- * @param value - CSS value string with 1-4 space-separated values
- * @returns Object with top, right, bottom, left properties, or undefined if invalid
+ * @param input - CSS declaration(s) to expand (e.g., "margin: 10px 20px;")
+ * @param options - Configuration options for expansion behavior
+ * @returns Object containing expansion result, success status, and any issues
  *
  * @example
- * directional('10px') // { top: '10px', right: '10px', bottom: '10px', left: '10px' }
- * directional('10px 20px') // { top: '10px', right: '20px', bottom: '10px', left: '20px' }
- * directional('10px 20px 30px') // { top: '10px', right: '20px', bottom: '30px', left: '20px' }
- * directional('10px 20px 30px 40px') // { top: '10px', right: '20px', bottom: '30px', left: '40px' }
+ * // Basic expansion
+ * expand('margin: 10px 20px;')
+ * // → { ok: true, result: 'margin-top: 10px;\nmargin-right: 20px;...', issues: [] }
+ *
+ * @example
+ * // JavaScript object format
+ * expand('padding: 1rem;', { format: 'js' })
+ * // → { ok: true, result: { paddingTop: '1rem', ... }, issues: [] }
+ *
+ * @example
+ * // Multiple declarations with conflict resolution
+ * expand('margin: 10px; margin-top: 20px;', { format: 'js' })
+ * // → { ok: true, result: { marginTop: '20px', marginRight: '10px', ... }, issues: [] }
  */
-export default function directional(value: string): Record<string, string> | undefined {
-  // Check cache first
-  const cached = directionalCache.get(value);
-  if (cached) return cached;
+export function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
+  const cleanedInput = stripComments(input);
 
-  const values = value.split(/\s+/);
+  // Apply defaults using DEFAULT_EXPAND_OPTIONS
+  const {
+    format = DEFAULT_EXPAND_OPTIONS.format,
+    indent = DEFAULT_EXPAND_OPTIONS.indent,
+    separator = DEFAULT_EXPAND_OPTIONS.separator,
+    propertyGrouping = DEFAULT_EXPAND_OPTIONS.propertyGrouping,
+    expandPartialLonghand = DEFAULT_EXPAND_OPTIONS.expandPartialLonghand,
+  } = options;
 
-  if (values.length === 1) values.splice(0, 1, ...Array.from({ length: 4 }, () => values[0]));
-  else if (values.length === 2) values.push(...values);
-  else if (values.length === 3) values.push(values[1]);
-  else if (values.length > 4) return;
+  const validation = validate(cleanedInput);
 
-  const result = ["top", "right", "bottom", "left"].reduce(
-    (acc: Record<string, string>, direction: string, i: number) => {
-      acc[direction] = values[i];
-      return acc;
-    },
-    {}
-  );
+  const inputs = parseInputString(cleanedInput);
+  const results: (Record<string, string> | string)[] = [];
+  const issues: BStyleWarning[] = [];
+  const resultMetadata: Array<{ isShorthand: boolean; properties: Set<string> }> = [];
 
-  // Cache result with size limit
-  if (directionalCache.size >= MAX_CACHE_SIZE) {
-    // Remove oldest entry (first key)
-    const firstKey = directionalCache.keys().next().value;
-    if (firstKey !== undefined) {
-      directionalCache.delete(firstKey);
+  for (const item of inputs) {
+    const parsed = parseCssDeclaration(item);
+    if (!parsed) {
+      continue;
+    }
+
+    const { property, value } = parsed;
+    const normalized = value.trim();
+    const important = normalized.endsWith("!important") && /\s/.test(normalized.slice(-11, -10));
+
+    if (important) {
+      issues.push({
+        property,
+        name: "important-detected",
+        formattedWarning: `!important flag detected in '${property}' and has been ignored. Shorthand expansion does not support !important.`,
+      });
+
+      const result: Record<string, string> = {};
+      result[property] = normalized;
+      results.push(result);
+      resultMetadata.push({ isShorthand: false, properties: new Set([property]) });
+      continue;
+    }
+
+    const parse = shorthand[property];
+    const longhand = parse?.(normalized);
+
+    if (!longhand) {
+      const result: Record<string, string> = {};
+      result[property] = normalized;
+      results.push(result);
+      resultMetadata.push({ isShorthand: false, properties: new Set([property]) });
+
+      if (property in shorthand) {
+        issues.push({
+          property,
+          name: "expansion-failed",
+          formattedWarning: `Could not expand shorthand property '${property}' with value '${normalized}'. Returning original shorthand.`,
+        });
+      }
+      continue;
+    }
+
+    const result: Record<string, string> = longhand;
+    results.push(result);
+    resultMetadata.push({ isShorthand: true, properties: new Set(Object.keys(result)) });
+  }
+
+  /**
+   * Resolves conflicts between shorthand and longhand properties according to CSS cascade rules.
+   */
+  function removeConflictingProperties(
+    results: (Record<string, string> | string)[],
+    metadata: Array<{ isShorthand: boolean; properties: Set<string> }>
+  ): (Record<string, string> | string)[] {
+    const cleanedResults: (Record<string, string> | string)[] = [];
+    const propertyToResultIndex = new Map<string, number>();
+
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+      const meta = metadata[i];
+
+      let resultObj: Record<string, string>;
+      if (typeof result === "string") {
+        resultObj = {};
+        const cssLines = result.split(";").filter((line) => line.trim());
+        for (const line of cssLines) {
+          const colonIndex = line.indexOf(":");
+          if (colonIndex !== -1) {
+            const prop = line.slice(0, colonIndex).trim();
+            const value = line.slice(colonIndex + 1).trim();
+            resultObj[prop] = value;
+          }
+        }
+      } else {
+        resultObj = { ...result };
+      }
+
+      if (!meta.isShorthand) {
+        for (const prop of meta.properties) {
+          const earlierIndex = propertyToResultIndex.get(prop);
+          if (earlierIndex !== undefined) {
+            const earlierResult = cleanedResults[earlierIndex];
+            const earlierMeta = metadata[earlierIndex];
+
+            if (earlierMeta.isShorthand && earlierMeta.properties.has(prop)) {
+              if (typeof earlierResult === "string") {
+                const earlierObj: Record<string, string> = {};
+                const cssLines = earlierResult.split(";").filter((line) => line.trim());
+                for (const line of cssLines) {
+                  const colonIndex = line.indexOf(":");
+                  if (colonIndex !== -1) {
+                    const earlierProp = line.slice(0, colonIndex).trim();
+                    const value = line.slice(colonIndex + 1).trim();
+                    if (earlierProp !== prop) {
+                      earlierObj[earlierProp] = value;
+                    }
+                  }
+                }
+                cleanedResults[earlierIndex] = objectToCss(
+                  earlierObj,
+                  indent,
+                  separator,
+                  propertyGrouping
+                );
+              } else {
+                delete earlierResult[prop];
+              }
+              earlierMeta.properties.delete(prop);
+            }
+          }
+        }
+      } else {
+        if (format === FORMAT_CSS) {
+          for (const prop of meta.properties) {
+            const earlierIndex = propertyToResultIndex.get(prop);
+            if (earlierIndex !== undefined) {
+              const earlierResult = cleanedResults[earlierIndex];
+              const earlierMeta = metadata[earlierIndex];
+
+              if (!earlierMeta.isShorthand && earlierMeta.properties.has(prop)) {
+                if (typeof earlierResult === "string") {
+                  const earlierObj: Record<string, string> = {};
+                  const cssLines = earlierResult.split(";").filter((line) => line.trim());
+                  for (const line of cssLines) {
+                    const colonIndex = line.indexOf(":");
+                    if (colonIndex !== -1) {
+                      const earlierProp = line.slice(0, colonIndex).trim();
+                      const value = line.slice(colonIndex + 1).trim();
+                      if (earlierProp !== prop) {
+                        earlierObj[earlierProp] = value;
+                      }
+                    }
+                  }
+                  cleanedResults[earlierIndex] = objectToCss(
+                    earlierObj,
+                    indent,
+                    separator,
+                    propertyGrouping
+                  );
+                } else {
+                  delete earlierResult[prop];
+                }
+                earlierMeta.properties.delete(prop);
+              }
+            }
+          }
+        }
+      }
+
+      cleanedResults.push(result);
+
+      for (const prop of meta.properties) {
+        propertyToResultIndex.set(prop, cleanedResults.length - 1);
+      }
+    }
+
+    return cleanedResults;
+  }
+
+  const applyPartialExpansion = (obj: Record<string, string>): Record<string, string> => {
+    return expandPartialLonghand ? expandDirectionalProperties(obj) : obj;
+  };
+
+  let finalResult: Record<string, string> | string | undefined;
+
+  const cleanedResults = removeConflictingProperties(results, resultMetadata);
+
+  if (cleanedResults.length === 0) {
+    finalResult = undefined;
+  } else if (cleanedResults.length === 1) {
+    const result = cleanedResults[0];
+    if (format === FORMAT_CSS && typeof result === "object") {
+      const resultToProcess = applyPartialExpansion(result);
+      finalResult = objectToCss(resultToProcess, indent, separator, propertyGrouping);
+    } else if (format === FORMAT_JS && typeof result === "object") {
+      const resultToProcess = applyPartialExpansion(result);
+      const sorted = sortProperties(resultToProcess, propertyGrouping);
+      const camelCased: Record<string, string> = {};
+      for (const [key, value] of Object.entries(sorted)) {
+        camelCased[kebabToCamelCase(key)] = value;
+      }
+      finalResult = camelCased;
+    } else {
+      finalResult = result;
+    }
+  } else {
+    if (format === FORMAT_CSS) {
+      const mergedObject: Record<string, string> = {};
+
+      for (const result of cleanedResults) {
+        if (typeof result === "object" && result) {
+          Object.assign(mergedObject, result);
+        }
+      }
+
+      if (Object.keys(mergedObject).length > 0) {
+        const resultToProcess = applyPartialExpansion(mergedObject);
+        finalResult = objectToCss(resultToProcess, indent, separator, propertyGrouping);
+      } else {
+        const cssResults = cleanedResults.map((result) =>
+          typeof result === "object"
+            ? objectToCss(result, indent, separator, propertyGrouping)
+            : result
+        );
+        finalResult = cssResults.join(separator);
+      }
+    } else {
+      const mergedResult: Record<string, string> = {};
+      for (const result of cleanedResults) {
+        if (typeof result === "object" && result) {
+          Object.assign(mergedResult, result);
+        }
+      }
+
+      const resultToProcess = applyPartialExpansion(mergedResult);
+      const sorted = sortProperties(resultToProcess, propertyGrouping);
+      const camelCased: Record<string, string> = {};
+      for (const [key, value] of Object.entries(sorted)) {
+        camelCased[kebabToCamelCase(key)] = value;
+      }
+
+      finalResult = camelCased;
     }
   }
-  directionalCache.set(value, result);
+
+  const ok = validation.errors.length === 0;
+  const allIssues = [...validation.errors, ...validation.warnings, ...issues];
+
+  return {
+    ok,
+    result: finalResult,
+    issues: allIssues,
+  };
+}
+
+
+=== File: src/core/schema.ts ===
+// b_path:: src/core/schema.ts
+
+/**
+ * Base CSS value types
+ */
+export type CssValue = string;
+export type CssProperty = string;
+export type CssDeclaration = string;
+
+/**
+ * Output format enum
+ * - 'css': Returns kebab-case CSS string (e.g., "margin-top: 10px;")
+ * - 'js': Returns camelCase JavaScript object (e.g., { marginTop: '10px' })
+ */
+export const FORMAT_VALUES = ["css", "js"] as const;
+export type Format = (typeof FORMAT_VALUES)[number];
+
+/**
+ * Property grouping strategy enum
+ * - 'by-property': Groups by property type (e.g., all margins, then all borders)
+ * - 'by-side': Groups by directional side (e.g., all top properties, then all right properties)
+ */
+export const PROPERTY_GROUPING_VALUES = ["by-property", "by-side"] as const;
+export type PropertyGrouping = (typeof PROPERTY_GROUPING_VALUES)[number];
+
+// Named constants for better readability
+export const FORMAT_CSS = "css" as const;
+export const FORMAT_JS = "js" as const;
+export const GROUPING_BY_PROPERTY = "by-property" as const;
+export const GROUPING_BY_SIDE = "by-side" as const;
+
+/**
+ * Options for CSS shorthand expansion
+ */
+export interface ExpandOptions {
+  /** Output format: "css" (kebab-case string) or "js" (camelCase object). Default: "css" */
+  format?: Format;
+
+  /** Indentation spaces for CSS output (min: 0). Default: 0 */
+  indent?: number;
+
+  /** Separator between CSS declarations. Default: "\n" */
+  separator?: string;
+
+  /**
+   * Property grouping strategy. Default: "by-property"
+   * - 'by-property': Groups by property type (e.g., all margins, then all borders)
+   * - 'by-side': Groups by directional side (e.g., all top properties, then all right properties)
+   */
+  propertyGrouping?: PropertyGrouping;
+
+  /**
+   * Expand partial directional longhand properties (e.g., margin-top) by filling in missing sides with CSS default values.
+   * Default: false
+   */
+  expandPartialLonghand?: boolean;
+}
+
+/**
+ * Enum-style namespace for ExpandOptions values
+ * Provides better autocomplete and discoverability
+ *
+ * @example
+ * ```typescript
+ * import * as b from 'b_short';
+ *
+ * b.expand('background: red', {
+ *   format: b.ExpandOptions.Format.CSS,
+ *   propertyGrouping: b.ExpandOptions.PropertyGrouping.BY_PROPERTY,
+ *   separator: b.ExpandOptions.Separator.NEWLINE,
+ *   indent: b.ExpandOptions.Indent.NONE
+ * });
+ * ```
+ */
+export namespace ExpandOptions {
+  /**
+   * Output format values
+   */
+  export enum Format {
+    /** CSS format: kebab-case strings like "margin-top: 10px;" */
+    CSS = "css",
+    /** JS format: camelCase objects like { marginTop: '10px' } */
+    JS = "js",
+  }
+
+  /**
+   * Property grouping strategy values
+   */
+  export enum PropertyGrouping {
+    /** Group by property type (all margins, then all borders) */
+    BY_PROPERTY = "by-property",
+    /** Group by directional side (all top properties, then all right) */
+    BY_SIDE = "by-side",
+  }
+
+  /**
+   * Common separator values
+   */
+  export enum Separator {
+    /** Newline separator (default) */
+    NEWLINE = "\n",
+    /** Space separator */
+    SPACE = " ",
+    /** Semicolon with space */
+    SEMICOLON = "; ",
+    /** Empty string (compact) */
+    NONE = "",
+  }
+
+  /**
+   * Common indentation values
+   */
+  export enum Indent {
+    /** No indentation (default) */
+    NONE = 0,
+    /** 2 spaces */
+    TWO_SPACES = 2,
+    /** 4 spaces */
+    FOUR_SPACES = 4,
+    /** Tab character (8 spaces equivalent) */
+    TAB = 8,
+  }
+
+  /**
+   * Boolean option values for expandPartialLonghand
+   */
+  export const ExpandPartialLonghand = {
+    /** Don't expand partial longhand properties (default) */
+    DISABLED: false,
+    /** Expand partial longhand properties with CSS defaults */
+    ENABLED: true,
+  } as const;
+}
+
+/**
+ * Default values for ExpandOptions
+ * Users can spread this and override specific values
+ *
+ * @example
+ * ```typescript
+ * import { expand, DEFAULT_EXPAND_OPTIONS } from 'b_short';
+ *
+ * const myOptions = {
+ *   ...DEFAULT_EXPAND_OPTIONS,
+ *   indent: 2,
+ *   format: 'js'
+ * };
+ *
+ * expand('margin: 10px', myOptions);
+ * ```
+ */
+export const DEFAULT_EXPAND_OPTIONS: Required<ExpandOptions> = {
+  format: "css",
+  indent: 0,
+  separator: "\n",
+  propertyGrouping: "by-property",
+  expandPartialLonghand: false,
+};
+
+/**
+ * CSS Tree syntax parsing error
+ */
+export interface CssTreeSyntaxParseError {
+  name: string;
+  message: string;
+  line?: number;
+  column?: number;
+  property?: string;
+  offset?: number;
+  length?: number;
+}
+
+/**
+ * Custom warning for CSS property validation
+ */
+export interface BStyleWarning {
+  /** CSS property that has the warning */
+  property: string;
+  /** Warning name/type */
+  name: string;
+  /** CSS syntax that caused the warning */
+  syntax?: string;
+  /** Formatted warning message for display */
+  formattedWarning?: string;
+}
+
+/**
+ * Single layer in a multi-layer background
+ */
+export interface BackgroundLayer {
+  /** Background image (url, gradient, or none) */
+  image?: string;
+  /** Background position (e.g., '10px 20px') */
+  position?: string;
+  /** Background size (e.g., 'cover', '100px 200px') */
+  size?: string;
+  /** Background repeat (e.g., 'no-repeat', 'repeat-x') */
+  repeat?: string;
+  /** Background attachment (e.g., 'fixed', 'scroll') */
+  attachment?: string;
+  /** Background origin (e.g., 'padding-box', 'border-box') */
+  origin?: string;
+  /** Background clip (e.g., 'padding-box', 'border-box') */
+  clip?: string;
+}
+
+/**
+ * Result of parsing multi-layer background declaration
+ */
+export interface BackgroundResult {
+  /** Array of background layers */
+  layers: BackgroundLayer[];
+  /** Global background color applied to all layers */
+  color?: string;
+}
+
+/**
+ * Single layer in a multi-layer mask
+ */
+export interface MaskLayer {
+  /** Mask image (url, gradient, or none) */
+  image?: string;
+  /** Masking mode (e.g., 'alpha', 'luminance', 'match-source') */
+  mode?: string;
+  /** Mask position (e.g., '10px 20px', 'center') */
+  position?: string;
+  /** Mask size (e.g., 'cover', '100px 200px', 'auto') */
+  size?: string;
+  /** Mask repeat (e.g., 'no-repeat', 'repeat-x') */
+  repeat?: string;
+  /** Mask origin (e.g., 'padding-box', 'border-box', 'content-box') */
+  origin?: string;
+  /** Mask clip (e.g., 'padding-box', 'border-box', 'content-box', 'no-clip') */
+  clip?: string;
+  /** Mask composite (e.g., 'add', 'subtract', 'intersect', 'exclude') */
+  composite?: string;
+}
+
+/**
+ * Result of parsing multi-layer mask declaration
+ */
+export interface MaskResult {
+  /** Array of mask layers */
+  layers: MaskLayer[];
+}
+
+/**
+ * Single layer in a multi-layer transition
+ */
+export interface TransitionLayer {
+  /** Transition property (e.g., 'opacity', 'all', 'transform') */
+  property?: string;
+  /** Transition duration (e.g., '300ms', '0.5s') */
+  duration?: string;
+  /** Transition timing function (e.g., 'ease', 'cubic-bezier(0.4, 0, 0.2, 1)') */
+  timingFunction?: string;
+  /** Transition delay (e.g., '100ms', '0s') */
+  delay?: string;
+}
+
+/**
+ * Result of parsing multi-layer transition declaration
+ */
+export interface TransitionResult {
+  /** Array of transition layers */
+  layers: TransitionLayer[];
+}
+
+/**
+ * Single layer in a multi-layer animation
+ */
+export interface AnimationLayer {
+  /** Animation name (e.g., 'spin', 'none') */
+  name?: string;
+  /** Animation duration (e.g., '1s', '300ms') */
+  duration?: string;
+  /** Animation timing function (e.g., 'ease', 'cubic-bezier(0.4, 0, 0.2, 1)') */
+  timingFunction?: string;
+  /** Animation delay (e.g., '100ms', '0s') */
+  delay?: string;
+  /** Animation iteration count (e.g., '3', 'infinite') */
+  iterationCount?: string;
+  /** Animation direction (e.g., 'normal', 'reverse', 'alternate', 'alternate-reverse') */
+  direction?: string;
+  /** Animation fill mode (e.g., 'none', 'forwards', 'backwards', 'both') */
+  fillMode?: string;
+  /** Animation play state (e.g., 'running', 'paused') */
+  playState?: string;
+}
+
+/**
+ * Result of parsing multi-layer animation declaration
+ */
+export interface AnimationResult {
+  /** Array of animation layers */
+  layers: AnimationLayer[];
+}
+
+/**
+ * Result of CSS shorthand expansion
+ */
+export interface ExpandResult {
+  /** Whether expansion was successful (no syntax errors) */
+  ok: boolean;
+  /**
+   * The expanded CSS result
+   * - JavaScript object format (multiple declarations are merged, with later properties overriding earlier ones)
+   * - CSS string format (multiple declarations are joined)
+   * - undefined when input is empty or invalid
+   */
+  result?: Record<string, string> | string;
+  /** Array of syntax errors and validation warnings */
+  issues: Array<CssTreeSyntaxParseError | BStyleWarning>;
+}
+
+/**
+ * Result of CSS stylesheet validation
+ */
+export interface StylesheetValidation {
+  /** Whether validation passed (no errors) */
+  ok: boolean;
+  /** Array of syntax parsing errors */
+  errors: CssTreeSyntaxParseError[];
+  /** Array of property validation warnings */
+  warnings: BStyleWarning[];
+}
+
+
+=== File: src/core/validate.ts ===
+// b_path:: src/core/validate.ts
+/**
+ * Validates CSS stylesheet syntax and property values, providing detailed error formatting.
+ *
+ * This function parses CSS using the css-tree library and validates each CSS property
+ * against the CSS specification. When validation errors are found, it generates
+ * formatted error messages with visual context including line numbers, code snippets,
+ * and precise error location indicators.
+ *
+ * @param css - The CSS string to validate
+ *
+ * @returns StylesheetValidation object containing:
+ *   - ok: boolean indicating if validation passed (no errors)
+ *   - errors: Array of syntax parsing errors (malformed CSS)
+ *   - warnings: Array of property validation errors (invalid property values)
+ *
+ * @remarks
+ * - Context window shows ±2 lines around each error for better debugging
+ * - Long lines are intelligently truncated with ellipses (…) for readability
+ * - Pointer indicators (^^^) precisely mark the error location and length
+ * - Duplicate declarations are automatically deduplicated to avoid redundant warnings
+ *
+ * @throws Does not throw - parsing errors are captured in the returned errors array
+ *
+ * @since 1.0.0
+ */
+
+import * as csstree from "css-tree";
+import type { BStyleWarning, StylesheetValidation } from "./schema";
+
+// Constants
+const DEFAULT_MAX_LINE_WIDTH = 80;
+const LINE_NUMBER_PADDING = 4;
+const DEFAULT_CONTEXT_WINDOW_SIZE = 2; // Lines before and after error
+
+export interface BStyleMatchError extends csstree.SyntaxMatchError {
+  property: string;
+  formattedError?: string;
+}
+
+export type { BStyleWarning, StylesheetValidation };
+
+export interface Declaration {
+  property: string;
+  value: csstree.Value | csstree.Raw;
+  node: csstree.CssNode;
+}
+
+export interface ErrorFormatOptions {
+  maxLineWidth: number;
+  contextWindowSize?: number;
+}
+
+interface TruncationBounds {
+  startPos: number;
+  endPos: number;
+  needsStartEllipsis: boolean;
+  needsEndEllipsis: boolean;
+  availableWidth: number;
+}
+
+interface FormattedLine {
+  content: string;
+  adjustedColumn: number;
+}
+
+/**
+ * Validates a CSS stylesheet for syntax and property value errors.
+ *
+ * @param css - The CSS string to validate
+ * @returns StylesheetValidation object containing validation results
+ */
+export function validate(css: string): StylesheetValidation {
+  const errors: csstree.SyntaxParseError[] = [];
+  const warnings: BStyleMatchError[] = [];
+  const declarations: Declaration[] = [];
+  const syntax = csstree.lexer;
+  const uniqueDecls = new Map<string, number>();
+
+  // Parse CSS
+  const ast = csstree.parse(css, {
+    context: "declarationList",
+    positions: true,
+    parseAtrulePrelude: true,
+    parseRulePrelude: true,
+    parseCustomProperty: true,
+    onParseError(err: csstree.SyntaxParseError) {
+      // biome-ignore lint/correctness/noUnusedVariables: remove stack from err
+      const { stack, ...rest } = err;
+      errors.push(rest);
+    },
+  });
+
+  // Extract declarations
+  csstree.walk(ast, (node) => {
+    if (node.type !== "Declaration") {
+      return;
+    }
+    const id = csstree.generate(node);
+    if (uniqueDecls.has(id)) {
+      uniqueDecls.set(id, uniqueDecls.get(id)! + 1);
+      return;
+    }
+    uniqueDecls.set(id, 1);
+    declarations.push({ property: node.property, value: node.value, node });
+  });
+
+  // Validate declarations
+  // Suppress noisy csstree-match iteration warnings during matching.
+  // Control via env var: BStyle_CSSTREE_LOG_LEVEL=ERROR (default) suppresses these messages.
+  const suppressNoise = (msg: unknown): boolean => {
+    try {
+      const s = String(msg);
+      return /\[csstree-match\]\s*BREAK after/i.test(s);
+    } catch {
+      return false;
+    }
+  };
+  const LOG_LEVEL = (process.env.BStyle_CSSTREE_LOG_LEVEL || "ERROR").toUpperCase();
+  const QUIET = LOG_LEVEL === "ERROR" || LOG_LEVEL === "SILENT";
+  const origWarn = console.warn;
+  const origError = console.error;
+  try {
+    if (QUIET) {
+      console.warn = (...args: Parameters<typeof console.warn>) => {
+        if (args.length && suppressNoise(args[0])) return;
+        return origWarn(...args);
+      };
+      console.error = (...args: Parameters<typeof console.error>) => {
+        if (args.length && suppressNoise(args[0])) return;
+        return origError(...args);
+      };
+    }
+
+    for (const decl of declarations) {
+      const match = syntax.matchProperty(decl.property, decl.value);
+      const error = match.error as csstree.SyntaxMatchError;
+
+      if (!error) continue;
+
+      // biome-ignore lint/correctness/noUnusedVariables: remove stack from error
+      const { stack, name, ...rest } = error;
+      warnings.push({
+        property: decl.property,
+        name,
+        ...rest,
+      });
+    }
+  } finally {
+    // Always restore console methods
+    console.warn = origWarn;
+    console.error = origError;
+  }
+
+  // Format and display warnings
+  const formattedWarnings: BStyleWarning[] = [];
+
+  if (warnings.length > 0) {
+    const cssLines = css.split("\n");
+    for (const warning of warnings) {
+      const formattedError = formatErrorDisplay(cssLines, warning);
+      formattedWarnings.push({
+        property: warning.property,
+        name: warning.name,
+        syntax: warning.syntax,
+        formattedWarning: `Errors found in: ${warning.property}\n${formattedError.join("\n")}`,
+      });
+    }
+  }
+
+  // Return result with runtime type safety
+  const result: StylesheetValidation = {
+    ok: errors.length === 0,
+    errors,
+    warnings: formattedWarnings,
+  };
+
+  return result;
+}
+
+export function validateDeclaration(value: string, prop: string): StylesheetValidation {
+  const css = `.class {${prop}: ${value};}`;
+  const result = validate(css);
+  return result;
+}
+
+// Helper functions
+/**
+ * Calculates the line window to display around an error line.
+ * Shows contextWindowSize lines before and after the error for better context.
+ *
+ * @param errorLine - The line number where the error occurred
+ * @param totalLines - Total number of lines in the CSS
+ * @param contextWindowSize - Number of lines to show before and after error (default: 2)
+ * @returns Object with start and end line numbers for the context window
+ */
+function calculateLineWindow(
+  errorLine: number,
+  totalLines: number,
+  contextWindowSize: number = DEFAULT_CONTEXT_WINDOW_SIZE
+): { start: number; end: number } {
+  const start = Math.max(1, errorLine - contextWindowSize);
+  const end = Math.min(totalLines, errorLine + contextWindowSize);
+  return { start, end };
+}
+
+function formatLineNumber(lineNum: number, maxLineNum: number): string {
+  const maxDigits = Math.max(maxLineNum.toString().length, 1);
+  const paddedNum = lineNum.toString().padStart(maxDigits, " ");
+  const prefix = " ".repeat(LINE_NUMBER_PADDING - maxDigits);
+  return `${prefix}${paddedNum} |`;
+}
+
+function trimLine(line: string): { trimmed: string; spacesRemoved: number } {
+  const trimmed = line.trimStart();
+  const spacesRemoved = line.length - trimmed.length;
+  return { trimmed, spacesRemoved };
+}
+
+function calculateTruncationBounds(
+  lineLength: number,
+  errorColumn: number,
+  maxWidth: number
+): TruncationBounds {
+  if (lineLength <= maxWidth) {
+    return {
+      startPos: 0,
+      endPos: lineLength,
+      needsStartEllipsis: false,
+      needsEndEllipsis: false,
+      availableWidth: maxWidth,
+    };
+  }
+
+  // Reserve space for potential ellipses
+  let availableWidth = maxWidth - 2;
+  const halfWidth = Math.floor(availableWidth / 2);
+  let startPos = Math.max(0, errorColumn - halfWidth - 1);
+
+  // Determine if we need start ellipsis
+  const needsStartEllipsis = startPos > 0;
+
+  if (!needsStartEllipsis) {
+    // No start truncation - reclaim space for end-only ellipsis
+    availableWidth = maxWidth - 1;
+  } else {
+    // Skip one additional character for better spacing after ellipsis
+    startPos = startPos + 1;
+  }
+
+  let endPos = startPos + availableWidth;
+  let needsEndEllipsis = endPos < lineLength;
+
+  // Adjust if we hit the end of the line
+  if (endPos >= lineLength) {
+    endPos = lineLength;
+    needsEndEllipsis = false;
+
+    if (needsStartEllipsis) {
+      startPos = Math.max(0, endPos - availableWidth);
+    }
+  }
+
+  return {
+    startPos,
+    endPos,
+    needsStartEllipsis,
+    needsEndEllipsis,
+    availableWidth,
+  };
+}
+
+function applyTruncation(
+  line: string,
+  bounds: TruncationBounds,
+  originalErrorColumn: number
+): FormattedLine {
+  let content = line.slice(bounds.startPos, bounds.endPos);
+  let adjustedColumn = originalErrorColumn - bounds.startPos;
+
+  if (bounds.needsStartEllipsis) {
+    content = `…${content}`;
+    adjustedColumn = adjustedColumn + 1;
+  }
+
+  if (bounds.needsEndEllipsis) {
+    content = `${content}…`;
+  }
+
+  return { content, adjustedColumn };
+}
+
+function formatContextLine(line: string, maxWidth: number): string {
+  const { trimmed } = trimLine(line);
+
+  if (trimmed.length <= maxWidth) {
+    return trimmed;
+  }
+
+  return `${trimmed.slice(0, maxWidth - 1)}…`;
+}
+
+function formatErrorLine(line: string, errorColumn: number, maxWidth: number): FormattedLine {
+  // Input validation
+  if (errorColumn < 1) {
+    throw new Error("Error column must be >= 1");
+  }
+
+  const { trimmed, spacesRemoved } = trimLine(line);
+  const adjustedErrorColumn = Math.max(1, errorColumn - spacesRemoved);
+
+  // Handle case where line fits without truncation after trimming
+  if (trimmed.length <= maxWidth) {
+    return {
+      content: trimmed,
+      adjustedColumn: adjustedErrorColumn,
+    };
+  }
+
+  // Calculate truncation bounds using the original error column position
+  const bounds = calculateTruncationBounds(line.length, errorColumn, maxWidth);
+
+  // Special handling for start-of-line case (after trimming consideration)
+  if (bounds.startPos === 0 || bounds.startPos <= spacesRemoved) {
+    // Use trimmed line for start-of-line truncation
+    const trimmedBounds = calculateTruncationBounds(trimmed.length, adjustedErrorColumn, maxWidth);
+    return applyTruncation(trimmed, trimmedBounds, adjustedErrorColumn);
+  }
+
+  // Standard middle-of-line truncation
+  return applyTruncation(line, bounds, errorColumn);
+}
+
+function createPointerLine(prefixLength: number, column: number, length: number): string {
+  const safeLength = Math.max(1, length ?? 1);
+  const safeColumn = Math.max(1, column);
+
+  const pointerPrefix = " ".repeat(prefixLength);
+  const dashes = "-".repeat(safeColumn - 1);
+  const carets = "^".repeat(safeLength);
+
+  return pointerPrefix + dashes + carets;
+}
+
+/**
+ * Formats and displays CSS validation errors with visual context.
+ * Shows the error line with surrounding context, line numbers, and pointer indicators.
+ *
+ * @param cssLines - Array of CSS source lines
+ * @param warning - The validation error/warning to format
+ * @param options - Formatting options (maxLineWidth, contextWindowSize)
+ * @returns Array of formatted strings representing the error display
+ *
+ * @example
+ * // Error at line 5, column 10:
+ * //   3 | .class {
+ * //   4 |   margin: 10px;
+ * //   5 |   color: notacolor;
+ * //       ---------^^^^^^^^^^^
+ * //   6 | }
+ */
+function formatErrorDisplay(
+  cssLines: string[],
+  warning: BStyleMatchError,
+  options: ErrorFormatOptions = {
+    maxLineWidth: DEFAULT_MAX_LINE_WIDTH,
+    contextWindowSize: DEFAULT_CONTEXT_WINDOW_SIZE,
+  }
+): string[] {
+  // Input validation
+  if (!cssLines.length || warning.line < 1 || warning.line > cssLines.length) {
+    return [`Invalid error location: line ${warning.line}`];
+  }
+  const errorLine = warning.line;
+  const errorColumn = warning.column;
+  const mismatchLength = warning.mismatchLength ?? 1;
+  const contextWindowSize = options.contextWindowSize ?? DEFAULT_CONTEXT_WINDOW_SIZE;
+
+  const { start, end } = calculateLineWindow(errorLine, cssLines.length, contextWindowSize);
+  const maxLineNum = end;
+  const linePrefix = formatLineNumber(1, maxLineNum);
+  const prefixLength = linePrefix.length;
+  const availableWidth = options.maxLineWidth - prefixLength;
+
+  const result: string[] = [];
+
+  for (let lineNum = start; lineNum <= end; lineNum++) {
+    const lineIndex = lineNum - 1;
+    const currentLine = cssLines[lineIndex] ?? "";
+    const currentPrefix = formatLineNumber(lineNum, maxLineNum);
+
+    if (lineNum === errorLine) {
+      // Format error line
+      const { content, adjustedColumn } = formatErrorLine(currentLine, errorColumn, availableWidth);
+
+      result.push(currentPrefix + content);
+
+      // Add pointer line
+      const pointerLine = createPointerLine(prefixLength, adjustedColumn, mismatchLength);
+      result.push(pointerLine);
+    } else {
+      // Format context line
+      const formattedLine = formatContextLine(currentLine, availableWidth);
+      result.push(currentPrefix + formattedLine);
+    }
+  }
 
   return result;
 }
 
 
-=== File: src/expand-directional.ts ===
-// b_path:: src/expand-directional.ts
-
-import { CSS_DEFAULTS } from "./css-defaults";
-
-const DIRECTIONAL_SIDES = ["top", "right", "bottom", "left"] as const;
-const CORNER_POSITIONS = ["top-left", "top-right", "bottom-right", "bottom-left"] as const;
-
-/**
- * Base key for grouping bare directional properties (top, right, bottom, left).
- * These map to the CSS `inset` logical property group.
- */
-const INSET_BASE_KEY = "inset";
-
-/**
- * Base key for grouping border-radius corner properties.
- * These share the same "border-radius" shorthand.
- */
-const BORDER_RADIUS_BASE_KEY = "border-radius";
-
-/**
- * Grouping information for side-based directional properties (top, right, bottom, left).
- */
-interface DirectionalGroup {
-  prefix: string;
-  suffix: string;
-  sides: Set<string>;
-}
-
-/**
- * Grouping information for corner-based properties (top-left, top-right, etc.).
- */
-interface CornerGroup {
-  corners: Set<string>;
-}
-
-/**
- * Builds a full CSS property name from prefix, side, and suffix components.
- *
- * @param prefix - Property prefix (e.g., "border-", "margin-", or "")
- * @param side - Directional side (e.g., "top", "right", "bottom", "left")
- * @param suffix - Property suffix (e.g., "-width", "-style", or "")
- * @returns Full property name (e.g., "border-top-width", "margin-top", "top")
- *
- * @example
- * buildPropertyName("border-", "top", "-width") // → "border-top-width"
- * buildPropertyName("margin-", "top", "") // → "margin-top"
- * buildPropertyName("", "top", "") // → "top"
- */
-function buildPropertyName(prefix: string, side: string, suffix: string): string {
-  if (prefix === "" && suffix === "") {
-    // Just the side (top, right, bottom, left)
-    return side;
-  }
-  if (suffix === "") {
-    // prefix-side (e.g., "margin-top")
-    return `${prefix}${side}`;
-  }
-  // prefix-side-suffix (e.g., "border-top-width")
-  return `${prefix}${side}${suffix}`;
-}
-
-/**
- * Expands partial directional properties by filling in missing sides with CSS defaults.
- *
- * Scans the result for directional keywords (top, right, bottom, left), groups them by
- * base property, and fills in any missing sides with their CSS default values.
- *
- * @param result - Object with CSS properties (kebab-case)
- * @returns New object with expanded directional properties
- *
- * @example
- * expandDirectionalProperties({ 'border-top-width': '1px' })
- * // → {
- * //     'border-top-width': '1px',
- * //     'border-right-width': 'medium',
- * //     'border-bottom-width': 'medium',
- * //     'border-left-width': 'medium'
- * //   }
- */
-export function expandDirectionalProperties(
-  result: Record<string, string>
-): Record<string, string> {
-  const groups = new Map<string, DirectionalGroup>();
-  const cornerGroups = new Map<string, CornerGroup>();
-
-  // Pre-compile regex for directional property matching (more efficient than string operations)
-  // Matches: -(top|right|bottom|left)- or -(top|right|bottom|left)$ or exact side
-  const directionalRegex = /^(.*)-(top|right|bottom|left)(-(.*))?$|^(top|right|bottom|left)$/;
-
-  // Detect directional properties and group by base
-  for (const property of Object.keys(result)) {
-    // Check for border-radius corner properties first
-    const cornerMatch = property.match(
-      /^border-(top-left|top-right|bottom-right|bottom-left)-radius$/
-    );
-    if (cornerMatch) {
-      const corner = cornerMatch[1];
-      if (!cornerGroups.has(BORDER_RADIUS_BASE_KEY)) {
-        cornerGroups.set(BORDER_RADIUS_BASE_KEY, { corners: new Set() });
-      }
-      cornerGroups.get(BORDER_RADIUS_BASE_KEY)!.corners.add(corner);
-      continue;
-    }
-
-    // Check for side-based directional properties using pre-compiled regex
-    const match = property.match(directionalRegex);
-    if (match) {
-      // match[1] = prefix (if side in middle or end), match[2] = side (if hyphenated),
-      // match[4] = suffix (if side in middle), match[5] = bare side
-      const side = match[2] || match[5]; // Side from hyphenated or bare match
-
-      if (!side) continue; // Shouldn't happen, but defensive check
-
-      if (match[5]) {
-        // Bare side property (e.g., "top")
-        const prefix = "";
-        const suffix = "";
-        const baseKey = INSET_BASE_KEY;
-
-        if (!groups.has(baseKey)) {
-          groups.set(baseKey, { prefix, suffix, sides: new Set() });
-        }
-        groups.get(baseKey)!.sides.add(side);
-      } else if (match[4] !== undefined) {
-        // Side in the middle (e.g., border-top-width)
-        const prefix = match[1] ? `${match[1]}-` : ""; // Include trailing hyphen
-        const suffix = match[4] ? `-${match[4]}` : ""; // Include leading hyphen
-        const baseKey = `${prefix}|${suffix}`; // Normalized grouping key
-
-        if (!groups.has(baseKey)) {
-          groups.set(baseKey, { prefix, suffix, sides: new Set() });
-        }
-        groups.get(baseKey)!.sides.add(side);
-      } else {
-        // Side at the end (e.g., margin-top)
-        const prefix = match[1] ? `${match[1]}-` : ""; // Include trailing hyphen
-        const suffix = "";
-        const baseKey = prefix || side; // Use prefix as key; fallback to side
-
-        if (!groups.has(baseKey)) {
-          groups.set(baseKey, { prefix, suffix, sides: new Set() });
-        }
-        groups.get(baseKey)!.sides.add(side);
-      }
-    }
-  }
-
-  // If no directional groups found, return as-is
-  if (groups.size === 0 && cornerGroups.size === 0) {
-    return result;
-  }
-
-  const expanded: Record<string, string> = { ...result };
-
-  // Fill missing corners for border-radius
-  for (const [, group] of cornerGroups) {
-    const { corners } = group;
-
-    // If all 4 corners present, nothing to expand
-    if (corners.size === 4) {
-      continue;
-    }
-
-    // Add missing corners
-    for (const corner of CORNER_POSITIONS) {
-      if (!corners.has(corner)) {
-        const fullProperty = `border-${corner}-radius`;
-        const defaultValue = CSS_DEFAULTS[fullProperty];
-
-        if (defaultValue) {
-          expanded[fullProperty] = defaultValue;
-        }
-      }
-    }
-  }
-
-  // Fill missing sides with defaults
-  for (const [, group] of groups) {
-    const { prefix, suffix, sides } = group;
-
-    // If all 4 sides present, nothing to expand
-    if (sides.size === 4) {
-      continue;
-    }
-
-    // Add missing sides
-    for (const side of DIRECTIONAL_SIDES) {
-      if (!sides.has(side)) {
-        const fullProperty = buildPropertyName(prefix, side, suffix);
-        const defaultValue = CSS_DEFAULTS[fullProperty];
-
-        if (defaultValue) {
-          expanded[fullProperty] = defaultValue;
-        }
-      }
-    }
-  }
-
-  return expanded;
-}
-
-
 === File: src/flex-flow.ts ===
 // b_path:: src/flex-flow.ts
-export default function (value: string): Record<string, string> | undefined {
-  // Handle global CSS keywords first
-  if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
-      "flex-direction": value,
-      "flex-wrap": value,
-    };
-  }
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 
-  // Parse normal values
-  const parts = value.trim().split(/\s+/);
-  if (parts.length > 2) return undefined;
+/**
+ * Property handler for the 'flex-flow' CSS shorthand property
+ *
+ * Expands flex-flow into flex-direction and flex-wrap.
+ *
+ * @example
+ * ```typescript
+ * flexFlowHandler.expand('row wrap'); // { 'flex-direction': 'row', 'flex-wrap': 'wrap' }
+ * flexFlowHandler.expand('column'); // { 'flex-direction': 'column' }
+ * ```
+ */
+export const flexFlowHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "flex-flow",
+    longhands: ["flex-direction", "flex-wrap"],
+    defaults: {
+      "flex-direction": "row",
+      "flex-wrap": "nowrap",
+    },
+    category: "layout",
+  },
 
-  // Define keyword patterns
-  const directionPattern = /^(row|row-reverse|column|column-reverse)$/i;
-  const wrapPattern = /^(nowrap|wrap|wrap-reverse)$/i;
-
-  // Value classification logic
-  let direction: string | undefined;
-  let wrap: string | undefined;
-
-  for (const part of parts) {
-    if (directionPattern.test(part)) {
-      if (direction !== undefined) return undefined; // duplicate
-      direction = part;
-    } else if (wrapPattern.test(part)) {
-      if (wrap !== undefined) return undefined; // duplicate
-      wrap = part;
-    } else {
-      return undefined; // invalid
+  expand: (value: string): Record<string, string> | undefined => {
+    // Handle global CSS keywords first
+    if (/^(inherit|initial|unset|revert)$/i.test(value)) {
+      return {
+        "flex-direction": value,
+        "flex-wrap": value,
+      };
     }
-  }
 
-  // Return result
-  const result: Record<string, string> = {};
-  if (direction) result["flex-direction"] = direction;
-  if (wrap) result["flex-wrap"] = wrap;
-  return Object.keys(result).length > 0 ? result : undefined;
+    // Parse normal values
+    const parts = value.trim().split(/\s+/);
+    if (parts.length > 2) return undefined;
+
+    // Define keyword patterns
+    const directionPattern = /^(row|row-reverse|column|column-reverse)$/i;
+    const wrapPattern = /^(nowrap|wrap|wrap-reverse)$/i;
+
+    // Value classification logic
+    let direction: string | undefined;
+    let wrap: string | undefined;
+
+    for (const part of parts) {
+      if (directionPattern.test(part)) {
+        if (direction !== undefined) return undefined; // duplicate
+        direction = part;
+      } else if (wrapPattern.test(part)) {
+        if (wrap !== undefined) return undefined; // duplicate
+        wrap = part;
+      } else {
+        return undefined; // invalid
+      }
+    }
+
+    // Return result
+    const result: Record<string, string> = {};
+    if (direction) result["flex-direction"] = direction;
+    if (wrap) result["flex-wrap"] = wrap;
+    return Object.keys(result).length > 0 ? result : undefined;
+  },
+
+  validate: (value: string): boolean => {
+    const result = flexFlowHandler.expand(value);
+    return result !== undefined;
+  },
+});
+
+// Export default for backward compatibility with existing code
+export default function (value: string): Record<string, string> | undefined {
+  return flexFlowHandler.expand(value);
 }
 
 
 === File: src/flex.ts ===
 // b_path:: src/flex.ts
-import isLength from "./is-length";
+import isLength from "./internal/is-length";
 
 export default function (value: string): Record<string, string> | undefined {
   // Handle global CSS keywords
@@ -2300,7 +2702,7 @@ export default function (value: string): Record<string, string> | undefined {
  * Copied from https://github.com/bramstein/css-font-parser
  */
 
-import { sortProperties } from "./index";
+import { sortProperties } from "./internal/property-sorter";
 
 /**
  * @enum {number}
@@ -3128,62 +3530,939 @@ export default (value: string): Record<string, string> | undefined => {
 === File: src/index.ts ===
 // b_path:: src/index.ts
 
-import animation from "./animation";
-import background from "./background";
-import border from "./border";
-import borderRadius from "./border-radius";
-import columnRule from "./column-rule";
-import columns from "./columns";
-import containIntrinsicSize from "./contain-intrinsic-size";
-import directional from "./directional";
-import { expandDirectionalProperties } from "./expand-directional";
-import flex from "./flex";
-import flexFlow from "./flex-flow";
-import font from "./font";
-import grid from "./grid";
-import gridArea from "./grid-area";
-import gridColumn from "./grid-column";
-import gridRow from "./grid-row";
-import listStyle from "./list-style";
-import mask from "./mask";
-import offset from "./offset";
-import outline from "./outline";
-import overflow from "./overflow";
-import placeContent from "./place-content";
-import placeItems from "./place-items";
-import placeSelf from "./place-self";
-import type { BStyleWarning, ExpandOptions, ExpandResult, PropertyGrouping } from "./schema";
-import { FORMAT_CSS, FORMAT_JS, GROUPING_BY_PROPERTY, GROUPING_BY_SIDE } from "./schema";
-import textDecoration from "./text-decoration";
-import textEmphasis from "./text-emphasis";
-import transition from "./transition";
-import { validate } from "./validate";
+/**
+ * b_short - Lightning-fast CSS shorthand expansion to longhand properties
+ *
+ * Main entry point exporting the public API.
+ *
+ * @packageDocumentation
+ */
+
+// ============================================================================
+// CORE API - Primary public exports
+// ============================================================================
+
+export { expand } from "./core/expand";
+export { validate } from "./core/validate";
+
+// ============================================================================
+// TYPE EXPORTS - Configuration and result types
+// ============================================================================
+
+export type {
+  BStyleWarning,
+  ExpandResult,
+  Format,
+  PropertyGrouping,
+  StylesheetValidation,
+} from "./core/schema";
+
+// Export ExpandOptions as namespace (includes both interface and enums)
+export { ExpandOptions } from "./core/schema";
+
+// ============================================================================
+// LAYER TYPES - Multi-layer parsing result types
+// ============================================================================
+
+export type {
+  AnimationLayer,
+  AnimationResult,
+  BackgroundLayer,
+  BackgroundResult,
+  MaskLayer,
+  MaskResult,
+  TransitionLayer,
+  TransitionResult,
+} from "./core/schema";
+
+// ============================================================================
+// CONSTANTS - Runtime enum values
+// ============================================================================
+
+export {
+  DEFAULT_EXPAND_OPTIONS,
+  FORMAT_CSS,
+  FORMAT_JS,
+  FORMAT_VALUES,
+  GROUPING_BY_PROPERTY,
+  GROUPING_BY_SIDE,
+  PROPERTY_GROUPING_VALUES,
+} from "./core/schema";
+
+
+=== File: src/internal/color-utils.ts ===
+// b_path:: src/internal/color-utils.ts
+// Color utility functions - replacing external dependencies for better self-containment
+
+export const CSS_COLOR_NAMES: Record<string, string> = {
+  aliceblue: "#F0F8FF",
+  antiquewhite: "#FAEBD7",
+  aqua: "#00FFFF",
+  aquamarine: "#7FFFD4",
+  azure: "#F0FFFF",
+  beige: "#F5F5DC",
+  bisque: "#FFE4C4",
+  black: "#000000",
+  blanchedalmond: "#FFEBCD",
+  blue: "#0000FF",
+  blueviolet: "#8A2BE2",
+  brown: "#A52A2A",
+  burlywood: "#DEB887",
+  cadetblue: "#5F9EA0",
+  chartreuse: "#7FFF00",
+  chocolate: "#D2691E",
+  coral: "#FF7F50",
+  cornflowerblue: "#6495ED",
+  cornsilk: "#FFF8DC",
+  crimson: "#DC143C",
+  cyan: "#00FFFF",
+  darkblue: "#00008B",
+  darkcyan: "#008B8B",
+  darkgoldenrod: "#B8860B",
+  darkgray: "#A9A9A9",
+  darkgrey: "#A9A9A9",
+  darkgreen: "#006400",
+  darkkhaki: "#BDB76B",
+  darkmagenta: "#8B008B",
+  darkolivegreen: "#556B2F",
+  darkorange: "#FF8C00",
+  darkorchid: "#9932CC",
+  darkred: "#8B0000",
+  darksalmon: "#E9967A",
+  darkseagreen: "#8FBC8F",
+  darkslateblue: "#483D8B",
+  darkslategray: "#2F4F4F",
+  darkslategrey: "#2F4F4F",
+  darkturquoise: "#00CED1",
+  darkviolet: "#9400D3",
+  deeppink: "#FF1493",
+  deepskyblue: "#00BFFF",
+  dimgray: "#696969",
+  dimgrey: "#696969",
+  dodgerblue: "#1E90FF",
+  firebrick: "#B22222",
+  floralwhite: "#FFFAF0",
+  forestgreen: "#228B22",
+  fuchsia: "#FF00FF",
+  gainsboro: "#DCDCDC",
+  ghostwhite: "#F8F8FF",
+  gold: "#FFD700",
+  goldenrod: "#DAA520",
+  gray: "#808080",
+  grey: "#808080",
+  green: "#008000",
+  greenyellow: "#ADFF2F",
+  honeydew: "#F0FFF0",
+  hotpink: "#FF69B4",
+  indianred: "#CD5C5C",
+  indigo: "#4B0082",
+  ivory: "#FFFFF0",
+  khaki: "#F0E68C",
+  lavender: "#E6E6FA",
+  lavenderblush: "#FFF0F5",
+  lawngreen: "#7CFC00",
+  lemonchiffon: "#FFFACD",
+  lightblue: "#ADD8E6",
+  lightcoral: "#F08080",
+  lightcyan: "#E0FFFF",
+  lightgoldenrodyellow: "#FAFAD2",
+  lightgray: "#D3D3D3",
+  lightgrey: "#D3D3D3",
+  lightgreen: "#90EE90",
+  lightpink: "#FFB6C1",
+  lightsalmon: "#FFA07A",
+  lightseagreen: "#20B2AA",
+  lightskyblue: "#87CEFA",
+  lightslategray: "#778899",
+  lightslategrey: "#778899",
+  lightsteelblue: "#B0C4DE",
+  lightyellow: "#FFFFE0",
+  lime: "#00FF00",
+  limegreen: "#32CD32",
+  linen: "#FAF0E6",
+  magenta: "#FF00FF",
+  maroon: "#800000",
+  mediumaquamarine: "#66CDAA",
+  mediumblue: "#0000CD",
+  mediumorchid: "#BA55D3",
+  mediumpurple: "#9370DB",
+  mediumseagreen: "#3CB371",
+  mediumslateblue: "#7B68EE",
+  mediumspringgreen: "#00FA9A",
+  mediumturquoise: "#48D1CC",
+  mediumvioletred: "#C71585",
+  midnightblue: "#191970",
+  mintcream: "#F5FFFA",
+  mistyrose: "#FFE4E1",
+  moccasin: "#FFE4B5",
+  navajowhite: "#FFDEAD",
+  navy: "#000080",
+  oldlace: "#FDF5E6",
+  olive: "#808000",
+  olivedrab: "#6B8E23",
+  orange: "#FFA500",
+  orangered: "#FF4500",
+  orchid: "#DA70D6",
+  palegoldenrod: "#EEE8AA",
+  palegreen: "#98FB98",
+  paleturquoise: "#AFEEEE",
+  palevioletred: "#DB7093",
+  papayawhip: "#FFEFD5",
+  peachpuff: "#FFDAB9",
+  peru: "#CD853F",
+  pink: "#FFC0CB",
+  plum: "#DDA0DD",
+  powderblue: "#B0E0E6",
+  purple: "#800080",
+  rebeccapurple: "#663399",
+  red: "#FF0000",
+  rosybrown: "#BC8F8F",
+  royalblue: "#4169E1",
+  saddlebrown: "#8B4513",
+  salmon: "#FA8072",
+  sandybrown: "#F4A460",
+  seagreen: "#2E8B57",
+  seashell: "#FFF5EE",
+  sienna: "#A0522D",
+  silver: "#C0C0C0",
+  skyblue: "#87CEEB",
+  slateblue: "#6A5ACD",
+  slategray: "#708090",
+  slategrey: "#708090",
+  snow: "#FFFAFA",
+  springgreen: "#00FF7F",
+  steelblue: "#4682B4",
+  tan: "#D2B48C",
+  teal: "#008080",
+  thistle: "#D8BFD8",
+  tomato: "#FF6347",
+  turquoise: "#40E0D0",
+  violet: "#EE82EE",
+  wheat: "#F5DEB3",
+  white: "#FFFFFF",
+  whitesmoke: "#F5F5F5",
+  yellow: "#FFFF00",
+  yellowgreen: "#9ACD32",
+};
+
+export function cssUrlRegex(): RegExp {
+  return /url\((.*?)\)/gi;
+}
+
+export function hexColorRegex(opts?: { strict?: boolean }): RegExp {
+  opts = opts && typeof opts === "object" ? opts : {};
+  return opts.strict
+    ? /^#([a-f0-9]{3,4}|[a-f0-9]{4}(?:[a-f0-9]{2}){1,2})\b$/i
+    : /#([a-f0-9]{3}|[a-f0-9]{4}(?:[a-f0-9]{2}){0,2})\b/gi;
+}
+
+export function hslRegex(options?: { exact?: boolean }): RegExp {
+  options = options || {};
+  return options.exact
+    ? /^hsl\(\s*(\d+)\s*,\s*(\d*(?:\.\d+)?%)\s*,\s*(\d*(?:\.\d+)?%)\)$/
+    : /hsl\(\s*(\d+)\s*,\s*(\d*(?:\.\d+)?%)\s*,\s*(\d*(?:\.\d+)?%)\)/gi;
+}
+
+export function hslaRegex(options?: { exact?: boolean }): RegExp {
+  options = options || {};
+  return options.exact
+    ? /^hsla\((\d+),\s*([\d.]+)%,\s*([\d.]+)%,\s*(\d*(?:\.\d+)?)\)$/
+    : /hsla\((\d+),\s*([\d.]+)%,\s*([\d.]+)%,\s*(\d*(?:\.\d+)?)\)/gi;
+}
+
+export function rgbRegex(options?: { exact?: boolean }): RegExp {
+  options = options || {};
+  return options.exact
+    ? /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/
+    : /rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)/gi;
+}
+
+export function rgbaRegex(options?: { exact?: boolean }): RegExp {
+  options = options || {};
+  return options.exact
+    ? /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)$/
+    : /rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)/gi;
+}
+
+
+=== File: src/internal/css-defaults.ts ===
+// b_path:: src/internal/css-defaults.ts
+
+/**
+ * CSS default values for directional properties (kebab-case).
+ * Used for partial longhand expansion when expandPartialLonghand option is enabled.
+ */
+export const CSS_DEFAULTS: Record<string, string> = {
+  // Border width
+  "border-top-width": "medium",
+  "border-right-width": "medium",
+  "border-bottom-width": "medium",
+  "border-left-width": "medium",
+
+  // Border style
+  "border-top-style": "none",
+  "border-right-style": "none",
+  "border-bottom-style": "none",
+  "border-left-style": "none",
+
+  // Border color
+  "border-top-color": "currentcolor",
+  "border-right-color": "currentcolor",
+  "border-bottom-color": "currentcolor",
+  "border-left-color": "currentcolor",
+
+  // Border radius
+  "border-top-left-radius": "0",
+  "border-top-right-radius": "0",
+  "border-bottom-right-radius": "0",
+  "border-bottom-left-radius": "0",
+
+  // Margin
+  "margin-top": "0",
+  "margin-right": "0",
+  "margin-bottom": "0",
+  "margin-left": "0",
+
+  // Padding
+  "padding-top": "0",
+  "padding-right": "0",
+  "padding-bottom": "0",
+  "padding-left": "0",
+
+  // Positioning
+  top: "auto",
+  right: "auto",
+  bottom: "auto",
+  left: "auto",
+
+  // Scroll margin
+  "scroll-margin-top": "0",
+  "scroll-margin-right": "0",
+  "scroll-margin-bottom": "0",
+  "scroll-margin-left": "0",
+
+  // Scroll padding
+  "scroll-padding-top": "auto",
+  "scroll-padding-right": "auto",
+  "scroll-padding-bottom": "auto",
+  "scroll-padding-left": "auto",
+};
+
+
+=== File: src/internal/directional.ts ===
+// b_path:: src/internal/directional.ts
+
+/**
+ * Cache for directional property expansion results.
+ * Improves performance for repeated calls with same values.
+ */
+const directionalCache = new Map<string, Record<string, string>>();
+const MAX_CACHE_SIZE = 1000;
+
+/**
+ * Expands directional values (top, right, bottom, left) from CSS shorthand notation.
+ * Supports 1-4 value syntax and caches results for performance.
+ *
+ * @param value - CSS value string with 1-4 space-separated values
+ * @returns Object with top, right, bottom, left properties, or undefined if invalid
+ *
+ * @example
+ * directional('10px') // { top: '10px', right: '10px', bottom: '10px', left: '10px' }
+ * directional('10px 20px') // { top: '10px', right: '20px', bottom: '10px', left: '20px' }
+ * directional('10px 20px 30px') // { top: '10px', right: '20px', bottom: '30px', left: '20px' }
+ * directional('10px 20px 30px 40px') // { top: '10px', right: '20px', bottom: '30px', left: '40px' }
+ */
+export default function directional(value: string): Record<string, string> | undefined {
+  // Check cache first
+  const cached = directionalCache.get(value);
+  if (cached) return cached;
+
+  const values = value.split(/\s+/);
+
+  if (values.length === 1) values.splice(0, 1, ...Array.from({ length: 4 }, () => values[0]));
+  else if (values.length === 2) values.push(...values);
+  else if (values.length === 3) values.push(values[1]);
+  else if (values.length > 4) return;
+
+  const result = ["top", "right", "bottom", "left"].reduce(
+    (acc: Record<string, string>, direction: string, i: number) => {
+      acc[direction] = values[i];
+      return acc;
+    },
+    {}
+  );
+
+  // Cache result with size limit
+  if (directionalCache.size >= MAX_CACHE_SIZE) {
+    // Remove oldest entry (first key)
+    const firstKey = directionalCache.keys().next().value;
+    if (firstKey !== undefined) {
+      directionalCache.delete(firstKey);
+    }
+  }
+  directionalCache.set(value, result);
+
+  return result;
+}
+
+
+=== File: src/internal/expand-directional.ts ===
+// b_path:: src/internal/expand-directional.ts
+
+import { CSS_DEFAULTS } from "./css-defaults";
+
+const DIRECTIONAL_SIDES = ["top", "right", "bottom", "left"] as const;
+const CORNER_POSITIONS = ["top-left", "top-right", "bottom-right", "bottom-left"] as const;
+
+/**
+ * Base key for grouping bare directional properties (top, right, bottom, left).
+ * These map to the CSS `inset` logical property group.
+ */
+const INSET_BASE_KEY = "inset";
+
+/**
+ * Base key for grouping border-radius corner properties.
+ * These share the same "border-radius" shorthand.
+ */
+const BORDER_RADIUS_BASE_KEY = "border-radius";
+
+/**
+ * Grouping information for side-based directional properties (top, right, bottom, left).
+ */
+interface DirectionalGroup {
+  prefix: string;
+  suffix: string;
+  sides: Set<string>;
+}
+
+/**
+ * Grouping information for corner-based properties (top-left, top-right, etc.).
+ */
+interface CornerGroup {
+  corners: Set<string>;
+}
+
+/**
+ * Builds a full CSS property name from prefix, side, and suffix components.
+ *
+ * @param prefix - Property prefix (e.g., "border-", "margin-", or "")
+ * @param side - Directional side (e.g., "top", "right", "bottom", "left")
+ * @param suffix - Property suffix (e.g., "-width", "-style", or "")
+ * @returns Full property name (e.g., "border-top-width", "margin-top", "top")
+ *
+ * @example
+ * buildPropertyName("border-", "top", "-width") // → "border-top-width"
+ * buildPropertyName("margin-", "top", "") // → "margin-top"
+ * buildPropertyName("", "top", "") // → "top"
+ */
+function buildPropertyName(prefix: string, side: string, suffix: string): string {
+  if (prefix === "" && suffix === "") {
+    // Just the side (top, right, bottom, left)
+    return side;
+  }
+  if (suffix === "") {
+    // prefix-side (e.g., "margin-top")
+    return `${prefix}${side}`;
+  }
+  // prefix-side-suffix (e.g., "border-top-width")
+  return `${prefix}${side}${suffix}`;
+}
+
+/**
+ * Expands partial directional properties by filling in missing sides with CSS defaults.
+ *
+ * Scans the result for directional keywords (top, right, bottom, left), groups them by
+ * base property, and fills in any missing sides with their CSS default values.
+ *
+ * @param result - Object with CSS properties (kebab-case)
+ * @returns New object with expanded directional properties
+ *
+ * @example
+ * expandDirectionalProperties({ 'border-top-width': '1px' })
+ * // → {
+ * //     'border-top-width': '1px',
+ * //     'border-right-width': 'medium',
+ * //     'border-bottom-width': 'medium',
+ * //     'border-left-width': 'medium'
+ * //   }
+ */
+export function expandDirectionalProperties(
+  result: Record<string, string>
+): Record<string, string> {
+  const groups = new Map<string, DirectionalGroup>();
+  const cornerGroups = new Map<string, CornerGroup>();
+
+  // Pre-compile regex for directional property matching (more efficient than string operations)
+  // Matches: -(top|right|bottom|left)- or -(top|right|bottom|left)$ or exact side
+  const directionalRegex = /^(.*)-(top|right|bottom|left)(-(.*))?$|^(top|right|bottom|left)$/;
+
+  // Detect directional properties and group by base
+  for (const property of Object.keys(result)) {
+    // Check for border-radius corner properties first
+    const cornerMatch = property.match(
+      /^border-(top-left|top-right|bottom-right|bottom-left)-radius$/
+    );
+    if (cornerMatch) {
+      const corner = cornerMatch[1];
+      if (!cornerGroups.has(BORDER_RADIUS_BASE_KEY)) {
+        cornerGroups.set(BORDER_RADIUS_BASE_KEY, { corners: new Set() });
+      }
+      cornerGroups.get(BORDER_RADIUS_BASE_KEY)!.corners.add(corner);
+      continue;
+    }
+
+    // Check for side-based directional properties using pre-compiled regex
+    const match = property.match(directionalRegex);
+    if (match) {
+      // match[1] = prefix (if side in middle or end), match[2] = side (if hyphenated),
+      // match[4] = suffix (if side in middle), match[5] = bare side
+      const side = match[2] || match[5]; // Side from hyphenated or bare match
+
+      if (!side) continue; // Shouldn't happen, but defensive check
+
+      if (match[5]) {
+        // Bare side property (e.g., "top")
+        const prefix = "";
+        const suffix = "";
+        const baseKey = INSET_BASE_KEY;
+
+        if (!groups.has(baseKey)) {
+          groups.set(baseKey, { prefix, suffix, sides: new Set() });
+        }
+        groups.get(baseKey)!.sides.add(side);
+      } else if (match[4] !== undefined) {
+        // Side in the middle (e.g., border-top-width)
+        const prefix = match[1] ? `${match[1]}-` : ""; // Include trailing hyphen
+        const suffix = match[4] ? `-${match[4]}` : ""; // Include leading hyphen
+        const baseKey = `${prefix}|${suffix}`; // Normalized grouping key
+
+        if (!groups.has(baseKey)) {
+          groups.set(baseKey, { prefix, suffix, sides: new Set() });
+        }
+        groups.get(baseKey)!.sides.add(side);
+      } else {
+        // Side at the end (e.g., margin-top)
+        const prefix = match[1] ? `${match[1]}-` : ""; // Include trailing hyphen
+        const suffix = "";
+        const baseKey = prefix || side; // Use prefix as key; fallback to side
+
+        if (!groups.has(baseKey)) {
+          groups.set(baseKey, { prefix, suffix, sides: new Set() });
+        }
+        groups.get(baseKey)!.sides.add(side);
+      }
+    }
+  }
+
+  // If no directional groups found, return as-is
+  if (groups.size === 0 && cornerGroups.size === 0) {
+    return result;
+  }
+
+  const expanded: Record<string, string> = { ...result };
+
+  // Fill missing corners for border-radius
+  for (const [, group] of cornerGroups) {
+    const { corners } = group;
+
+    // If all 4 corners present, nothing to expand
+    if (corners.size === 4) {
+      continue;
+    }
+
+    // Add missing corners
+    for (const corner of CORNER_POSITIONS) {
+      if (!corners.has(corner)) {
+        const fullProperty = `border-${corner}-radius`;
+        const defaultValue = CSS_DEFAULTS[fullProperty];
+
+        if (defaultValue) {
+          expanded[fullProperty] = defaultValue;
+        }
+      }
+    }
+  }
+
+  // Fill missing sides with defaults
+  for (const [, group] of groups) {
+    const { prefix, suffix, sides } = group;
+
+    // If all 4 sides present, nothing to expand
+    if (sides.size === 4) {
+      continue;
+    }
+
+    // Add missing sides
+    for (const side of DIRECTIONAL_SIDES) {
+      if (!sides.has(side)) {
+        const fullProperty = buildPropertyName(prefix, side, suffix);
+        const defaultValue = CSS_DEFAULTS[fullProperty];
+
+        if (defaultValue) {
+          expanded[fullProperty] = defaultValue;
+        }
+      }
+    }
+  }
+
+  return expanded;
+}
+
+
+=== File: src/internal/is-angle.ts ===
+// b_path:: src/internal/is-angle.ts
+const ANGLE = /^(\+|-)?([0-9]*\.?[0-9]+)(deg|rad|turn|grad)$/i;
+const ZERO = /^(\+|-)?(0*\.)?0+$/;
+
+export default function isAngle(value: string): boolean {
+  return ANGLE.test(value) || ZERO.test(value);
+}
+
+
+=== File: src/internal/is-color.ts ===
+// b_path:: src/internal/is-color.ts
+import {
+  CSS_COLOR_NAMES,
+  hexColorRegex,
+  hslaRegex,
+  hslRegex,
+  rgbaRegex,
+  rgbRegex,
+} from "./color-utils";
+
+const HEX = new RegExp(`^${hexColorRegex().source}$`, "i");
+const HSLA = hslaRegex({ exact: true });
+const HSL = hslRegex({ exact: true });
+const RGB = rgbRegex({ exact: true });
+const RGBA = rgbaRegex({ exact: true });
+
+/**
+ * Cache for color validation results.
+ * Improves performance for repeated color checks.
+ */
+const colorCache = new Map<string, boolean>();
+const MAX_CACHE_SIZE = 500;
+
+/**
+ * Checks if a string value represents a valid CSS color.
+ * Supports named colors, hex, rgb, rgba, hsl, hsla, and CSS custom properties.
+ * Results are cached for performance.
+ *
+ * @param value - The CSS value to check
+ * @returns true if the value is a valid color, false otherwise
+ *
+ * @example
+ * isColor('red') // true
+ * isColor('#ff0000') // true
+ * isColor('rgb(255, 0, 0)') // true
+ * isColor('var(--primary-color)') // true
+ * isColor('10px') // false
+ */
+export default function isColor(value: string): boolean {
+  // Check cache first
+  const cached = colorCache.get(value);
+  if (cached !== undefined) return cached;
+
+  const lowerValue = value.toLowerCase();
+
+  // Support CSS custom property (var name)
+  if (/^var\(\s*--[a-zA-Z0-9-_]+\s*\)$/.test(lowerValue)) {
+    colorCache.set(value, true);
+    return true;
+  }
+
+  const result =
+    !!CSS_COLOR_NAMES[lowerValue] ||
+    lowerValue === "currentcolor" ||
+    lowerValue === "transparent" ||
+    HEX.test(lowerValue) ||
+    HSLA.test(lowerValue) ||
+    HSL.test(lowerValue) ||
+    RGB.test(lowerValue) ||
+    RGBA.test(lowerValue);
+
+  // Cache result with size limit
+  if (colorCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = colorCache.keys().next().value;
+    if (firstKey !== undefined) {
+      colorCache.delete(firstKey);
+    }
+  }
+  colorCache.set(value, result);
+
+  return result;
+}
+
+
+=== File: src/internal/is-length.ts ===
+// b_path:: src/internal/is-length.ts
+const LENGTH = /^(\+|-)?([0-9]*\.)?[0-9]+(em|ex|ch|rem|vh|vw|vmin|vmax|px|mm|cm|in|pt|pc|%)$/i;
+const ZERO = /^(\+|-)?(0*\.)?0+$/;
+
+export default function isLength(value: string): boolean {
+  return LENGTH.test(value) || ZERO.test(value);
+}
+
+
+=== File: src/internal/is-time.ts ===
+// b_path:: src/internal/is-time.ts
+// Utility to detect CSS time values for transition-duration and transition-delay parsing
+const TIME = /^[+-]?(\d*\.)?\d+(m?s)$/i;
+
+export default function isTime(value: string): boolean {
+  return TIME.test(value);
+}
+
+
+=== File: src/internal/is-timing-function.ts ===
+// b_path:: src/internal/is-timing-function.ts
+// Utility to detect CSS timing function values for transition-timing-function parsing
+const TIMING_KEYWORDS = /^(ease|linear|ease-in|ease-out|ease-in-out|step-start|step-end)$/i;
+const TIMING_FUNCTIONS = /^(cubic-bezier|steps)\s*\(/i;
+
+function hasBalancedParentheses(value: string): boolean {
+  let openCount = 0;
+  for (const char of value) {
+    if (char === "(") {
+      openCount++;
+    } else if (char === ")") {
+      openCount--;
+      if (openCount < 0) {
+        return false;
+      }
+    }
+  }
+  return openCount === 0;
+}
+
+export default function isTimingFunction(value: string): boolean {
+  // Check for timing function keywords
+  if (TIMING_KEYWORDS.test(value)) {
+    return true;
+  }
+
+  // Check for timing function functions with balanced parentheses
+  if (TIMING_FUNCTIONS.test(value)) {
+    return hasBalancedParentheses(value);
+  }
+
+  return false;
+}
+
+
+=== File: src/internal/layer-parser-utils.ts ===
+// b_path:: src/internal/layer-parser-utils.ts
+import * as csstree from "css-tree";
+
+/**
+ * Shared utilities for parsing multi-layer CSS properties (background, mask, animation, transition).
+ * Eliminates ~360 lines of duplication across layer-parsing modules.
+ */
+
+/**
+ * Detects if a CSS value contains top-level commas (indicating multiple layers).
+ * Ignores commas inside parentheses/brackets (functions, rgba(), etc.).
+ *
+ * @param value - CSS value to analyze
+ * @param detectFunctions - If true, also return true for values with function calls
+ * @returns true if multi-layer parsing is needed
+ *
+ * @example
+ * hasTopLevelCommas('url(a.png), url(b.png)') // → true (multiple layers)
+ * hasTopLevelCommas('rgba(0,0,0,0.5)')        // → false (comma inside function)
+ * hasTopLevelCommas('cubic-bezier(0,0,1,1)', true) // → true (has function)
+ */
+export function hasTopLevelCommas(value: string, detectFunctions = false): boolean {
+  let parenDepth = 0;
+  let bracketDepth = 0;
+  let hasFunctions = false;
+
+  for (let i = 0; i < value.length; i++) {
+    const char = value[i];
+
+    if (char === "(") {
+      parenDepth++;
+      hasFunctions = true;
+    } else if (char === ")") {
+      parenDepth--;
+    } else if (char === "[") {
+      bracketDepth++;
+    } else if (char === "]") {
+      bracketDepth--;
+    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
+      // Found a comma at the top level - this indicates multiple layers
+      return true;
+    }
+  }
+
+  // Optionally detect functions (for animation/transition timing functions)
+  return detectFunctions && hasFunctions;
+}
+
+/**
+ * Splits a CSS value into layers at top-level commas, respecting nested functions.
+ *
+ * @param value - CSS value to split
+ * @returns Array of layer strings (trimmed)
+ *
+ * @example
+ * splitLayers('url(a.png) center, url(b.png) top')
+ * // → ['url(a.png) center', 'url(b.png) top']
+ *
+ * splitLayers('rgba(0,0,0,0.5)')
+ * // → ['rgba(0,0,0,0.5)']
+ */
+export function splitLayers(value: string): string[] {
+  const layers: string[] = [];
+  let currentLayer = "";
+  let parenDepth = 0;
+  let bracketDepth = 0;
+
+  for (let i = 0; i < value.length; i++) {
+    const char = value[i];
+
+    if (char === "(") {
+      parenDepth++;
+    } else if (char === ")") {
+      parenDepth--;
+    } else if (char === "[") {
+      bracketDepth++;
+    } else if (char === "]") {
+      bracketDepth--;
+    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
+      // Found a comma at the top level - this separates layers
+      layers.push(currentLayer.trim());
+      currentLayer = "";
+      continue;
+    }
+
+    currentLayer += char;
+  }
+
+  // Add the last layer
+  if (currentLayer.trim()) {
+    layers.push(currentLayer.trim());
+  }
+
+  return layers;
+}
+
+/**
+ * Generic layer parsing factory for multi-layer CSS properties.
+ * Handles splitting, parsing, and error handling uniformly.
+ *
+ * @param value - CSS value to parse
+ * @param parseSingleLayer - Function to parse a single layer string
+ * @returns Parsed layers or undefined on error
+ *
+ * @example
+ * // Background parsing
+ * parseLayersGeneric(
+ *   'url(a.png) center, url(b.png) top',
+ *   parseBackgroundLayer
+ * )
+ */
+export function parseLayersGeneric<T>(
+  value: string,
+  parseSingleLayer: (layerValue: string) => T | undefined
+): T[] | undefined {
+  try {
+    // Split into layers
+    const layerStrings = splitLayers(value);
+    if (layerStrings.length === 0) {
+      return undefined;
+    }
+
+    // Parse each layer
+    const layers: T[] = [];
+    for (const layerStr of layerStrings) {
+      const parsedLayer = parseSingleLayer(layerStr);
+      if (!parsedLayer) {
+        return undefined; // Parsing failed for this layer
+      }
+      layers.push(parsedLayer);
+    }
+
+    return layers;
+  } catch (_error) {
+    // If parsing fails, return undefined to indicate invalid input
+    return undefined;
+  }
+}
+
+/**
+ * Collects all child nodes from a css-tree AST Value node.
+ * Common pattern across all multi-layer parsers.
+ *
+ * @param ast - css-tree AST (must contain Value nodes)
+ * @returns Flattened array of child nodes
+ */
+export function collectCssTreeChildren(ast: csstree.CssNode): csstree.CssNode[] {
+  const children: csstree.CssNode[] = [];
+
+  // Type guard to ensure we have a valid css-tree node
+  if (!ast || typeof ast !== "object") {
+    return children;
+  }
+
+  // Walk the AST and collect children from Value nodes
+  csstree.walk(ast, {
+    visit: "Value",
+    enter: (node: { children?: Iterable<csstree.CssNode> }) => {
+      if (node.children) {
+        for (const child of node.children) {
+          children.push(child);
+        }
+      }
+    },
+  });
+
+  return children;
+}
+
+
+=== File: src/internal/normalize-color.ts ===
+// b_path:: src/internal/normalize-color.ts
+import { hslaRegex, hslRegex, rgbaRegex, rgbRegex } from "./color-utils";
+
+const FUNCTIONS = [hslaRegex(), hslRegex(), rgbRegex(), rgbaRegex()];
+
+export default function normalizeColor(value: string): string {
+  return FUNCTIONS.reduce(
+    (acc: string, func: RegExp) => acc.replace(func, (match: string) => match.replace(/\s+/g, "")),
+    value
+  );
+}
+
+
+=== File: src/internal/parsers.ts ===
+// b_path:: src/internal/parsers.ts
+
+/**
+ * Internal parsing utilities for CSS declaration processing.
+ * @internal
+ */
 
 /**
  * Removes all CSS comments from the input string.
  * Uses a character-by-character scanning approach that safely handles multi-line comments.
+ * @internal
  */
-function stripComments(css: string): string {
-  // Remove all CSS comments /* ... */
-  // This function scans character-by-character to handle multi-line comments safely
+export function stripComments(css: string): string {
   let result = "";
   let i = 0;
 
   while (i < css.length) {
-    // Check for comment start
     if (css[i] === "/" && css[i + 1] === "*") {
-      // Find comment end
       let j = i + 2;
       while (j < css.length) {
         if (css[j] === "*" && css[j + 1] === "/") {
-          // Skip the comment, replace with a space to preserve token boundaries
           result += " ";
           i = j + 2;
           break;
         }
         j++;
       }
-      // If we didn't find a closing */, treat rest of string as comment and stop
       if (j >= css.length) {
         i = css.length;
       }
@@ -3196,7 +4475,12 @@ function stripComments(css: string): string {
   return result;
 }
 
-function parseInputString(input: string): string[] {
+/**
+ * Parses CSS input string into individual declarations.
+ * Handles quotes, parentheses, and brackets correctly.
+ * @internal
+ */
+export function parseInputString(input: string): string[] {
   const declarations: string[] = [];
   let current = "";
   let i = 0;
@@ -3205,16 +4489,13 @@ function parseInputString(input: string): string[] {
     const char = input[i];
     const nextChar = input[i + 1];
 
-    // Handle escaped characters
     if (char === "\\" && nextChar) {
       current += char + nextChar;
       i += 2;
       continue;
     }
 
-    // Track context
     if (char === '"' || char === "'") {
-      // Find the closing quote, handling escaped quotes
       let quoteEnd = i + 1;
       while (quoteEnd < input.length) {
         if (input[quoteEnd] === char && input[quoteEnd - 1] !== "\\") {
@@ -3229,7 +4510,6 @@ function parseInputString(input: string): string[] {
       }
     }
 
-    // Handle parentheses (for functions like url(), calc(), etc.)
     if (char === "(") {
       let parenCount = 1;
       let parenEnd = i + 1;
@@ -3245,7 +4525,6 @@ function parseInputString(input: string): string[] {
       }
     }
 
-    // Handle square brackets (for attribute selectors, etc.)
     if (char === "[") {
       const bracketEnd = input.indexOf("]", i + 1);
       if (bracketEnd !== -1) {
@@ -3255,7 +4534,6 @@ function parseInputString(input: string): string[] {
       }
     }
 
-    // Split on semicolons only when not in any special context
     if (char === ";") {
       declarations.push(current.trim());
       current = "";
@@ -3266,16 +4544,20 @@ function parseInputString(input: string): string[] {
     i++;
   }
 
-  // Add the last declaration if it exists
   if (current.trim()) {
     declarations.push(current.trim());
   }
 
-  // Filter out empty declarations
   return declarations.filter((decl) => decl.length > 0);
 }
 
-function parseCssDeclaration(declaration: string): { property: string; value: string } | null {
+/**
+ * Parses a CSS declaration into property and value.
+ * @internal
+ */
+export function parseCssDeclaration(
+  declaration: string
+): { property: string; value: string } | null {
   const trimmed = declaration.trim();
   const colonIndex = trimmed.indexOf(":");
 
@@ -3289,59 +4571,201 @@ function parseCssDeclaration(declaration: string): { property: string; value: st
   return { property, value };
 }
 
-const prefix =
-  (prefix: string) =>
-  (value: string): Record<string, string> | undefined => {
-    const longhand = directional(value);
 
-    if (!longhand) return;
+=== File: src/internal/property-handler.ts ===
+// b_path:: src/internal/property-handler.ts
 
-    const result: Record<string, string> = {};
-    for (const key in longhand) {
-      result[`${prefix}-${key}`] = longhand[key];
-    }
-    return result;
-  };
+/**
+ * Options for property handler behavior
+ */
+export interface PropertyHandlerOptions {
+  /** Enable strict validation mode (reject invalid values). Default: false */
+  strict?: boolean;
+  /** Preserve custom properties (CSS variables) in output. Default: true */
+  preserveCustomProperties?: boolean;
+}
 
-const shorthand: Record<string, (value: string) => Record<string, string> | undefined> = {
-  animation: animation,
-  background: background,
-  border: border,
-  "border-bottom": border.bottom,
-  "border-color": border.color,
-  "border-left": border.left,
-  "border-radius": borderRadius,
-  "border-right": border.right,
-  "border-style": border.style,
-  "border-top": border.top,
-  "border-width": border.width,
-  columns: columns,
-  "column-rule": columnRule,
-  "contain-intrinsic-size": containIntrinsicSize,
-  flex: flex,
-  "flex-flow": flexFlow,
-  font: font,
-  grid: grid,
-  "grid-area": gridArea,
-  "grid-column": gridColumn,
-  "grid-row": gridRow,
-  inset: directional,
-  "list-style": listStyle,
-  mask: mask,
-  margin: prefix("margin"),
-  offset: offset,
-  outline: outline,
-  overflow: overflow,
-  padding: prefix("padding"),
-  "place-content": placeContent,
-  "place-items": placeItems,
-  "place-self": placeSelf,
-  "text-decoration": textDecoration,
-  "text-emphasis": textEmphasis,
-  transition: transition,
+/**
+ * Default values for PropertyHandlerOptions
+ */
+export const DEFAULT_PROPERTY_HANDLER_OPTIONS: Required<PropertyHandlerOptions> = {
+  strict: false,
+  preserveCustomProperties: true,
 };
 
-const PROPERTY_ORDER_MAP: Record<string, number> = {
+/**
+ * Property category enumeration
+ */
+export const PROPERTY_CATEGORIES = [
+  "box-model",
+  "visual",
+  "layout",
+  "animation",
+  "typography",
+  "other",
+] as const;
+
+export type PropertyCategory = (typeof PROPERTY_CATEGORIES)[number];
+
+/**
+ * Metadata describing a property handler
+ */
+export interface PropertyHandlerMetadata {
+  /** The shorthand property name (e.g., 'border') */
+  shorthand: string;
+  /** Array of longhand property names this shorthand expands to */
+  longhands: string[];
+  /** Default values for longhand properties when not specified */
+  defaults?: Record<string, string>;
+  /** Property category classification */
+  category: PropertyCategory;
+}
+
+/**
+ * Property handler interface for CSS shorthand expansion
+ *
+ * All property handlers must implement this interface to ensure:
+ * - Consistent API across all handlers
+ * - Type-safe expansion logic
+ * - Introspection capabilities
+ * - Future extensibility (e.g., collapse API)
+ */
+export interface PropertyHandler {
+  /**
+   * Metadata describing the handler's properties
+   */
+  readonly meta: PropertyHandlerMetadata;
+
+  /**
+   * Expand a CSS shorthand value into its longhand properties
+   *
+   * @param value - The CSS value to expand
+   * @param options - Optional handler options
+   * @returns Object mapping longhand property names to values, or undefined if invalid
+   *
+   * @example
+   * ```typescript
+   * const handler = overflowHandler;
+   * handler.expand('hidden auto'); // { 'overflow-x': 'hidden', 'overflow-y': 'auto' }
+   * handler.expand('invalid'); // undefined
+   * ```
+   */
+  expand(value: string, options?: PropertyHandlerOptions): Record<string, string> | undefined;
+
+  /**
+   * Optional: Validate a CSS value without expanding it
+   *
+   * @param value - The CSS value to validate
+   * @returns true if valid, false otherwise
+   */
+  validate?(value: string): boolean;
+
+  /**
+   * Optional: Reconstruct a shorthand value from longhand properties (future feature)
+   *
+   * This method enables the "collapse API" - converting longhand properties back
+   * into their shorthand equivalent.
+   *
+   * @param properties - Object mapping longhand property names to values
+   * @returns The reconstructed shorthand value, or undefined if cannot be collapsed
+   *
+   * @example
+   * ```typescript
+   * const handler = overflowHandler;
+   * handler.reconstruct?.({ 'overflow-x': 'hidden', 'overflow-y': 'hidden' }); // 'hidden'
+   * handler.reconstruct?.({ 'overflow-x': 'hidden', 'overflow-y': 'auto' }); // 'hidden auto'
+   * ```
+   */
+  reconstruct?(properties: Record<string, string>): string | undefined;
+
+  /**
+   * Optional: Sub-handlers for related shorthands
+   *
+   * Some properties like 'border' have sub-properties (border-width, border-style, etc.)
+   * that are themselves shorthands. This allows hierarchical composition.
+   *
+   * @example
+   * ```typescript
+   * const borderHandler: PropertyHandler = {
+   *   meta: { shorthand: 'border', ... },
+   *   expand: (value) => { ... },
+   *   handlers: {
+   *     width: borderWidthHandler,
+   *     style: borderStyleHandler,
+   *     color: borderColorHandler,
+   *   }
+   * };
+   * ```
+   */
+  readonly handlers?: Readonly<Record<string, PropertyHandler>>;
+}
+
+/**
+ * Factory function for creating property handlers with consistent behavior
+ *
+ * This factory wraps handler logic with:
+ * - Option validation and defaults
+ * - Error handling (returns undefined on exceptions)
+ * - Consistent return types
+ *
+ * @param config - Property handler configuration
+ * @returns A fully-formed PropertyHandler instance
+ *
+ * @example
+ * ```typescript
+ * export const overflowHandler = createPropertyHandler({
+ *   meta: {
+ *     shorthand: 'overflow',
+ *     longhands: ['overflow-x', 'overflow-y'],
+ *     category: 'visual',
+ *   },
+ *   expand: (value) => {
+ *     // Handler implementation
+ *   },
+ * });
+ * ```
+ */
+export function createPropertyHandler(config: PropertyHandler): PropertyHandler {
+  return {
+    ...config,
+    expand: (
+      value: string,
+      options?: PropertyHandlerOptions
+    ): Record<string, string> | undefined => {
+      try {
+        // Apply default options
+        const validatedOptions: Required<PropertyHandlerOptions> = {
+          ...DEFAULT_PROPERTY_HANDLER_OPTIONS,
+          ...options,
+        };
+
+        // Call the underlying expand function with validated options
+        return config.expand(value, validatedOptions);
+      } catch (_error) {
+        // Return undefined on any errors (invalid options, parsing failures, etc.)
+        return undefined;
+      }
+    },
+  };
+}
+
+
+=== File: src/internal/property-sorter.ts ===
+// b_path:: src/internal/property-sorter.ts
+
+import type { PropertyGrouping } from "../core/schema";
+import { GROUPING_BY_PROPERTY } from "../core/schema";
+
+/**
+ * Internal property sorting utilities.
+ * @internal
+ */
+
+/**
+ * CSS property ordering map - defines the canonical order of properties
+ * @internal
+ */
+export const PROPERTY_ORDER_MAP: Record<string, number> = {
   // Grid properties (indices 0-11)
   "grid-row-start": 0,
   "grid-row-end": 1,
@@ -3504,41 +4928,14 @@ const PROPERTY_ORDER_MAP: Record<string, number> = {
 };
 
 /**
- * Converts a kebab-case CSS property name to camelCase for JavaScript.
- *
- * @param property - CSS property name in kebab-case (e.g., "margin-top")
- * @returns Property name in camelCase (e.g., "marginTop")
- *
- * @example
- * kebabToCamelCase('margin-top') // → 'marginTop'
- * kebabToCamelCase('text-decoration-line') // → 'textDecorationLine'
+ * Sorts an object's properties according to CSS specification order.
+ * @internal
  */
-function kebabToCamelCase(property: string): string {
-  return property.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-}
-
-/**
- * Sorts an object's properties according to CSS specification order defined in PROPERTY_ORDER_MAP.
- *
- * @param obj - Object with CSS properties to sort
- * @param grouping - Grouping strategy from PropertyGrouping enum
- * @returns New object with properties sorted according to the specified strategy
- *
- * @example
- * // by-property: groups all properties of same type together
- * sortProperties({ 'margin-top': '5px', 'border-top-width': '1px' })
- * // → { 'border-top-width': '1px', 'margin-top': '5px' }
- *
- * @example
- * // by-side: groups all properties of same side together
- * sortProperties({ 'margin-bottom': '5px', 'border-top-width': '1px' }, 'by-side')
- * // → { 'border-top-width': '1px', 'margin-bottom': '5px' } (top before bottom)
- */
-function sortProperties(
+export function sortProperties(
   obj: Record<string, string>,
   grouping: PropertyGrouping = GROUPING_BY_PROPERTY
 ): Record<string, string> {
-  if (grouping === GROUPING_BY_SIDE) {
+  if (grouping === "by-side") {
     return sortPropertiesBySide(obj);
   }
   return sortPropertiesByProperty(obj);
@@ -3546,18 +4943,7 @@ function sortProperties(
 
 /**
  * Helper to extract property metadata for directional grouping.
- * Identifies the side (top/right/bottom/left) and base property name.
- *
- * @param prop - CSS property name to analyze
- * @returns Metadata object with side, sideIndex, and base property
- *
- * @example
- * getPropertyMetadata('border-top-width')
- * // → { side: 'top', sideIndex: 0, base: 'border' }
- *
- * @example
- * getPropertyMetadata('font-size')
- * // → { side: null, sideIndex: -1, base: 'font' }
+ * @internal
  */
 function getPropertyMetadata(prop: string): {
   side: string | null;
@@ -3575,10 +4961,7 @@ function getPropertyMetadata(prop: string): {
 
 /**
  * Sort properties by property type (default CSS spec order).
- * Groups all properties of the same type together (e.g., all margins, then all borders).
- *
- * @param obj - Object with CSS properties to sort
- * @returns New object with properties sorted by type
+ * @internal
  */
 function sortPropertiesByProperty(obj: Record<string, string>): Record<string, string> {
   const sortedEntries = Object.entries(obj).sort(([a], [b]) => {
@@ -3598,34 +4981,25 @@ function sortPropertiesByProperty(obj: Record<string, string>): Record<string, s
 
 /**
  * Sort properties by directional side.
- * Groups all properties of the same side together (e.g., all top properties, then all right properties).
- * Useful for debugging and understanding box model relationships.
- *
- * @param obj - Object with CSS properties to sort
- * @returns New object with properties sorted by side
+ * @internal
  */
 function sortPropertiesBySide(obj: Record<string, string>): Record<string, string> {
   const sortedEntries = Object.entries(obj).sort(([a], [b]) => {
     const metaA = getPropertyMetadata(a);
     const metaB = getPropertyMetadata(b);
 
-    // Both have sides - sort by side first, then by property order within that side
     if (metaA.side && metaB.side) {
       if (metaA.sideIndex !== metaB.sideIndex) {
         return metaA.sideIndex - metaB.sideIndex;
       }
-      // Same side - sort by CSS spec order to maintain proper ordering within the side
       const orderA = PROPERTY_ORDER_MAP[a] ?? 999999;
       const orderB = PROPERTY_ORDER_MAP[b] ?? 999999;
       return orderA - orderB;
     }
 
-    // If only one has a side, non-directional properties come first (by their spec order)
-    // This handles mixed cases like font-size mixed with margin-top
     if (!metaA.side && metaB.side) {
       const orderA = PROPERTY_ORDER_MAP[a] ?? 999999;
-      // Put non-directional before directional if they have lower spec order
-      if (orderA < 200) return -1; // Most non-directional properties are < 200
+      if (orderA < 200) return -1;
       return 1;
     }
     if (metaA.side && !metaB.side) {
@@ -3634,7 +5008,6 @@ function sortPropertiesBySide(obj: Record<string, string>): Record<string, strin
       return -1;
     }
 
-    // Neither has sides - use normal property order
     const orderA = PROPERTY_ORDER_MAP[a] ?? 999999;
     const orderB = PROPERTY_ORDER_MAP[b] ?? 999999;
     if (orderA !== orderB) return orderA - orderB;
@@ -3644,531 +5017,128 @@ function sortPropertiesBySide(obj: Record<string, string>): Record<string, strin
   return Object.fromEntries(sortedEntries);
 }
 
-function objectToCss(
+/**
+ * Converts a kebab-case CSS property name to camelCase for JavaScript.
+ * @internal
+ */
+export function kebabToCamelCase(property: string): string {
+  return property.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+/**
+ * Converts a CSS object to CSS string format.
+ * @internal
+ */
+export function objectToCss(
   obj: Record<string, string>,
   indent: number,
   separator: string,
   propertyGrouping: PropertyGrouping = GROUPING_BY_PROPERTY
 ): string {
   const indentStr = "  ".repeat(indent);
-
-  // Sort properties using the specified grouping strategy
   const sorted = sortProperties(obj, propertyGrouping);
   const sortedEntries = Object.entries(sorted);
-
   return sortedEntries.map(([key, value]) => `${indentStr}${key}: ${value};`).join(separator);
 }
 
+
+=== File: src/internal/shorthand-registry.ts ===
+// b_path:: src/internal/shorthand-registry.ts
+
+import animation from "../animation";
+import background from "../background";
+import border from "../border";
+import borderRadius from "../border-radius";
+import columnRule from "../column-rule";
+import columns from "../columns";
+import containIntrinsicSize from "../contain-intrinsic-size";
+import flex from "../flex";
+import flexFlow from "../flex-flow";
+import font from "../font";
+import grid from "../grid";
+import gridArea from "../grid-area";
+import gridColumn from "../grid-column";
+import gridRow from "../grid-row";
+import listStyle from "../list-style";
+import mask from "../mask";
+import offset from "../offset";
+import outline from "../outline";
+import overflow from "../overflow";
+import placeContent from "../place-content";
+import placeItems from "../place-items";
+import placeSelf from "../place-self";
+import textDecoration from "../text-decoration";
+import textEmphasis from "../text-emphasis";
+import transition from "../transition";
+import directional from "./directional";
+
 /**
- * Expands CSS shorthand properties into their longhand equivalents.
- *
- * @param input - CSS declaration(s) to expand (e.g., "margin: 10px 20px;")
- * @param options - Configuration options for expansion behavior
- * @returns Object containing expansion result, success status, and any issues
- *
- * @example
- * // Basic expansion
- * expand('margin: 10px 20px;')
- * // → { ok: true, result: 'margin-top: 10px;\nmargin-right: 20px;...', issues: [] }
- *
- * // JavaScript object format
- * expand('padding: 1rem;', { format: 'js' })
- * // → { ok: true, result: { 'padding-top': '1rem', ... }, issues: [] }
- *
- * // Multiple declarations with conflict resolution
- * expand('margin: 10px; margin-top: 20px;', { format: 'js' })
- * // → { ok: true, result: { 'margin-top': '20px', 'margin-right': '10px', ... }, issues: [] }
+ * Internal shorthand property handler registry.
+ * @internal
  */
-function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
-  // Strip comments first to avoid parsing issues
-  const cleanedInput = stripComments(input);
 
-  // Merge partial options with defaults from schema
-  const {
-    format = FORMAT_CSS,
-    indent = 0,
-    separator = "\n",
-    propertyGrouping = GROUPING_BY_PROPERTY,
-    expandPartialLonghand = false,
-  } = options;
+const prefix =
+  (prefix: string) =>
+  (value: string): Record<string, string> | undefined => {
+    const longhand = directional(value);
 
-  // Validate the input CSS directly (assume it's valid CSS)
-  const validation = validate(cleanedInput);
+    if (!longhand) return;
 
-  const inputs = parseInputString(cleanedInput);
-  const results: (Record<string, string> | string)[] = [];
-  const issues: BStyleWarning[] = [];
-  const resultMetadata: Array<{ isShorthand: boolean; properties: Set<string> }> = [];
-
-  for (const item of inputs) {
-    const parsed = parseCssDeclaration(item);
-    if (!parsed) {
-      continue; // Skip invalid declarations
+    const result: Record<string, string> = {};
+    for (const key in longhand) {
+      result[`${prefix}-${key}`] = longhand[key];
     }
-
-    const { property, value } = parsed;
-    const normalized = value.trim();
-    // Safe check for !important without ReDoS vulnerability
-    const important = normalized.endsWith("!important") && /\s/.test(normalized.slice(-11, -10));
-
-    // Handle !important detection and warning
-    if (important) {
-      issues.push({
-        property,
-        name: "important-detected",
-        formattedWarning: `!important flag detected in '${property}' and has been ignored. Shorthand expansion does not support !important.`,
-      });
-
-      const result: Record<string, string> = {};
-      result[property] = normalized;
-      results.push(result);
-      resultMetadata.push({ isShorthand: false, properties: new Set([property]) });
-      continue;
-    }
-
-    const parse = shorthand[property];
-    const longhand = parse?.(normalized);
-
-    if (!longhand) {
-      // For non-shorthand properties, still include them in the result
-      // but as-is (no expansion needed) - validation will catch invalid ones
-
-      const result: Record<string, string> = {};
-      result[property] = normalized;
-      results.push(result);
-      resultMetadata.push({ isShorthand: false, properties: new Set([property]) });
-
-      // Add warning for unparseable shorthands only if CSS is actually invalid
-      if (property in shorthand) {
-        issues.push({
-          property,
-          name: "expansion-failed",
-          formattedWarning: `Could not expand shorthand property '${property}' with value '${normalized}'. Returning original shorthand.`,
-        });
-      }
-      continue;
-    }
-
-    const result: Record<string, string> = longhand;
-    results.push(result);
-    resultMetadata.push({ isShorthand: true, properties: new Set(Object.keys(result)) });
-  }
-
-  /**
-   * Resolves conflicts between shorthand and longhand properties according to CSS cascade rules.
-   *
-   * When a longhand property (e.g., margin-top) appears after a shorthand (e.g., margin),
-   * the longhand overrides that specific property from the shorthand expansion.
-   * When a shorthand appears after a longhand, the shorthand replaces all related longhands.
-   *
-   * @param results - Array of CSS declaration objects (either objects or strings)
-   * @param metadata - Array of metadata describing each result (shorthand vs longhand, properties affected)
-   * @returns Cleaned array with conflicts resolved
-   *
-   * @example
-   * // Input: ['margin: 10px', 'margin-top: 20px']
-   * // Output: margin-top from the shorthand is removed, replaced by explicit margin-top: 20px
-   *
-   * @example
-   * // Input: ['margin-top: 20px', 'margin: 10px']
-   * // Output: margin-top: 20px is removed, replaced by margin: 10px expansion
-   */
-  function removeConflictingProperties(
-    results: (Record<string, string> | string)[],
-    metadata: Array<{ isShorthand: boolean; properties: Set<string> }>
-  ): (Record<string, string> | string)[] {
-    const cleanedResults: (Record<string, string> | string)[] = [];
-    // Maintain a running map of property name to the index of the last setting result
-    const propertyToResultIndex = new Map<string, number>();
-
-    for (let i = 0; i < results.length; i++) {
-      const result = results[i];
-      const meta = metadata[i];
-
-      // For CSS strings, we need to convert them back to objects for conflict resolution
-      let resultObj: Record<string, string>;
-      if (typeof result === "string") {
-        // Parse CSS string back to object for conflict resolution
-        resultObj = {};
-        const cssLines = result.split(";").filter((line) => line.trim());
-        for (const line of cssLines) {
-          const colonIndex = line.indexOf(":");
-          if (colonIndex !== -1) {
-            const prop = line.slice(0, colonIndex).trim();
-            const value = line.slice(colonIndex + 1).trim();
-            resultObj[prop] = value;
-          }
-        }
-      } else {
-        resultObj = { ...result };
-      }
-
-      // Handle conflicts based on whether current result is from shorthand expansion
-      if (!meta.isShorthand) {
-        // Current result is NOT from shorthand expansion - check for conflicts with earlier shorthand results
-        for (const prop of meta.properties) {
-          const earlierIndex = propertyToResultIndex.get(prop);
-          if (earlierIndex !== undefined) {
-            const earlierResult = cleanedResults[earlierIndex];
-            const earlierMeta = metadata[earlierIndex];
-
-            // Only check earlier shorthand results for conflicts
-            if (earlierMeta.isShorthand && earlierMeta.properties.has(prop)) {
-              // Remove the conflicting property from the earlier shorthand result
-              if (typeof earlierResult === "string") {
-                // Parse, remove property, and convert back to CSS string
-                const earlierObj: Record<string, string> = {};
-                const cssLines = earlierResult.split(";").filter((line) => line.trim());
-                for (const line of cssLines) {
-                  const colonIndex = line.indexOf(":");
-                  if (colonIndex !== -1) {
-                    const earlierProp = line.slice(0, colonIndex).trim();
-                    const value = line.slice(colonIndex + 1).trim();
-                    if (earlierProp !== prop) {
-                      earlierObj[earlierProp] = value;
-                    }
-                  }
-                }
-                cleanedResults[earlierIndex] = objectToCss(
-                  earlierObj,
-                  indent,
-                  separator,
-                  propertyGrouping
-                );
-              } else {
-                delete earlierResult[prop];
-              }
-              // Update metadata to remove the property
-              earlierMeta.properties.delete(prop);
-            }
-          }
-        }
-      } else {
-        // Current result IS from shorthand expansion - check for conflicts with earlier non-shorthand results
-        // Gate this behind CSS format only to mirror JS merge behavior
-        if (format === FORMAT_CSS) {
-          for (const prop of meta.properties) {
-            const earlierIndex = propertyToResultIndex.get(prop);
-            if (earlierIndex !== undefined) {
-              const earlierResult = cleanedResults[earlierIndex];
-              const earlierMeta = metadata[earlierIndex];
-
-              // Only check earlier non-shorthand results for conflicts
-              if (!earlierMeta.isShorthand && earlierMeta.properties.has(prop)) {
-                // Remove the conflicting property from the earlier non-shorthand result
-                if (typeof earlierResult === "string") {
-                  // Parse, remove property, and convert back to CSS string
-                  const earlierObj: Record<string, string> = {};
-                  const cssLines = earlierResult.split(";").filter((line) => line.trim());
-                  for (const line of cssLines) {
-                    const colonIndex = line.indexOf(":");
-                    if (colonIndex !== -1) {
-                      const earlierProp = line.slice(0, colonIndex).trim();
-                      const value = line.slice(colonIndex + 1).trim();
-                      if (earlierProp !== prop) {
-                        earlierObj[earlierProp] = value;
-                      }
-                    }
-                  }
-                  cleanedResults[earlierIndex] = objectToCss(
-                    earlierObj,
-                    indent,
-                    separator,
-                    propertyGrouping
-                  );
-                } else {
-                  delete earlierResult[prop];
-                }
-                // Update metadata to remove the property
-                earlierMeta.properties.delete(prop);
-              }
-            }
-          }
-        }
-      }
-
-      // Add the current result (CSS string or object)
-      cleanedResults.push(result);
-
-      // Update the property map with the current result index for all properties in this result
-      for (const prop of meta.properties) {
-        propertyToResultIndex.set(prop, cleanedResults.length - 1);
-      }
-    }
-
-    return cleanedResults;
-  }
-
-  /**
-   * Helper to apply partial longhand expansion if enabled.
-   */
-  const applyPartialExpansion = (obj: Record<string, string>): Record<string, string> => {
-    return expandPartialLonghand ? expandDirectionalProperties(obj) : obj;
+    return result;
   };
 
-  let finalResult: Record<string, string> | string | undefined;
-
-  // Apply conflict resolution for shorthand/longhand property overrides
-  const cleanedResults = removeConflictingProperties(results, resultMetadata);
-
-  if (cleanedResults.length === 0) {
-    finalResult = undefined;
-  } else if (cleanedResults.length === 1) {
-    const result = cleanedResults[0];
-    if (format === FORMAT_CSS && typeof result === "object") {
-      const resultToProcess = applyPartialExpansion(result);
-      finalResult = objectToCss(resultToProcess, indent, separator, propertyGrouping);
-    } else if (format === FORMAT_JS && typeof result === "object") {
-      const resultToProcess = applyPartialExpansion(result);
-      // Sort and convert to camelCase for JS format
-      const sorted = sortProperties(resultToProcess, propertyGrouping);
-      const camelCased: Record<string, string> = {};
-      for (const [key, value] of Object.entries(sorted)) {
-        camelCased[kebabToCamelCase(key)] = value;
-      }
-      finalResult = camelCased;
-    } else {
-      finalResult = result;
-    }
-  } else {
-    if (format === FORMAT_CSS) {
-      // For CSS format with multiple declarations, we need to merge objects first
-      // then convert to CSS to respect property grouping across declarations
-      const mergedObject: Record<string, string> = {};
-
-      for (const result of cleanedResults) {
-        if (typeof result === "object" && result) {
-          Object.assign(mergedObject, result);
-        }
-      }
-
-      // If we have a merged object, convert it to CSS with proper grouping
-      if (Object.keys(mergedObject).length > 0) {
-        const resultToProcess = applyPartialExpansion(mergedObject);
-        finalResult = objectToCss(resultToProcess, indent, separator, propertyGrouping);
-      } else {
-        // Fallback for non-object results (shouldn't normally happen)
-        const cssResults = cleanedResults.map((result) =>
-          typeof result === "object"
-            ? objectToCss(result, indent, separator, propertyGrouping)
-            : result
-        );
-        finalResult = cssResults.join(separator);
-      }
-    } else {
-      // format === FORMAT_JS (js) - merge objects with simple "later wins" logic
-      const mergedResult: Record<string, string> = {};
-      for (const result of cleanedResults) {
-        if (typeof result === "object" && result) {
-          Object.assign(mergedResult, result);
-        }
-      }
-
-      const resultToProcess = applyPartialExpansion(mergedResult);
-
-      // Sort the merged result according to the specified grouping strategy
-      const sorted = sortProperties(resultToProcess, propertyGrouping);
-
-      // Convert property names to camelCase for JavaScript
-      const camelCased: Record<string, string> = {};
-      for (const [key, value] of Object.entries(sorted)) {
-        camelCased[kebabToCamelCase(key)] = value;
-      }
-
-      finalResult = camelCased;
-    }
-  }
-
-  // Determine ok status: false if errors, true if warnings only or no issues
-  const ok = validation.errors.length === 0;
-
-  // Combine errors, warnings, and our custom issues
-  const allIssues = [...validation.errors, ...validation.warnings, ...issues];
-
-  return {
-    ok,
-    result: finalResult,
-    issues: allIssues,
-  };
-}
-
-// Export named functions only (no default export to avoid CJS/ESM ambiguity)
-export { expand, validate, sortProperties, PROPERTY_ORDER_MAP };
-
-// Re-export types for convenience
-export type {
-  AnimationLayer,
-  AnimationResult,
-  BackgroundLayer,
-  BackgroundResult,
-  BStyleWarning,
-  ExpandOptions,
-  ExpandResult,
-  Format,
-  MaskLayer,
-  MaskResult,
-  PropertyGrouping,
-  StylesheetValidation,
-  TransitionLayer,
-  TransitionResult,
-} from "./schema";
-// Export enum values and constants for runtime use
-export {
-  FORMAT_CSS,
-  FORMAT_JS,
-  FORMAT_VALUES,
-  GROUPING_BY_PROPERTY,
-  GROUPING_BY_SIDE,
-  PROPERTY_GROUPING_VALUES,
-} from "./schema";
-
-
-=== File: src/is-angle.ts ===
-// b_path:: src/is-angle.ts
-const ANGLE = /^(\+|-)?([0-9]*\.?[0-9]+)(deg|rad|turn|grad)$/i;
-const ZERO = /^(\+|-)?(0*\.)?0+$/;
-
-export default function isAngle(value: string): boolean {
-  return ANGLE.test(value) || ZERO.test(value);
-}
-
-
-=== File: src/is-color.ts ===
-// b_path:: src/is-color.ts
-import {
-  CSS_COLOR_NAMES,
-  hexColorRegex,
-  hslaRegex,
-  hslRegex,
-  rgbaRegex,
-  rgbRegex,
-} from "./color-utils";
-
-const HEX = new RegExp(`^${hexColorRegex().source}$`, "i");
-const HSLA = hslaRegex({ exact: true });
-const HSL = hslRegex({ exact: true });
-const RGB = rgbRegex({ exact: true });
-const RGBA = rgbaRegex({ exact: true });
-
 /**
- * Cache for color validation results.
- * Improves performance for repeated color checks.
+ * Central registry mapping shorthand property names to their expansion handlers.
+ * @internal
  */
-const colorCache = new Map<string, boolean>();
-const MAX_CACHE_SIZE = 500;
-
-/**
- * Checks if a string value represents a valid CSS color.
- * Supports named colors, hex, rgb, rgba, hsl, hsla, and CSS custom properties.
- * Results are cached for performance.
- *
- * @param value - The CSS value to check
- * @returns true if the value is a valid color, false otherwise
- *
- * @example
- * isColor('red') // true
- * isColor('#ff0000') // true
- * isColor('rgb(255, 0, 0)') // true
- * isColor('var(--primary-color)') // true
- * isColor('10px') // false
- */
-export default function isColor(value: string): boolean {
-  // Check cache first
-  const cached = colorCache.get(value);
-  if (cached !== undefined) return cached;
-
-  const lowerValue = value.toLowerCase();
-
-  // Support CSS custom property (var name)
-  if (/^var\(\s*--[a-zA-Z0-9-_]+\s*\)$/.test(lowerValue)) {
-    colorCache.set(value, true);
-    return true;
-  }
-
-  const result =
-    !!CSS_COLOR_NAMES[lowerValue] ||
-    lowerValue === "currentcolor" ||
-    lowerValue === "transparent" ||
-    HEX.test(lowerValue) ||
-    HSLA.test(lowerValue) ||
-    HSL.test(lowerValue) ||
-    RGB.test(lowerValue) ||
-    RGBA.test(lowerValue);
-
-  // Cache result with size limit
-  if (colorCache.size >= MAX_CACHE_SIZE) {
-    const firstKey = colorCache.keys().next().value;
-    if (firstKey !== undefined) {
-      colorCache.delete(firstKey);
-    }
-  }
-  colorCache.set(value, result);
-
-  return result;
-}
-
-
-=== File: src/is-length.ts ===
-// b_path:: src/is-length.ts
-const LENGTH = /^(\+|-)?([0-9]*\.)?[0-9]+(em|ex|ch|rem|vh|vw|vmin|vmax|px|mm|cm|in|pt|pc|%)$/i;
-const ZERO = /^(\+|-)?(0*\.)?0+$/;
-
-export default function isLength(value: string): boolean {
-  return LENGTH.test(value) || ZERO.test(value);
-}
-
-
-=== File: src/is-time.ts ===
-// b_path:: src/is-time.ts
-// Utility to detect CSS time values for transition-duration and transition-delay parsing
-const TIME = /^[+-]?(\d*\.)?\d+(m?s)$/i;
-
-export default function isTime(value: string): boolean {
-  return TIME.test(value);
-}
-
-
-=== File: src/is-timing-function.ts ===
-// b_path:: src/is-timing-function.ts
-// Utility to detect CSS timing function values for transition-timing-function parsing
-const TIMING_KEYWORDS = /^(ease|linear|ease-in|ease-out|ease-in-out|step-start|step-end)$/i;
-const TIMING_FUNCTIONS = /^(cubic-bezier|steps)\s*\(/i;
-
-function hasBalancedParentheses(value: string): boolean {
-  let openCount = 0;
-  for (const char of value) {
-    if (char === "(") {
-      openCount++;
-    } else if (char === ")") {
-      openCount--;
-      if (openCount < 0) {
-        return false;
-      }
-    }
-  }
-  return openCount === 0;
-}
-
-export default function isTimingFunction(value: string): boolean {
-  // Check for timing function keywords
-  if (TIMING_KEYWORDS.test(value)) {
-    return true;
-  }
-
-  // Check for timing function functions with balanced parentheses
-  if (TIMING_FUNCTIONS.test(value)) {
-    return hasBalancedParentheses(value);
-  }
-
-  return false;
-}
+export const shorthand: Record<string, (value: string) => Record<string, string> | undefined> = {
+  animation: animation,
+  background: background,
+  border: border,
+  "border-bottom": border.bottom,
+  "border-color": border.color,
+  "border-left": border.left,
+  "border-radius": borderRadius,
+  "border-right": border.right,
+  "border-style": border.style,
+  "border-top": border.top,
+  "border-width": border.width,
+  columns: columns,
+  "column-rule": columnRule,
+  "contain-intrinsic-size": containIntrinsicSize,
+  flex: flex,
+  "flex-flow": flexFlow,
+  font: font,
+  grid: grid,
+  "grid-area": gridArea,
+  "grid-column": gridColumn,
+  "grid-row": gridRow,
+  inset: directional,
+  "list-style": listStyle,
+  mask: mask,
+  margin: prefix("margin"),
+  offset: offset,
+  outline: outline,
+  overflow: overflow,
+  padding: prefix("padding"),
+  "place-content": placeContent,
+  "place-items": placeItems,
+  "place-self": placeSelf,
+  "text-decoration": textDecoration,
+  "text-emphasis": textEmphasis,
+  transition: transition,
+};
 
 
 === File: src/list-style.ts ===
 // b_path:: src/list-style.ts
-import { cssUrlRegex } from "./color-utils";
-import { sortProperties } from "./index";
-import normalizeColor from "./normalize-color";
+import { cssUrlRegex } from "./internal/color-utils";
+import normalizeColor from "./internal/normalize-color";
+import { sortProperties } from "./internal/property-sorter";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
 const POSITION = /^(inside|outside)$/i;
@@ -4249,7 +5219,8 @@ export default function listStyle(value: string): Record<string, string> | undef
 // b_path:: src/mask-layers.ts
 
 import * as csstree from "css-tree";
-import type { MaskLayer, MaskResult } from "./schema";
+import type { MaskLayer, MaskResult } from "./core/schema";
+import { hasTopLevelCommas, parseLayersGeneric } from "./internal/layer-parser-utils";
 
 // CSS default values for mask properties
 export const MASK_DEFAULTS = {
@@ -4267,99 +5238,15 @@ export const MASK_DEFAULTS = {
  * Detects if a mask value needs advanced parsing (multi-layer masks)
  */
 export function needsAdvancedParser(value: string): boolean {
-  // Only use advanced parsing for actual multi-layer masks (comma-separated)
-  // Must ignore commas inside parentheses/brackets (functions, rgba(), etc.)
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this indicates multiple layers
-      return true;
-    }
-  }
-
-  return false;
-}
-
-/**
- * Splits a mask value into layers, respecting nested functions
- */
-function splitLayers(value: string): string[] {
-  const layers: string[] = [];
-  let currentLayer = "";
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this separates layers
-      layers.push(currentLayer.trim());
-      currentLayer = "";
-      continue;
-    }
-
-    currentLayer += char;
-  }
-
-  // Add the last layer
-  if (currentLayer.trim()) {
-    layers.push(currentLayer.trim());
-  }
-
-  return layers;
+  return hasTopLevelCommas(value);
 }
 
 /**
  * Parses a complex mask value using css-tree AST parsing
  */
 export function parseMaskLayers(value: string): MaskResult | undefined {
-  try {
-    // Split into layers
-    const layerStrings = splitLayers(value);
-    if (layerStrings.length === 0) {
-      return undefined;
-    }
-
-    // Parse each layer to extract all properties
-    const layers: MaskLayer[] = [];
-
-    for (const layerStr of layerStrings) {
-      const parsedLayer = parseSingleLayer(layerStr);
-      if (!parsedLayer) {
-        // Bail out if any layer fails parsing (stricter error handling)
-        return undefined;
-      }
-      layers.push(parsedLayer);
-    }
-
-    return {
-      layers,
-    };
-  } catch (_error) {
-    // If parsing fails, return undefined to indicate invalid input
-    return undefined;
-  }
+  const layers = parseLayersGeneric(value, parseSingleLayer);
+  return layers ? { layers } : undefined;
 }
 
 /**
@@ -4752,24 +5639,10 @@ export default function mask(value: string): Record<string, string> | undefined 
 }
 
 
-=== File: src/normalize-color.ts ===
-// b_path:: src/normalize-color.ts
-import { hslaRegex, hslRegex, rgbaRegex, rgbRegex } from "./color-utils";
-
-const FUNCTIONS = [hslaRegex(), hslRegex(), rgbRegex(), rgbaRegex()];
-
-export default function normalizeColor(value: string): string {
-  return FUNCTIONS.reduce(
-    (acc: string, func: RegExp) => acc.replace(func, (match: string) => match.replace(/\s+/g, "")),
-    value
-  );
-}
-
-
 === File: src/offset.ts ===
 // b_path:: src/offset.ts
-import isAngle from "./is-angle.js";
-import isLength from "./is-length.js";
+import isAngle from "./internal/is-angle";
+import isLength from "./internal/is-length";
 
 function splitTopLevelSlash(input: string): [string, string?] | null {
   let depth = 0;
@@ -5044,10 +5917,11 @@ export default (value: string): Record<string, string> | undefined => {
 
 === File: src/outline.ts ===
 // b_path:: src/outline.ts
-import { sortProperties } from "./index";
-import isColor from "./is-color";
-import isLength from "./is-length";
-import normalizeColor from "./normalize-color";
+
+import isColor from "./internal/is-color";
+import isLength from "./internal/is-length";
+import normalizeColor from "./internal/normalize-color";
+import { sortProperties } from "./internal/property-sorter";
 
 const WIDTH = /^(thin|medium|thick)$/;
 const STYLE = /^(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset)$/i;
@@ -5097,253 +5971,389 @@ export default function outline(value: string): Record<string, string> | undefin
 
 === File: src/overflow.ts ===
 // b_path:: src/overflow.ts
-export default (value: string): Record<string, string> | undefined => {
-  // Handle global CSS keywords
-  if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
-      "overflow-x": value,
-      "overflow-y": value,
-    };
-  }
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 
-  // Split values on whitespace
-  const values = value.trim().split(/\s+/);
+/**
+ * Property handler for the 'overflow' CSS shorthand property
+ *
+ * Expands overflow into overflow-x and overflow-y.
+ *
+ * @example
+ * ```typescript
+ * overflowHandler.expand('hidden'); // { 'overflow-x': 'hidden', 'overflow-y': 'hidden' }
+ * overflowHandler.expand('auto scroll'); // { 'overflow-x': 'auto', 'overflow-y': 'scroll' }
+ * ```
+ */
+export const overflowHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "overflow",
+    longhands: ["overflow-x", "overflow-y"],
+    category: "visual",
+  },
 
-  // Validate value count - max 2 values
-  if (values.length > 2) {
+  expand: (value: string): Record<string, string> | undefined => {
+    // Handle global CSS keywords
+    if (/^(inherit|initial|unset|revert)$/i.test(value)) {
+      return {
+        "overflow-x": value,
+        "overflow-y": value,
+      };
+    }
+
+    // Split values on whitespace
+    const values = value.trim().split(/\s+/);
+
+    // Validate value count - max 2 values
+    if (values.length > 2) {
+      return undefined;
+    }
+
+    // Valid overflow values
+    const validValues = /^(visible|hidden|clip|scroll|auto)$/i;
+
+    // Handle single value - both x and y get the same value
+    if (values.length === 1) {
+      if (!validValues.test(values[0])) {
+        return undefined;
+      }
+      return {
+        "overflow-x": values[0],
+        "overflow-y": values[0],
+      };
+    }
+
+    // Handle two values - first=x, second=y
+    if (values.length === 2) {
+      if (!validValues.test(values[0]) || !validValues.test(values[1])) {
+        return undefined;
+      }
+      return {
+        "overflow-x": values[0],
+        "overflow-y": values[1],
+      };
+    }
+
     return undefined;
-  }
+  },
 
-  // Valid overflow values
-  const validValues = /^(visible|hidden|clip|scroll|auto)$/i;
+  validate: (value: string): boolean => {
+    const result = overflowHandler.expand(value);
+    return result !== undefined;
+  },
+});
 
-  // Handle single value - both x and y get the same value
-  if (values.length === 1) {
-    if (!validValues.test(values[0])) {
-      return undefined;
-    }
-    return {
-      "overflow-x": values[0],
-      "overflow-y": values[0],
-    };
-  }
-
-  // Handle two values - first=x, second=y
-  if (values.length === 2) {
-    if (!validValues.test(values[0]) || !validValues.test(values[1])) {
-      return undefined;
-    }
-    return {
-      "overflow-x": values[0],
-      "overflow-y": values[1],
-    };
-  }
-
-  return undefined;
+// Export default for backward compatibility with existing code
+export default (value: string): Record<string, string> | undefined => {
+  return overflowHandler.expand(value);
 };
 
 
 === File: src/place-content.ts ===
 // b_path:: src/place-content.ts
+
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 import { consolidatePlaceTokens } from "./place-utils";
 
-export default (value: string): Record<string, string> | undefined => {
-  // Handle global CSS keywords
-  if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
-      "align-content": value,
-      "justify-content": value,
-    };
-  }
+/**
+ * Property handler for the 'place-content' CSS shorthand property
+ *
+ * Expands place-content into align-content and justify-content.
+ *
+ * @example
+ * ```typescript
+ * placeContentHandler.expand('center'); // { 'align-content': 'center', 'justify-content': 'center' }
+ * placeContentHandler.expand('start space-between'); // { 'align-content': 'start', 'justify-content': 'space-between' }
+ * ```
+ */
+export const placeContentHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "place-content",
+    longhands: ["align-content", "justify-content"],
+    defaults: {
+      "align-content": "normal",
+      "justify-content": "normal",
+    },
+    category: "layout",
+  },
 
-  // Process tokens with lookahead for compound keywords
-  const processedValues = consolidatePlaceTokens(
-    value,
-    /^(center|start|end|flex-start|flex-end)$/i
-  );
-  if (!processedValues) {
-    return undefined;
-  }
+  expand: (value: string): Record<string, string> | undefined => {
+    // Handle global CSS keywords
+    if (/^(inherit|initial|unset|revert)$/i.test(value)) {
+      return {
+        "align-content": value,
+        "justify-content": value,
+      };
+    }
 
-  // Validate processed values
-  const validValuePattern =
-    /^(normal|space-between|space-around|space-evenly|stretch|center|start|end|flex-start|flex-end|baseline|first baseline|last baseline|safe center|safe start|safe end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe flex-start|unsafe flex-end)$/i;
-
-  for (const val of processedValues) {
-    if (!validValuePattern.test(val)) {
+    // Process tokens with lookahead for compound keywords
+    const processedValues = consolidatePlaceTokens(
+      value,
+      /^(center|start|end|flex-start|flex-end)$/i
+    );
+    if (!processedValues) {
       return undefined;
     }
-  }
 
-  // Handle single value - both properties get the same value
-  if (processedValues.length === 1) {
-    return {
-      "align-content": processedValues[0],
-      "justify-content": processedValues[0],
-    };
-  }
+    // Validate processed values
+    const validValuePattern =
+      /^(normal|space-between|space-around|space-evenly|stretch|center|start|end|flex-start|flex-end|baseline|first baseline|last baseline|safe center|safe start|safe end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe flex-start|unsafe flex-end)$/i;
 
-  // Handle two values - first=align-content, second=justify-content
-  if (processedValues.length === 2) {
-    return {
-      "align-content": processedValues[0],
-      "justify-content": processedValues[1],
-    };
-  }
+    for (const val of processedValues) {
+      if (!validValuePattern.test(val)) {
+        return undefined;
+      }
+    }
 
-  return undefined;
+    // Handle single value - both properties get the same value
+    if (processedValues.length === 1) {
+      return {
+        "align-content": processedValues[0],
+        "justify-content": processedValues[0],
+      };
+    }
+
+    // Handle two values - first=align-content, second=justify-content
+    if (processedValues.length === 2) {
+      return {
+        "align-content": processedValues[0],
+        "justify-content": processedValues[1],
+      };
+    }
+
+    return undefined;
+  },
+
+  validate: (value: string): boolean => {
+    const result = placeContentHandler.expand(value);
+    return result !== undefined;
+  },
+});
+
+// Export default for backward compatibility with existing code
+export default (value: string): Record<string, string> | undefined => {
+  return placeContentHandler.expand(value);
 };
 
 
 === File: src/place-items.ts ===
 // b_path:: src/place-items.ts
+
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 import { consolidatePlaceTokens } from "./place-utils";
 
-export default (value: string): Record<string, string> | undefined => {
-  // Handle global CSS keywords
-  if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
-      "align-items": value,
-      "justify-items": value,
-    };
-  }
+/**
+ * Property handler for the 'place-items' CSS shorthand property
+ *
+ * Expands place-items into align-items and justify-items.
+ *
+ * @example
+ * ```typescript
+ * placeItemsHandler.expand('center'); // { 'align-items': 'center', 'justify-items': 'center' }
+ * placeItemsHandler.expand('start end'); // { 'align-items': 'start', 'justify-items': 'end' }
+ * ```
+ */
+export const placeItemsHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "place-items",
+    longhands: ["align-items", "justify-items"],
+    defaults: {
+      "align-items": "normal",
+      "justify-items": "legacy",
+    },
+    category: "layout",
+  },
 
-  // Process tokens with lookahead for compound keywords
-  const processedValues = consolidatePlaceTokens(
-    value,
-    /^(center|start|end|self-start|self-end|flex-start|flex-end)$/i
-  );
-  if (!processedValues) {
+  expand: (value: string): Record<string, string> | undefined => {
+    // Handle global CSS keywords
+    if (/^(inherit|initial|unset|revert)$/i.test(value)) {
+      return {
+        "align-items": value,
+        "justify-items": value,
+      };
+    }
+
+    // Process tokens with lookahead for compound keywords
+    const processedValues = consolidatePlaceTokens(
+      value,
+      /^(center|start|end|self-start|self-end|flex-start|flex-end)$/i
+    );
+    if (!processedValues) {
+      return undefined;
+    }
+
+    // Helper functions for validation
+    const isValidAlignItemsValue = (val: string): boolean => {
+      return /^(normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
+        val
+      );
+    };
+
+    const isValidJustifyItemsValue = (val: string): boolean => {
+      return /^(normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|left|right|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
+        val
+      );
+    };
+
+    // Validate processed values
+    for (const val of processedValues) {
+      if (!isValidAlignItemsValue(val) && !isValidJustifyItemsValue(val)) {
+        return undefined;
+      }
+    }
+
+    // Handle single value - both properties get the same value, but left/right are invalid for single value
+    if (processedValues.length === 1) {
+      const val = processedValues[0];
+      if (val === "left" || val === "right") {
+        return undefined;
+      }
+      if (!isValidAlignItemsValue(val)) {
+        return undefined;
+      }
+      return {
+        "align-items": val,
+        "justify-items": val,
+      };
+    }
+
+    // Handle two values - first=align-items, second=justify-items
+    if (processedValues.length === 2) {
+      const [alignVal, justifyVal] = processedValues;
+      if (!isValidAlignItemsValue(alignVal) || alignVal === "left" || alignVal === "right") {
+        return undefined;
+      }
+      if (!isValidJustifyItemsValue(justifyVal)) {
+        return undefined;
+      }
+      return {
+        "align-items": alignVal,
+        "justify-items": justifyVal,
+      };
+    }
+
     return undefined;
-  }
+  },
 
-  // Helper functions for validation
-  const isValidAlignItemsValue = (val: string): boolean => {
-    return /^(normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
-      val
-    );
-  };
+  validate: (value: string): boolean => {
+    const result = placeItemsHandler.expand(value);
+    return result !== undefined;
+  },
+});
 
-  const isValidJustifyItemsValue = (val: string): boolean => {
-    return /^(normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|left|right|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
-      val
-    );
-  };
-
-  // Validate processed values
-  for (const val of processedValues) {
-    if (!isValidAlignItemsValue(val) && !isValidJustifyItemsValue(val)) {
-      return undefined;
-    }
-  }
-
-  // Handle single value - both properties get the same value, but left/right are invalid for single value
-  if (processedValues.length === 1) {
-    const val = processedValues[0];
-    if (val === "left" || val === "right") {
-      return undefined; // Cannot apply left/right to both properties
-    }
-    if (!isValidAlignItemsValue(val)) {
-      return undefined;
-    }
-    return {
-      "align-items": val,
-      "justify-items": val,
-    };
-  }
-
-  // Handle two values - first=align-items, second=justify-items
-  if (processedValues.length === 2) {
-    const [alignVal, justifyVal] = processedValues;
-    if (!isValidAlignItemsValue(alignVal) || alignVal === "left" || alignVal === "right") {
-      return undefined; // left/right cannot be used for align-items
-    }
-    if (!isValidJustifyItemsValue(justifyVal)) {
-      return undefined;
-    }
-    return {
-      "align-items": alignVal,
-      "justify-items": justifyVal,
-    };
-  }
-
-  return undefined;
+// Export default for backward compatibility with existing code
+export default (value: string): Record<string, string> | undefined => {
+  return placeItemsHandler.expand(value);
 };
 
 
 === File: src/place-self.ts ===
 // b_path:: src/place-self.ts
+
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 import { consolidatePlaceTokens } from "./place-utils";
 
-export default (value: string): Record<string, string> | undefined => {
-  // Handle global CSS keywords
-  if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
-      "align-self": value,
-      "justify-self": value,
-    };
-  }
+/**
+ * Property handler for the 'place-self' CSS shorthand property
+ *
+ * Expands place-self into align-self and justify-self.
+ *
+ * @example
+ * ```typescript
+ * placeSelfHandler.expand('center'); // { 'align-self': 'center', 'justify-self': 'center' }
+ * placeSelfHandler.expand('start end'); // { 'align-self': 'start', 'justify-self': 'end' }
+ * ```
+ */
+export const placeSelfHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "place-self",
+    longhands: ["align-self", "justify-self"],
+    defaults: {
+      "align-self": "auto",
+      "justify-self": "auto",
+    },
+    category: "layout",
+  },
 
-  // Process tokens with lookahead for compound keywords
-  const processedValues = consolidatePlaceTokens(
-    value,
-    /^(center|start|end|self-start|self-end|flex-start|flex-end)$/i
-  );
-  if (!processedValues) {
+  expand: (value: string): Record<string, string> | undefined => {
+    // Handle global CSS keywords
+    if (/^(inherit|initial|unset|revert)$/i.test(value)) {
+      return {
+        "align-self": value,
+        "justify-self": value,
+      };
+    }
+
+    // Process tokens with lookahead for compound keywords
+    const processedValues = consolidatePlaceTokens(
+      value,
+      /^(center|start|end|self-start|self-end|flex-start|flex-end)$/i
+    );
+    if (!processedValues) {
+      return undefined;
+    }
+
+    // Helper functions for validation
+    const isValidAlignSelfValue = (val: string): boolean => {
+      return /^(auto|normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|anchor-center|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
+        val
+      );
+    };
+
+    const isValidJustifySelfValue = (val: string): boolean => {
+      return /^(auto|normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|left|right|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
+        val
+      );
+    };
+
+    // Validate processed values
+    for (const val of processedValues) {
+      if (!isValidAlignSelfValue(val) && !isValidJustifySelfValue(val)) {
+        return undefined;
+      }
+    }
+
+    // Handle single value - both properties get the same value, but left/right are invalid for single value
+    if (processedValues.length === 1) {
+      const val = processedValues[0];
+      if (val === "left" || val === "right") {
+        return undefined;
+      }
+      if (!isValidAlignSelfValue(val)) {
+        return undefined;
+      }
+      return {
+        "align-self": val,
+        "justify-self": val,
+      };
+    }
+
+    // Handle two values - first=align-self, second=justify-self
+    if (processedValues.length === 2) {
+      const [alignVal, justifyVal] = processedValues;
+      if (!isValidAlignSelfValue(alignVal) || alignVal === "left" || alignVal === "right") {
+        return undefined;
+      }
+      if (!isValidJustifySelfValue(justifyVal)) {
+        return undefined;
+      }
+      return {
+        "align-self": alignVal,
+        "justify-self": justifyVal,
+      };
+    }
+
     return undefined;
-  }
+  },
 
-  // Helper functions for validation
-  const isValidAlignSelfValue = (val: string): boolean => {
-    return /^(auto|normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|anchor-center|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
-      val
-    );
-  };
+  validate: (value: string): boolean => {
+    const result = placeSelfHandler.expand(value);
+    return result !== undefined;
+  },
+});
 
-  const isValidJustifySelfValue = (val: string): boolean => {
-    return /^(auto|normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|left|right|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
-      val
-    );
-  };
-
-  // Validate processed values
-  for (const val of processedValues) {
-    if (!isValidAlignSelfValue(val) && !isValidJustifySelfValue(val)) {
-      return undefined;
-    }
-  }
-
-  // Handle single value - both properties get the same value, but left/right are invalid for single value
-  if (processedValues.length === 1) {
-    const val = processedValues[0];
-    if (val === "left" || val === "right") {
-      return undefined; // Cannot apply left/right to both properties
-    }
-    if (!isValidAlignSelfValue(val)) {
-      return undefined;
-    }
-    return {
-      "align-self": val,
-      "justify-self": val,
-    };
-  }
-
-  // Handle two values - first=align-self, second=justify-self
-  if (processedValues.length === 2) {
-    const [alignVal, justifyVal] = processedValues;
-    if (!isValidAlignSelfValue(alignVal) || alignVal === "left" || alignVal === "right") {
-      return undefined; // left/right cannot be used for align-self
-    }
-    if (!isValidJustifySelfValue(justifyVal)) {
-      return undefined;
-    }
-    return {
-      "align-self": alignVal,
-      "justify-self": justifyVal,
-    };
-  }
-
-  return undefined;
+// Export default for backward compatibility with existing code
+export default (value: string): Record<string, string> | undefined => {
+  return placeSelfHandler.expand(value);
 };
 
 
@@ -5377,294 +6387,13 @@ export function consolidatePlaceTokens(
 }
 
 
-=== File: src/schema.ts ===
-// b_path:: src/schema.ts
-import { z } from "zod";
-
-/**
- * Base CSS value schemas
- */
-export const CssValueSchema = z.string().describe("CSS property value");
-export const CssPropertySchema = z.string().describe("CSS property name");
-export const CssDeclarationSchema = z.string().describe("CSS declaration string");
-
-/**
- * Output format enum schema
- * - 'css': Returns kebab-case CSS string (e.g., "margin-top: 10px;")
- * - 'js': Returns camelCase JavaScript object (e.g., { marginTop: '10px' })
- */
-export const FormatEnumSchema = z.enum(["css", "js"]);
-
-/**
- * Property grouping strategy enum schema
- * - 'by-property': Groups by property type (e.g., all margins, then all borders)
- * - 'by-side': Groups by directional side (e.g., all top properties, then all right properties)
- */
-export const PropertyGroupingEnumSchema = z.enum(["by-property", "by-side"]);
-
-// Derive enum arrays from schemas for runtime use
-export const FORMAT_VALUES = FormatEnumSchema.options;
-export const PROPERTY_GROUPING_VALUES = PropertyGroupingEnumSchema.options;
-
-// Named constants for better readability (derived directly from schema)
-export const FORMAT_CSS = "css" as const;
-export const FORMAT_JS = "js" as const;
-export const GROUPING_BY_PROPERTY = "by-property" as const;
-export const GROUPING_BY_SIDE = "by-side" as const;
-
-/**
- * Options schema for CSS shorthand expansion
- */
-export const ExpandOptionsSchema = z
-  .object({
-    format: FormatEnumSchema.default("css").describe("Output format"),
-    indent: z.number().min(0).default(0).describe("Indentation for CSS output"),
-    separator: z.string().default("\n").describe("Separator between CSS declarations"),
-    propertyGrouping: PropertyGroupingEnumSchema.default("by-property").describe(
-      "Property grouping strategy: 'by-property' groups by property type (e.g., all margins, then all borders), 'by-side' groups by directional side (e.g., all top properties, then all right properties)"
-    ),
-    expandPartialLonghand: z
-      .boolean()
-      .default(false)
-      .describe(
-        "Expand partial directional longhand properties (e.g., margin-top) by filling in missing sides with CSS default values"
-      ),
-  })
-  .describe("Options for CSS expansion");
-
-/**
- * CSS Tree and custom warning types for validation
- */
-export const CssTreeSyntaxParseErrorSchema = z
-  .object({
-    name: z.string(),
-    message: z.string(),
-    line: z.number(),
-    column: z.number(),
-    property: z.string().optional(),
-    offset: z.number().optional(),
-    length: z.number().optional(),
-  })
-  .describe("CSS Tree syntax parsing error");
-
-export const BStyleWarningSchema = z
-  .object({
-    property: z.string().describe("CSS property that has the warning"),
-    name: z.string().describe("Warning name/type"),
-    syntax: z.string().optional().describe("CSS syntax that caused the warning"),
-    formattedWarning: z.string().optional().describe("Formatted warning message for display"),
-  })
-  .describe("Custom warning for CSS property validation");
-
-/**
- * Background layer schema for multi-layer background parsing
- */
-export const BackgroundLayerSchema = z
-  .object({
-    image: z.string().optional().describe("Background image (url, gradient, or none)"),
-    position: z.string().optional().describe("Background position (e.g., '10px 20px')"),
-    size: z.string().optional().describe("Background size (e.g., 'cover', '100px 200px')"),
-    repeat: z.string().optional().describe("Background repeat (e.g., 'no-repeat', 'repeat-x')"),
-    attachment: z.string().optional().describe("Background attachment (e.g., 'fixed', 'scroll')"),
-    origin: z.string().optional().describe("Background origin (e.g., 'padding-box', 'border-box')"),
-    clip: z.string().optional().describe("Background clip (e.g., 'padding-box', 'border-box')"),
-  })
-  .describe("Single layer in a multi-layer background");
-
-/**
- * Multi-layer background parsing result
- */
-export const BackgroundResultSchema = z
-  .object({
-    layers: z.array(BackgroundLayerSchema).describe("Array of background layers"),
-    color: z.string().optional().describe("Global background color applied to all layers"),
-  })
-  .describe("Result of parsing multi-layer background declaration");
-
-/**
- * Mask layer schema for multi-layer mask parsing
- */
-export const MaskLayerSchema = z
-  .object({
-    image: z.string().optional().describe("Mask image (url, gradient, or none)"),
-    mode: z
-      .string()
-      .optional()
-      .describe("Masking mode (e.g., 'alpha', 'luminance', 'match-source')"),
-    position: z.string().optional().describe("Mask position (e.g., '10px 20px', 'center')"),
-    size: z.string().optional().describe("Mask size (e.g., 'cover', '100px 200px', 'auto')"),
-    repeat: z.string().optional().describe("Mask repeat (e.g., 'no-repeat', 'repeat-x')"),
-    origin: z
-      .string()
-      .optional()
-      .describe("Mask origin (e.g., 'padding-box', 'border-box', 'content-box')"),
-    clip: z
-      .string()
-      .optional()
-      .describe("Mask clip (e.g., 'padding-box', 'border-box', 'content-box', 'no-clip')"),
-    composite: z
-      .string()
-      .optional()
-      .describe("Mask composite (e.g., 'add', 'subtract', 'intersect', 'exclude')"),
-  })
-  .describe("Single layer in a multi-layer mask");
-
-/**
- * Multi-layer mask parsing result
- */
-export const MaskResultSchema = z
-  .object({
-    layers: z.array(MaskLayerSchema).describe("Array of mask layers"),
-  })
-  .describe("Result of parsing multi-layer mask declaration");
-
-/**
- * Transition layer schema for multi-layer transition parsing
- */
-export const TransitionLayerSchema = z
-  .object({
-    property: z
-      .string()
-      .optional()
-      .describe("Transition property (e.g., 'opacity', 'all', 'transform')"),
-    duration: z.string().optional().describe("Transition duration (e.g., '300ms', '0.5s')"),
-    timingFunction: z
-      .string()
-      .optional()
-      .describe("Transition timing function (e.g., 'ease', 'cubic-bezier(0.4, 0, 0.2, 1)')"),
-    delay: z.string().optional().describe("Transition delay (e.g., '100ms', '0s')"),
-  })
-  .describe("Single layer in a multi-layer transition");
-
-/**
- * Multi-layer transition parsing result
- */
-export const TransitionResultSchema = z
-  .object({
-    layers: z.array(TransitionLayerSchema).describe("Array of transition layers"),
-  })
-  .describe("Result of parsing multi-layer transition declaration");
-
-/**
- * Animation layer schema for multi-layer animation parsing
- */
-export const AnimationLayerSchema = z
-  .object({
-    name: z.string().optional().describe("Animation name (e.g., 'spin', 'none')"),
-    duration: z.string().optional().describe("Animation duration (e.g., '1s', '300ms')"),
-    timingFunction: z
-      .string()
-      .optional()
-      .describe("Animation timing function (e.g., 'ease', 'cubic-bezier(0.4, 0, 0.2, 1)')"),
-    delay: z.string().optional().describe("Animation delay (e.g., '100ms', '0s')"),
-    iterationCount: z
-      .string()
-      .optional()
-      .describe("Animation iteration count (e.g., '3', 'infinite')"),
-    direction: z
-      .string()
-      .optional()
-      .describe(
-        "Animation direction (e.g., 'normal', 'reverse', 'alternate', 'alternate-reverse')"
-      ),
-    fillMode: z
-      .string()
-      .optional()
-      .describe("Animation fill mode (e.g., 'none', 'forwards', 'backwards', 'both')"),
-    playState: z.string().optional().describe("Animation play state (e.g., 'running', 'paused')"),
-  })
-  .describe("Single layer in a multi-layer animation");
-
-/**
- * Multi-layer animation parsing result
- */
-export const AnimationResultSchema = z
-  .object({
-    layers: z.array(AnimationLayerSchema).describe("Array of animation layers"),
-  })
-  .describe("Result of parsing multi-layer animation declaration");
-
-/**
- * Main expansion result schema
- */
-export const ExpandResultSchema = z
-  .object({
-    ok: z.boolean().describe("Whether expansion was successful (no syntax errors)"),
-    result: z
-      .union([
-        z
-          .record(z.string(), z.string())
-          .describe(
-            "JavaScript object format result (multiple declarations are merged, with later properties overriding earlier ones)"
-          ),
-        z.string().describe("CSS string format result (multiple declarations are joined)"),
-        z.undefined().describe("No result when input is empty or invalid"),
-      ])
-      .describe("The expanded CSS result"),
-    issues: z
-      .array(z.union([CssTreeSyntaxParseErrorSchema, BStyleWarningSchema]))
-      .describe("Array of syntax errors and validation warnings"),
-  })
-  .describe("Result of CSS shorthand expansion");
-
-/**
- * Stylesheet validation result schema
- */
-export const StylesheetValidationSchema = z
-  .object({
-    ok: z.boolean().describe("Whether validation passed (no errors)"),
-    errors: z.array(CssTreeSyntaxParseErrorSchema).describe("Array of syntax parsing errors"),
-    warnings: z.array(BStyleWarningSchema).describe("Array of property validation warnings"),
-  })
-  .describe("Result of CSS stylesheet validation");
-
-// Derived TypeScript types from schemas
-export type Format = z.infer<typeof FormatEnumSchema>;
-export type PropertyGrouping = z.infer<typeof PropertyGroupingEnumSchema>;
-export type ExpandOptions = z.infer<typeof ExpandOptionsSchema>;
-export type ExpandResult = z.infer<typeof ExpandResultSchema>;
-export type BackgroundLayer = z.infer<typeof BackgroundLayerSchema>;
-export type BackgroundResult = z.infer<typeof BackgroundResultSchema>;
-export type MaskLayer = z.infer<typeof MaskLayerSchema>;
-export type MaskResult = z.infer<typeof MaskResultSchema>;
-export type TransitionLayer = z.infer<typeof TransitionLayerSchema>;
-export type TransitionResult = z.infer<typeof TransitionResultSchema>;
-export type AnimationLayer = z.infer<typeof AnimationLayerSchema>;
-export type AnimationResult = z.infer<typeof AnimationResultSchema>;
-export type BStyleWarning = z.infer<typeof BStyleWarningSchema>;
-export type StylesheetValidation = z.infer<typeof StylesheetValidationSchema>;
-export type CssValue = z.infer<typeof CssValueSchema>;
-export type CssProperty = z.infer<typeof CssPropertySchema>;
-export type CssDeclaration = z.infer<typeof CssDeclarationSchema>;
-
-// Export schemas for runtime validation
-export const schemas = {
-  Format: FormatEnumSchema,
-  PropertyGrouping: PropertyGroupingEnumSchema,
-  ExpandOptions: ExpandOptionsSchema,
-  ExpandResult: ExpandResultSchema,
-  BackgroundLayer: BackgroundLayerSchema,
-  BackgroundResult: BackgroundResultSchema,
-  MaskLayer: MaskLayerSchema,
-  MaskResult: MaskResultSchema,
-  TransitionLayer: TransitionLayerSchema,
-  TransitionResult: TransitionResultSchema,
-  AnimationLayer: AnimationLayerSchema,
-  AnimationResult: AnimationResultSchema,
-  BStyleWarning: BStyleWarningSchema,
-  StylesheetValidation: StylesheetValidationSchema,
-  CssValue: CssValueSchema,
-  CssProperty: CssPropertySchema,
-  CssDeclaration: CssDeclarationSchema,
-} as const;
-
-
 === File: src/text-decoration.ts ===
 // b_path:: src/text-decoration.ts
-import { sortProperties } from "./index";
-import isColor from "./is-color";
-import isLength from "./is-length";
-import normalizeColor from "./normalize-color";
+
+import isColor from "./internal/is-color";
+import isLength from "./internal/is-length";
+import normalizeColor from "./internal/normalize-color";
+import { sortProperties } from "./internal/property-sorter";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
 const LINE = /^(none|underline|overline|line-through|blink|spelling-error|grammar-error)$/i;
@@ -5731,9 +6460,10 @@ export default function textDecoration(value: string): Record<string, string> | 
 
 === File: src/text-emphasis.ts ===
 // b_path:: src/text-emphasis.ts
-import { sortProperties } from "./index";
-import isColor from "./is-color";
-import normalizeColor from "./normalize-color";
+
+import isColor from "./internal/is-color";
+import normalizeColor from "./internal/normalize-color";
+import { sortProperties } from "./internal/property-sorter";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
 const FILL = /^(filled|open)$/i;
@@ -5799,9 +6529,10 @@ export default function textEmphasis(value: string): Record<string, string> | un
 // b_path:: src/transition-layers.ts
 
 import * as csstree from "css-tree";
-import isTime from "./is-time";
-import isTimingFunction from "./is-timing-function";
-import type { TransitionLayer, TransitionResult } from "./schema";
+import type { TransitionLayer, TransitionResult } from "./core/schema";
+import isTime from "./internal/is-time";
+import isTimingFunction from "./internal/is-timing-function";
+import { hasTopLevelCommas, parseLayersGeneric } from "./internal/layer-parser-utils";
 
 // CSS default values for transition properties
 export const TRANSITION_DEFAULTS = {
@@ -5815,103 +6546,15 @@ export const TRANSITION_DEFAULTS = {
  * Detects if a transition value needs advanced parsing (multi-layer transitions or complex functions)
  */
 export function needsAdvancedParser(value: string): boolean {
-  // Use advanced parsing for:
-  // 1. Multi-layer transitions (comma-separated)
-  // 2. Complex timing functions with parentheses
-  // Must ignore commas inside parentheses/brackets (functions, rgba(), etc.)
-  let parenDepth = 0;
-  let bracketDepth = 0;
-  let hasFunctions = false;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-      hasFunctions = true;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this indicates multiple layers
-      return true;
-    }
-  }
-
-  // Use advanced parsing for complex timing functions
-  return hasFunctions;
-}
-
-/**
- * Splits a transition value into layers, respecting nested functions
- */
-function splitLayers(value: string): string[] {
-  const layers: string[] = [];
-  let currentLayer = "";
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this separates layers
-      layers.push(currentLayer.trim());
-      currentLayer = "";
-      continue;
-    }
-
-    currentLayer += char;
-  }
-
-  // Add the last layer
-  if (currentLayer.trim()) {
-    layers.push(currentLayer.trim());
-  }
-
-  return layers;
+  return hasTopLevelCommas(value, true);
 }
 
 /**
  * Parses a complex transition value using css-tree AST parsing
  */
 export function parseTransitionLayers(value: string): TransitionResult | undefined {
-  try {
-    // Split into layers
-    const layerStrings = splitLayers(value);
-    if (layerStrings.length === 0) {
-      return undefined;
-    }
-
-    // Parse each layer to extract all properties
-    const layers: TransitionLayer[] = [];
-
-    for (const layerStr of layerStrings) {
-      const parsedLayer = parseSingleLayer(layerStr);
-      if (!parsedLayer) {
-        return undefined; // Parsing failed for this layer
-      }
-      layers.push(parsedLayer);
-    }
-
-    return {
-      layers,
-    };
-  } catch (_error) {
-    // If parsing fails, return undefined to indicate invalid input
-    return undefined;
-  }
+  const layers = parseLayersGeneric(value, parseSingleLayer);
+  return layers ? { layers } : undefined;
 }
 
 /**
@@ -6063,8 +6706,8 @@ export function reconstructLayers(layers: TransitionLayer[]): Record<string, str
 === File: src/transition.ts ===
 // b_path:: src/transition.ts
 
-import isTime from "./is-time";
-import isTimingFunction from "./is-timing-function";
+import isTime from "./internal/is-time";
+import isTimingFunction from "./internal/is-timing-function";
 import { needsAdvancedParser, parseTransitionLayers, reconstructLayers } from "./transition-layers";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
@@ -6144,423 +6787,6 @@ export default function transition(value: string): Record<string, string> | unde
     "transition-timing-function": result["transition-timing-function"] || "ease",
     "transition-delay": result["transition-delay"] || "0s",
   };
-}
-
-
-=== File: src/validate.ts ===
-// b_path:: src/validate.ts
-/**
- * Validates CSS stylesheet syntax and property values, providing detailed error formatting.
- *
- * This function parses CSS using the css-tree library and validates each CSS property
- * against the CSS specification. When validation errors are found, it generates
- * formatted error messages with visual context including line numbers, code snippets,
- * and precise error location indicators.
- *
- * @param css - The CSS string to validate
- *
- * @returns StylesheetValidation object containing:
- *   - ok: boolean indicating if validation passed (no errors)
- *   - errors: Array of syntax parsing errors (malformed CSS)
- *   - warnings: Array of property validation errors (invalid property values)
- *
- * @remarks
- * - Context window shows ±2 lines around each error for better debugging
- * - Long lines are intelligently truncated with ellipses (…) for readability
- * - Pointer indicators (^^^) precisely mark the error location and length
- * - Duplicate declarations are automatically deduplicated to avoid redundant warnings
- *
- * @throws Does not throw - parsing errors are captured in the returned errors array
- *
- * @since 1.0.0
- */
-
-import * as csstree from "css-tree";
-import {
-  type BStyleWarning,
-  type StylesheetValidation,
-  StylesheetValidationSchema,
-} from "./schema";
-
-// Constants
-const DEFAULT_MAX_LINE_WIDTH = 80;
-const LINE_NUMBER_PADDING = 4;
-const DEFAULT_CONTEXT_WINDOW_SIZE = 2; // Lines before and after error
-
-export interface BStyleMatchError extends csstree.SyntaxMatchError {
-  property: string;
-  formattedError?: string;
-}
-
-export type { BStyleWarning, StylesheetValidation };
-
-export interface Declaration {
-  property: string;
-  value: csstree.Value | csstree.Raw;
-  node: csstree.CssNode;
-}
-
-export interface ErrorFormatOptions {
-  maxLineWidth: number;
-  contextWindowSize?: number;
-}
-
-interface TruncationBounds {
-  startPos: number;
-  endPos: number;
-  needsStartEllipsis: boolean;
-  needsEndEllipsis: boolean;
-  availableWidth: number;
-}
-
-interface FormattedLine {
-  content: string;
-  adjustedColumn: number;
-}
-
-/**
- * Validates a CSS stylesheet for syntax and property value errors.
- *
- * @param css - The CSS string to validate
- * @returns StylesheetValidation object containing validation results
- */
-export function validate(css: string): StylesheetValidation {
-  const errors: csstree.SyntaxParseError[] = [];
-  const warnings: BStyleMatchError[] = [];
-  const declarations: Declaration[] = [];
-  const syntax = csstree.lexer;
-  const uniqueDecls = new Map<string, number>();
-
-  // Parse CSS
-  const ast = csstree.parse(css, {
-    context: "declarationList",
-    positions: true,
-    parseAtrulePrelude: true,
-    parseRulePrelude: true,
-    parseCustomProperty: true,
-    onParseError(err: csstree.SyntaxParseError) {
-      // biome-ignore lint/correctness/noUnusedVariables: remove stack from err
-      const { stack, ...rest } = err;
-      errors.push(rest);
-    },
-  });
-
-  // Extract declarations
-  csstree.walk(ast, (node) => {
-    if (node.type !== "Declaration") {
-      return;
-    }
-    const id = csstree.generate(node);
-    if (uniqueDecls.has(id)) {
-      uniqueDecls.set(id, uniqueDecls.get(id)! + 1);
-      return;
-    }
-    uniqueDecls.set(id, 1);
-    declarations.push({ property: node.property, value: node.value, node });
-  });
-
-  // Validate declarations
-  // Suppress noisy csstree-match iteration warnings during matching.
-  // Control via env var: BStyle_CSSTREE_LOG_LEVEL=ERROR (default) suppresses these messages.
-  const suppressNoise = (msg: unknown): boolean => {
-    try {
-      const s = String(msg);
-      return /\[csstree-match\]\s*BREAK after/i.test(s);
-    } catch {
-      return false;
-    }
-  };
-  const LOG_LEVEL = (process.env.BStyle_CSSTREE_LOG_LEVEL || "ERROR").toUpperCase();
-  const QUIET = LOG_LEVEL === "ERROR" || LOG_LEVEL === "SILENT";
-  const origWarn = console.warn;
-  const origError = console.error;
-  try {
-    if (QUIET) {
-      console.warn = (...args: Parameters<typeof console.warn>) => {
-        if (args.length && suppressNoise(args[0])) return;
-        return origWarn(...args);
-      };
-      console.error = (...args: Parameters<typeof console.error>) => {
-        if (args.length && suppressNoise(args[0])) return;
-        return origError(...args);
-      };
-    }
-
-    for (const decl of declarations) {
-      const match = syntax.matchProperty(decl.property, decl.value);
-      const error = match.error as csstree.SyntaxMatchError;
-
-      if (!error) continue;
-
-      // biome-ignore lint/correctness/noUnusedVariables: remove stack from error
-      const { stack, name, ...rest } = error;
-      warnings.push({
-        property: decl.property,
-        name,
-        ...rest,
-      });
-    }
-  } finally {
-    // Always restore console methods
-    console.warn = origWarn;
-    console.error = origError;
-  }
-
-  // Format and display warnings
-  const formattedWarnings: BStyleWarning[] = [];
-
-  if (warnings.length > 0) {
-    const cssLines = css.split("\n");
-    for (const warning of warnings) {
-      const formattedError = formatErrorDisplay(cssLines, warning);
-      formattedWarnings.push({
-        property: warning.property,
-        name: warning.name,
-        syntax: warning.syntax,
-        formattedWarning: `Errors found in: ${warning.property}\n${formattedError.join("\n")}`,
-      });
-    }
-  }
-
-  // Validate and return using Zod schema for type safety
-  const result = {
-    ok: errors.length === 0,
-    errors,
-    warnings: formattedWarnings,
-  };
-
-  // Validate the result against our Zod schema for runtime type safety
-  return StylesheetValidationSchema.parse(result);
-}
-
-export function validateDeclaration(value: string, prop: string): StylesheetValidation {
-  const css = `.class {${prop}: ${value};}`;
-  const result = validate(css);
-  return result;
-}
-
-// Helper functions
-/**
- * Calculates the line window to display around an error line.
- * Shows contextWindowSize lines before and after the error for better context.
- *
- * @param errorLine - The line number where the error occurred
- * @param totalLines - Total number of lines in the CSS
- * @param contextWindowSize - Number of lines to show before and after error (default: 2)
- * @returns Object with start and end line numbers for the context window
- */
-function calculateLineWindow(
-  errorLine: number,
-  totalLines: number,
-  contextWindowSize: number = DEFAULT_CONTEXT_WINDOW_SIZE
-): { start: number; end: number } {
-  const start = Math.max(1, errorLine - contextWindowSize);
-  const end = Math.min(totalLines, errorLine + contextWindowSize);
-  return { start, end };
-}
-
-function formatLineNumber(lineNum: number, maxLineNum: number): string {
-  const maxDigits = Math.max(maxLineNum.toString().length, 1);
-  const paddedNum = lineNum.toString().padStart(maxDigits, " ");
-  const prefix = " ".repeat(LINE_NUMBER_PADDING - maxDigits);
-  return `${prefix}${paddedNum} |`;
-}
-
-function trimLine(line: string): { trimmed: string; spacesRemoved: number } {
-  const trimmed = line.trimStart();
-  const spacesRemoved = line.length - trimmed.length;
-  return { trimmed, spacesRemoved };
-}
-
-function calculateTruncationBounds(
-  lineLength: number,
-  errorColumn: number,
-  maxWidth: number
-): TruncationBounds {
-  if (lineLength <= maxWidth) {
-    return {
-      startPos: 0,
-      endPos: lineLength,
-      needsStartEllipsis: false,
-      needsEndEllipsis: false,
-      availableWidth: maxWidth,
-    };
-  }
-
-  // Reserve space for potential ellipses
-  let availableWidth = maxWidth - 2;
-  const halfWidth = Math.floor(availableWidth / 2);
-  let startPos = Math.max(0, errorColumn - halfWidth - 1);
-
-  // Determine if we need start ellipsis
-  const needsStartEllipsis = startPos > 0;
-
-  if (!needsStartEllipsis) {
-    // No start truncation - reclaim space for end-only ellipsis
-    availableWidth = maxWidth - 1;
-  } else {
-    // Skip one additional character for better spacing after ellipsis
-    startPos = startPos + 1;
-  }
-
-  let endPos = startPos + availableWidth;
-  let needsEndEllipsis = endPos < lineLength;
-
-  // Adjust if we hit the end of the line
-  if (endPos >= lineLength) {
-    endPos = lineLength;
-    needsEndEllipsis = false;
-
-    if (needsStartEllipsis) {
-      startPos = Math.max(0, endPos - availableWidth);
-    }
-  }
-
-  return {
-    startPos,
-    endPos,
-    needsStartEllipsis,
-    needsEndEllipsis,
-    availableWidth,
-  };
-}
-
-function applyTruncation(
-  line: string,
-  bounds: TruncationBounds,
-  originalErrorColumn: number
-): FormattedLine {
-  let content = line.slice(bounds.startPos, bounds.endPos);
-  let adjustedColumn = originalErrorColumn - bounds.startPos;
-
-  if (bounds.needsStartEllipsis) {
-    content = `…${content}`;
-    adjustedColumn = adjustedColumn + 1;
-  }
-
-  if (bounds.needsEndEllipsis) {
-    content = `${content}…`;
-  }
-
-  return { content, adjustedColumn };
-}
-
-function formatContextLine(line: string, maxWidth: number): string {
-  const { trimmed } = trimLine(line);
-
-  if (trimmed.length <= maxWidth) {
-    return trimmed;
-  }
-
-  return `${trimmed.slice(0, maxWidth - 1)}…`;
-}
-
-function formatErrorLine(line: string, errorColumn: number, maxWidth: number): FormattedLine {
-  // Input validation
-  if (errorColumn < 1) {
-    throw new Error("Error column must be >= 1");
-  }
-
-  const { trimmed, spacesRemoved } = trimLine(line);
-  const adjustedErrorColumn = Math.max(1, errorColumn - spacesRemoved);
-
-  // Handle case where line fits without truncation after trimming
-  if (trimmed.length <= maxWidth) {
-    return {
-      content: trimmed,
-      adjustedColumn: adjustedErrorColumn,
-    };
-  }
-
-  // Calculate truncation bounds using the original error column position
-  const bounds = calculateTruncationBounds(line.length, errorColumn, maxWidth);
-
-  // Special handling for start-of-line case (after trimming consideration)
-  if (bounds.startPos === 0 || bounds.startPos <= spacesRemoved) {
-    // Use trimmed line for start-of-line truncation
-    const trimmedBounds = calculateTruncationBounds(trimmed.length, adjustedErrorColumn, maxWidth);
-    return applyTruncation(trimmed, trimmedBounds, adjustedErrorColumn);
-  }
-
-  // Standard middle-of-line truncation
-  return applyTruncation(line, bounds, errorColumn);
-}
-
-function createPointerLine(prefixLength: number, column: number, length: number): string {
-  const safeLength = Math.max(1, length ?? 1);
-  const safeColumn = Math.max(1, column);
-
-  const pointerPrefix = " ".repeat(prefixLength);
-  const dashes = "-".repeat(safeColumn - 1);
-  const carets = "^".repeat(safeLength);
-
-  return pointerPrefix + dashes + carets;
-}
-
-/**
- * Formats and displays CSS validation errors with visual context.
- * Shows the error line with surrounding context, line numbers, and pointer indicators.
- *
- * @param cssLines - Array of CSS source lines
- * @param warning - The validation error/warning to format
- * @param options - Formatting options (maxLineWidth, contextWindowSize)
- * @returns Array of formatted strings representing the error display
- *
- * @example
- * // Error at line 5, column 10:
- * //   3 | .class {
- * //   4 |   margin: 10px;
- * //   5 |   color: notacolor;
- * //       ---------^^^^^^^^^^^
- * //   6 | }
- */
-function formatErrorDisplay(
-  cssLines: string[],
-  warning: BStyleMatchError,
-  options: ErrorFormatOptions = {
-    maxLineWidth: DEFAULT_MAX_LINE_WIDTH,
-    contextWindowSize: DEFAULT_CONTEXT_WINDOW_SIZE,
-  }
-): string[] {
-  // Input validation
-  if (!cssLines.length || warning.line < 1 || warning.line > cssLines.length) {
-    return [`Invalid error location: line ${warning.line}`];
-  }
-  const errorLine = warning.line;
-  const errorColumn = warning.column;
-  const mismatchLength = warning.mismatchLength ?? 1;
-  const contextWindowSize = options.contextWindowSize ?? DEFAULT_CONTEXT_WINDOW_SIZE;
-
-  const { start, end } = calculateLineWindow(errorLine, cssLines.length, contextWindowSize);
-  const maxLineNum = end;
-  const linePrefix = formatLineNumber(1, maxLineNum);
-  const prefixLength = linePrefix.length;
-  const availableWidth = options.maxLineWidth - prefixLength;
-
-  const result: string[] = [];
-
-  for (let lineNum = start; lineNum <= end; lineNum++) {
-    const lineIndex = lineNum - 1;
-    const currentLine = cssLines[lineIndex] ?? "";
-    const currentPrefix = formatLineNumber(lineNum, maxLineNum);
-
-    if (lineNum === errorLine) {
-      // Format error line
-      const { content, adjustedColumn } = formatErrorLine(currentLine, errorColumn, availableWidth);
-
-      result.push(currentPrefix + content);
-
-      // Add pointer line
-      const pointerLine = createPointerLine(prefixLength, adjustedColumn, mismatchLength);
-      result.push(pointerLine);
-    } else {
-      // Format context line
-      const formattedLine = formatContextLine(currentLine, availableWidth);
-      result.push(currentPrefix + formattedLine);
-    }
-  }
-
-  return result;
 }
 
 
