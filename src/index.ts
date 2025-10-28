@@ -24,7 +24,8 @@ import overflow from "./overflow";
 import placeContent from "./place-content";
 import placeItems from "./place-items";
 import placeSelf from "./place-self";
-import type { BStyleWarning, ExpandOptions, ExpandResult } from "./schema";
+import type { BStyleWarning, ExpandOptions, ExpandResult, PropertyGrouping } from "./schema";
+import { FORMAT_CSS, FORMAT_JS, GROUPING_BY_PROPERTY, GROUPING_BY_SIDE } from "./schema";
 import textDecoration from "./text-decoration";
 import textEmphasis from "./text-emphasis";
 import transition from "./transition";
@@ -392,7 +393,7 @@ function kebabToCamelCase(property: string): string {
  * Sorts an object's properties according to CSS specification order defined in PROPERTY_ORDER_MAP.
  *
  * @param obj - Object with CSS properties to sort
- * @param grouping - Grouping strategy: "by-property" (default) or "by-side"
+ * @param grouping - Grouping strategy from PropertyGrouping enum
  * @returns New object with properties sorted according to the specified strategy
  *
  * @example
@@ -407,9 +408,9 @@ function kebabToCamelCase(property: string): string {
  */
 function sortProperties(
   obj: Record<string, string>,
-  grouping: "by-property" | "by-side" = "by-property"
+  grouping: PropertyGrouping = GROUPING_BY_PROPERTY
 ): Record<string, string> {
-  if (grouping === "by-side") {
+  if (grouping === GROUPING_BY_SIDE) {
     return sortPropertiesBySide(obj);
   }
   return sortPropertiesByProperty(obj);
@@ -519,7 +520,7 @@ function objectToCss(
   obj: Record<string, string>,
   indent: number,
   separator: string,
-  propertyGrouping: "by-property" | "by-side" = "by-property"
+  propertyGrouping: PropertyGrouping = GROUPING_BY_PROPERTY
 ): string {
   const indentStr = "  ".repeat(indent);
 
@@ -556,10 +557,10 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
 
   // Merge partial options with defaults from schema
   const {
-    format = "css",
+    format = FORMAT_CSS,
     indent = 0,
     separator = "\n",
-    propertyGrouping = "by-property",
+    propertyGrouping = GROUPING_BY_PROPERTY,
     expandPartialLonghand = false,
   } = options;
 
@@ -717,7 +718,7 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
       } else {
         // Current result IS from shorthand expansion - check for conflicts with earlier non-shorthand results
         // Gate this behind CSS format only to mirror JS merge behavior
-        if (format === "css") {
+        if (format === FORMAT_CSS) {
           for (const prop of meta.properties) {
             const earlierIndex = propertyToResultIndex.get(prop);
             if (earlierIndex !== undefined) {
@@ -786,10 +787,10 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
     finalResult = undefined;
   } else if (cleanedResults.length === 1) {
     const result = cleanedResults[0];
-    if (format === "css" && typeof result === "object") {
+    if (format === FORMAT_CSS && typeof result === "object") {
       const resultToProcess = applyPartialExpansion(result);
       finalResult = objectToCss(resultToProcess, indent, separator, propertyGrouping);
-    } else if (format === "js" && typeof result === "object") {
+    } else if (format === FORMAT_JS && typeof result === "object") {
       const resultToProcess = applyPartialExpansion(result);
       // Sort and convert to camelCase for JS format
       const sorted = sortProperties(resultToProcess, propertyGrouping);
@@ -802,7 +803,7 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
       finalResult = result;
     }
   } else {
-    if (format === "css") {
+    if (format === FORMAT_CSS) {
       // For CSS format with multiple declarations, we need to merge objects first
       // then convert to CSS to respect property grouping across declarations
       const mergedObject: Record<string, string> = {};
@@ -827,7 +828,7 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
         finalResult = cssResults.join(separator);
       }
     } else {
-      // format === "js" - merge objects with simple "later wins" logic
+      // format === FORMAT_JS (js) - merge objects with simple "later wins" logic
       const mergedResult: Record<string, string> = {};
       for (const result of cleanedResults) {
         if (typeof result === "object" && result) {
@@ -875,9 +876,20 @@ export type {
   BStyleWarning,
   ExpandOptions,
   ExpandResult,
+  Format,
   MaskLayer,
   MaskResult,
+  PropertyGrouping,
   StylesheetValidation,
   TransitionLayer,
   TransitionResult,
+} from "./schema";
+// Export enum values and constants for runtime use
+export {
+  FORMAT_CSS,
+  FORMAT_JS,
+  FORMAT_VALUES,
+  GROUPING_BY_PROPERTY,
+  GROUPING_BY_SIDE,
+  PROPERTY_GROUPING_VALUES,
 } from "./schema";

@@ -1,23 +1,48 @@
 // b_path:: src/schema.ts
 import { z } from "zod";
 
-// Base CSS value schemas
+/**
+ * Base CSS value schemas
+ */
 export const CssValueSchema = z.string().describe("CSS property value");
 export const CssPropertySchema = z.string().describe("CSS property name");
 export const CssDeclarationSchema = z.string().describe("CSS declaration string");
 
-// Format options schema
+/**
+ * Output format enum schema
+ * - 'css': Returns kebab-case CSS string (e.g., "margin-top: 10px;")
+ * - 'js': Returns camelCase JavaScript object (e.g., { marginTop: '10px' })
+ */
+export const FormatEnumSchema = z.enum(["css", "js"]);
+
+/**
+ * Property grouping strategy enum schema
+ * - 'by-property': Groups by property type (e.g., all margins, then all borders)
+ * - 'by-side': Groups by directional side (e.g., all top properties, then all right properties)
+ */
+export const PropertyGroupingEnumSchema = z.enum(["by-property", "by-side"]);
+
+// Derive enum arrays from schemas for runtime use
+export const FORMAT_VALUES = FormatEnumSchema.options;
+export const PROPERTY_GROUPING_VALUES = PropertyGroupingEnumSchema.options;
+
+// Named constants for better readability (derived directly from schema)
+export const FORMAT_CSS = "css" as const;
+export const FORMAT_JS = "js" as const;
+export const GROUPING_BY_PROPERTY = "by-property" as const;
+export const GROUPING_BY_SIDE = "by-side" as const;
+
+/**
+ * Options schema for CSS shorthand expansion
+ */
 export const ExpandOptionsSchema = z
   .object({
-    format: z.enum(["js", "css"]).default("css").describe("Output format"),
+    format: FormatEnumSchema.default("css").describe("Output format"),
     indent: z.number().min(0).default(0).describe("Indentation for CSS output"),
     separator: z.string().default("\n").describe("Separator between CSS declarations"),
-    propertyGrouping: z
-      .enum(["by-property", "by-side"])
-      .default("by-property")
-      .describe(
-        "Property grouping strategy: 'by-property' groups by property type (e.g., all margins, then all borders), 'by-side' groups by directional side (e.g., all top properties, then all right properties)"
-      ),
+    propertyGrouping: PropertyGroupingEnumSchema.default("by-property").describe(
+      "Property grouping strategy: 'by-property' groups by property type (e.g., all margins, then all borders), 'by-side' groups by directional side (e.g., all top properties, then all right properties)"
+    ),
     expandPartialLonghand: z
       .boolean()
       .default(false)
@@ -214,6 +239,8 @@ export const StylesheetValidationSchema = z
   .describe("Result of CSS stylesheet validation");
 
 // Derived TypeScript types from schemas
+export type Format = z.infer<typeof FormatEnumSchema>;
+export type PropertyGrouping = z.infer<typeof PropertyGroupingEnumSchema>;
 export type ExpandOptions = z.infer<typeof ExpandOptionsSchema>;
 export type ExpandResult = z.infer<typeof ExpandResultSchema>;
 export type BackgroundLayer = z.infer<typeof BackgroundLayerSchema>;
@@ -232,6 +259,8 @@ export type CssDeclaration = z.infer<typeof CssDeclarationSchema>;
 
 // Export schemas for runtime validation
 export const schemas = {
+  Format: FormatEnumSchema,
+  PropertyGrouping: PropertyGroupingEnumSchema,
   ExpandOptions: ExpandOptionsSchema,
   ExpandResult: ExpandResultSchema,
   BackgroundLayer: BackgroundLayerSchema,

@@ -25,6 +25,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -52,6 +53,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -65,6 +67,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -78,6 +81,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -91,6 +95,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -104,6 +109,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -117,6 +123,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -130,6 +137,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -143,6 +151,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -156,6 +165,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -169,6 +179,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -197,6 +208,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-size": "auto auto",
       "background-repeat": "repeat",
       "background-attachment": "scroll",
+      "background-color": "transparent",
     },
   },
   {
@@ -210,6 +222,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-size": "auto auto",
       "background-repeat": "repeat",
       "background-attachment": "scroll",
+      "background-color": "transparent",
     },
   },
   {
@@ -223,6 +236,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-repeat": "repeat",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -252,6 +266,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll, scroll",
       "background-origin": "padding-box, padding-box",
       "background-clip": "border-box, border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -265,6 +280,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll, scroll",
       "background-origin": "padding-box, padding-box",
       "background-clip": "border-box, border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -278,6 +294,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll, scroll",
       "background-origin": "padding-box, padding-box",
       "background-clip": "border-box, border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -292,6 +309,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll, scroll, scroll",
       "background-origin": "padding-box, padding-box, padding-box",
       "background-clip": "border-box, border-box, border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -319,6 +337,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll, scroll",
       "background-position": "0% 0%, 0% 0%",
       "background-size": "auto auto, auto auto",
+      "background-color": "transparent",
     },
   },
   {
@@ -332,6 +351,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll, scroll, scroll",
       "background-origin": "padding-box, padding-box, padding-box",
       "background-clip": "border-box, border-box, border-box",
+      "background-color": "transparent",
     },
     // Note: The above `background-repeat: no-repeat;` is a separate declaration,
     // the 'background' shorthand will *not* inherit it unless it's explicitly
@@ -353,6 +373,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -366,6 +387,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
@@ -505,6 +527,7 @@ const _backgroundTestFixtures: TestCase[] = [
       "background-attachment": "scroll",
       "background-origin": "padding-box",
       "background-clip": "border-box",
+      "background-color": "transparent",
     },
   },
   {
