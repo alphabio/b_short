@@ -15,13 +15,19 @@
     "outlineColor": "#000000"
   },
   "solid": {
-    "outlineStyle": "solid"
+    "outlineWidth": "medium",
+    "outlineStyle": "solid",
+    "outlineColor": "currentcolor"
   },
   "black": {
+    "outlineWidth": "medium",
+    "outlineStyle": "none",
     "outlineColor": "black"
   },
   "1px": {
-    "outlineWidth": "1px"
+    "outlineWidth": "1px",
+    "outlineStyle": "none",
+    "outlineColor": "currentcolor"
   },
   "inherit": {
     "outlineWidth": "inherit",
