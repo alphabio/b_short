@@ -1,65 +1,50 @@
 // b_path:: src/internal/property-handler.ts
-import { z } from "zod";
 
 /**
- * Schema for property handler options
+ * Options for property handler behavior
  */
-export const PropertyHandlerOptionsSchema = z
-  .object({
-    strict: z
-      .boolean()
-      .default(false)
-      .describe("Enable strict validation mode (reject invalid values)"),
-    preserveCustomProperties: z
-      .boolean()
-      .default(true)
-      .describe("Preserve custom properties (CSS variables) in output"),
-  })
-  .describe("Options for property handler behavior");
+export interface PropertyHandlerOptions {
+  /** Enable strict validation mode (reject invalid values). Default: false */
+  strict?: boolean;
+  /** Preserve custom properties (CSS variables) in output. Default: true */
+  preserveCustomProperties?: boolean;
+}
 
 /**
- * Derived type for property handler options
+ * Default values for PropertyHandlerOptions
  */
-export type PropertyHandlerOptions = z.infer<typeof PropertyHandlerOptionsSchema>;
+export const DEFAULT_PROPERTY_HANDLER_OPTIONS: Required<PropertyHandlerOptions> = {
+  strict: false,
+  preserveCustomProperties: true,
+};
 
 /**
- * Property category enumeration schema
+ * Property category enumeration
  */
-export const PropertyCategorySchema = z.enum([
+export const PROPERTY_CATEGORIES = [
   "box-model",
   "visual",
   "layout",
   "animation",
   "typography",
   "other",
-]);
+] as const;
+
+export type PropertyCategory = (typeof PROPERTY_CATEGORIES)[number];
 
 /**
- * Derived type for property categories
+ * Metadata describing a property handler
  */
-export type PropertyCategory = z.infer<typeof PropertyCategorySchema>;
-
-/**
- * Schema for property handler metadata
- */
-export const PropertyHandlerMetadataSchema = z
-  .object({
-    shorthand: z.string().describe("The shorthand property name (e.g., 'border')"),
-    longhands: z
-      .array(z.string())
-      .describe("Array of longhand property names this shorthand expands to"),
-    defaults: z
-      .record(z.string(), z.string())
-      .optional()
-      .describe("Default values for longhand properties when not specified"),
-    category: PropertyCategorySchema.describe("Property category classification"),
-  })
-  .describe("Metadata describing a property handler");
-
-/**
- * Derived type for property handler metadata
- */
-export type PropertyHandlerMetadata = z.infer<typeof PropertyHandlerMetadataSchema>;
+export interface PropertyHandlerMetadata {
+  /** The shorthand property name (e.g., 'border') */
+  shorthand: string;
+  /** Array of longhand property names this shorthand expands to */
+  longhands: string[];
+  /** Default values for longhand properties when not specified */
+  defaults?: Record<string, string>;
+  /** Property category classification */
+  category: PropertyCategory;
+}
 
 /**
  * Property handler interface for CSS shorthand expansion
@@ -173,10 +158,11 @@ export function createPropertyHandler(config: PropertyHandler): PropertyHandler 
       options?: PropertyHandlerOptions
     ): Record<string, string> | undefined => {
       try {
-        // Validate options if provided
-        const validatedOptions = options
-          ? PropertyHandlerOptionsSchema.parse(options)
-          : PropertyHandlerOptionsSchema.parse({});
+        // Apply default options
+        const validatedOptions: Required<PropertyHandlerOptions> = {
+          ...DEFAULT_PROPERTY_HANDLER_OPTIONS,
+          ...options,
+        };
 
         // Call the underlying expand function with validated options
         return config.expand(value, validatedOptions);
