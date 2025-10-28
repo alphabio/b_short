@@ -6,7 +6,8 @@
     "backgroundRepeat": "no-repeat",
     "backgroundAttachment": "fixed",
     "backgroundOrigin": "padding-box",
-    "backgroundClip": "border-box"
+    "backgroundClip": "border-box",
+    "backgroundColor": "transparent"
   },
   "scroll": {
     "backgroundImage": "none",
@@ -15,7 +16,8 @@
     "backgroundRepeat": "repeat",
     "backgroundAttachment": "scroll",
     "backgroundOrigin": "padding-box",
-    "backgroundClip": "border-box"
+    "backgroundClip": "border-box",
+    "backgroundColor": "transparent"
   },
   "content-box": {
     "backgroundImage": "none",
@@ -24,7 +26,8 @@
     "backgroundRepeat": "repeat",
     "backgroundAttachment": "scroll",
     "backgroundOrigin": "content-box",
-    "backgroundClip": "content-box"
+    "backgroundClip": "content-box",
+    "backgroundColor": "transparent"
   },
   "url( image.png )": {
     "backgroundImage": "url(image.png)",
@@ -33,7 +36,8 @@
     "backgroundRepeat": "repeat",
     "backgroundAttachment": "scroll",
     "backgroundOrigin": "padding-box",
-    "backgroundClip": "border-box"
+    "backgroundClip": "border-box",
+    "backgroundColor": "transparent"
   },
   "no-repeat repeat": {
     "backgroundImage": "none",
@@ -42,7 +46,8 @@
     "backgroundRepeat": "no-repeat repeat",
     "backgroundAttachment": "scroll",
     "backgroundOrigin": "padding-box",
-    "backgroundClip": "border-box"
+    "backgroundClip": "border-box",
+    "backgroundColor": "transparent"
   },
   "rgba(128, 64, 128, 1)": {
     "backgroundImage": "none",
@@ -61,7 +66,8 @@
     "backgroundRepeat": "repeat",
     "backgroundAttachment": "scroll",
     "backgroundOrigin": "padding-box",
-    "backgroundClip": "border-box"
+    "backgroundClip": "border-box",
+    "backgroundColor": "transparent"
   },
   "10% / auto 10px": {
     "backgroundImage": "none",
@@ -70,7 +76,8 @@
     "backgroundRepeat": "repeat",
     "backgroundAttachment": "scroll",
     "backgroundOrigin": "padding-box",
-    "backgroundClip": "border-box"
+    "backgroundClip": "border-box",
+    "backgroundColor": "transparent"
   },
   "fixed padding-box url(image.png) rgb(255, 255, 0) 10px top / cover repeat-x": {
     "backgroundImage": "url(image.png)",
@@ -99,7 +106,8 @@
     "backgroundRepeat": "repeat",
     "backgroundAttachment": "scroll",
     "backgroundOrigin": "padding-box",
-    "backgroundClip": "border-box"
+    "backgroundClip": "border-box",
+    "backgroundColor": "transparent"
   },
   "conic-gradient(at 83.333333% 33.333333%, #999999 0 120deg, #0000 0), conic-gradient(from -120deg at 16.666667% 33.333333%, #cdcbcc 0 120deg, #0000 0), conic-gradient(from 120deg at 33.333333% 83.333333%, #f2f2f2 0 120deg, #0000 0), conic-gradient(from 120deg at 66.666667% 83.333333%, #f2f2f2 0 120deg, #0000 0), conic-gradient(from -180deg at 33.333333% 50%, #cdcbcc 60deg, #f2f2f2 0 120deg, #0000 0), conic-gradient(from 60deg at 66.666667% 50%, #f2f2f2 60deg, #999999 0 120deg, #0000 0), conic-gradient(from -60deg at 50% 33.333333%, #f2f2f2 120deg, #cdcbcc 0 240deg, #999999 0)": {
     "backgroundImage": "conic-gradient(at 83.333333% 33.333333%,#999999 0 120deg,#0000 0), conic-gradient(from -120deg at 16.666667% 33.333333%,#cdcbcc 0 120deg,#0000 0), conic-gradient(from 120deg at 33.333333% 83.333333%,#f2f2f2 0 120deg,#0000 0), conic-gradient(from 120deg at 66.666667% 83.333333%,#f2f2f2 0 120deg,#0000 0), conic-gradient(from -180deg at 33.333333% 50%,#cdcbcc 60deg,#f2f2f2 0 120deg,#0000 0), conic-gradient(from 60deg at 66.666667% 50%,#f2f2f2 60deg,#999999 0 120deg,#0000 0), conic-gradient(from -60deg at 50% 33.333333%,#f2f2f2 120deg,#cdcbcc 0 240deg,#999999 0)",
@@ -108,7 +116,8 @@
     "backgroundRepeat": "repeat, repeat, repeat, repeat, repeat, repeat, repeat",
     "backgroundAttachment": "scroll, scroll, scroll, scroll, scroll, scroll, scroll",
     "backgroundOrigin": "padding-box, padding-box, padding-box, padding-box, padding-box, padding-box, padding-box",
-    "backgroundClip": "border-box, border-box, border-box, border-box, border-box, border-box, border-box"
+    "backgroundClip": "border-box, border-box, border-box, border-box, border-box, border-box, border-box",
+    "backgroundColor": "transparent"
   },
   "conic-gradient(at 83.333333% 33.333333%, #999999 0 120deg, #0000 0), conic-gradient(from -120deg at 16.666667% 33.333333%, #cdcbcc 0 120deg, #0000 0), conic-gradient(from 120deg at 33.333333% 83.333333%, #f2f2f2 0 120deg, #0000 0), conic-gradient(from 120deg at 66.666667% 83.333333%, #f2f2f2 0 120deg, #0000 0), conic-gradient(from -180deg at 33.333333% 50%, #cdcbcc 60deg, #f2f2f2 0 120deg, #0000 0), conic-gradient(from 60deg at 66.666667% 50%, #f2f2f2 60deg, #999999 0 120deg, #0000 0), conic-gradient(from -60deg at 50% 33.333333%, #f2f2f2 120deg, #cdcbcc 0 240deg, #999999 0); background-size: 145.492268px 84px": {
     "backgroundImage": "conic-gradient(at 83.333333% 33.333333%,#999999 0 120deg,#0000 0), conic-gradient(from -120deg at 16.666667% 33.333333%,#cdcbcc 0 120deg,#0000 0), conic-gradient(from 120deg at 33.333333% 83.333333%,#f2f2f2 0 120deg,#0000 0), conic-gradient(from 120deg at 66.666667% 83.333333%,#f2f2f2 0 120deg,#0000 0), conic-gradient(from -180deg at 33.333333% 50%,#cdcbcc 60deg,#f2f2f2 0 120deg,#0000 0), conic-gradient(from 60deg at 66.666667% 50%,#f2f2f2 60deg,#999999 0 120deg,#0000 0), conic-gradient(from -60deg at 50% 33.333333%,#f2f2f2 120deg,#cdcbcc 0 240deg,#999999 0)",
@@ -117,7 +126,8 @@
     "backgroundRepeat": "repeat, repeat, repeat, repeat, repeat, repeat, repeat",
     "backgroundAttachment": "scroll, scroll, scroll, scroll, scroll, scroll, scroll",
     "backgroundOrigin": "padding-box, padding-box, padding-box, padding-box, padding-box, padding-box, padding-box",
-    "backgroundClip": "border-box, border-box, border-box, border-box, border-box, border-box, border-box"
+    "backgroundClip": "border-box, border-box, border-box, border-box, border-box, border-box, border-box",
+    "backgroundColor": "transparent"
   },
   "url(image.png) no-repeat; background-position: center": {
     "backgroundImage": "url(image.png)",
@@ -126,7 +136,8 @@
     "backgroundRepeat": "no-repeat",
     "backgroundAttachment": "scroll",
     "backgroundOrigin": "padding-box",
-    "backgroundClip": "border-box"
+    "backgroundClip": "border-box",
+    "backgroundColor": "transparent"
   },
   "url(image.png); background-repeat: repeat-x": {
     "backgroundImage": "url(image.png)",
@@ -135,7 +146,8 @@
     "backgroundRepeat": "repeat-x",
     "backgroundAttachment": "scroll",
     "backgroundOrigin": "padding-box",
-    "backgroundClip": "border-box"
+    "backgroundClip": "border-box",
+    "backgroundColor": "transparent"
   },
   "url(image.png) red; background-color: blue": {
     "backgroundImage": "url(image.png)",
@@ -154,7 +166,8 @@
     "backgroundRepeat": "repeat",
     "backgroundAttachment": "scroll",
     "backgroundOrigin": "padding-box",
-    "backgroundClip": "border-box"
+    "backgroundClip": "border-box",
+    "backgroundColor": "transparent"
   },
   "url('https://example.com/image1.png') top left / 50% auto no-repeat fixed content-box padding-box": {
     "backgroundImage": "url(https://example.com/image1.png)",
@@ -163,6 +176,7 @@
     "backgroundRepeat": "no-repeat",
     "backgroundAttachment": "fixed",
     "backgroundOrigin": "content-box",
-    "backgroundClip": "padding-box"
+    "backgroundClip": "padding-box",
+    "backgroundColor": "transparent"
   }
 }

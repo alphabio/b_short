@@ -8,7 +8,9 @@ src/color-utils.ts
 src/column-rule.ts
 src/columns.ts
 src/contain-intrinsic-size.ts
+src/css-defaults.ts
 src/directional.ts
+src/expand-directional.ts
 src/flex-flow.ts
 src/flex.ts
 src/font.ts

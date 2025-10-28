@@ -492,10 +492,8 @@ export function reconstructLayers(
     result[property] = values.join(", ");
   });
 
-  // Add color if specified
-  if (color) {
-    result["background-color"] = color;
-  }
+  // Add color (defaults to transparent if not specified)
+  result["background-color"] = color || "transparent";
 
   return result;
 }
