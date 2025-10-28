@@ -57,6 +57,82 @@ export interface ExpandOptions {
 }
 
 /**
+ * Enum-style namespace for ExpandOptions values
+ * Provides better autocomplete and discoverability
+ *
+ * @example
+ * ```typescript
+ * import * as b from 'b_short';
+ *
+ * b.expand('background: red', {
+ *   format: b.ExpandOptions.Format.CSS,
+ *   propertyGrouping: b.ExpandOptions.PropertyGrouping.BY_PROPERTY,
+ *   separator: b.ExpandOptions.Separator.NEWLINE,
+ *   indent: b.ExpandOptions.Indent.NONE
+ * });
+ * ```
+ */
+export namespace ExpandOptions {
+  /**
+   * Output format values
+   */
+  export enum Format {
+    /** CSS format: kebab-case strings like "margin-top: 10px;" */
+    CSS = "css",
+    /** JS format: camelCase objects like { marginTop: '10px' } */
+    JS = "js",
+  }
+
+  /**
+   * Property grouping strategy values
+   */
+  export enum PropertyGrouping {
+    /** Group by property type (all margins, then all borders) */
+    BY_PROPERTY = "by-property",
+    /** Group by directional side (all top properties, then all right) */
+    BY_SIDE = "by-side",
+  }
+
+  /**
+   * Common separator values
+   */
+  export enum Separator {
+    /** Newline separator (default) */
+    NEWLINE = "\n",
+    /** Space separator */
+    SPACE = " ",
+    /** Semicolon with space */
+    SEMICOLON = "; ",
+    /** Empty string (compact) */
+    NONE = "",
+  }
+
+  /**
+   * Common indentation values
+   */
+  export enum Indent {
+    /** No indentation (default) */
+    NONE = 0,
+    /** 2 spaces */
+    TWO_SPACES = 2,
+    /** 4 spaces */
+    FOUR_SPACES = 4,
+    /** Tab character (8 spaces equivalent) */
+    TAB = 8,
+  }
+
+  /**
+   * Boolean option values for expandPartialLonghand
+   */
+  export const ExpandPartialLonghand = {
+    /** Don't expand partial longhand properties (default) */
+    DISABLED: false,
+    /** Expand partial longhand properties with CSS defaults */
+    ENABLED: true,
+  } as const;
+}
+
+/**
  * Default values for ExpandOptions
  * Users can spread this and override specific values
  *

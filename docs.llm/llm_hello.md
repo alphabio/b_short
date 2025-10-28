@@ -7,6 +7,8 @@ Use llm_map.txt to get a quick overview of the file system <-- this is essential
 
 The following files contain the full source code
 
+
+
 ## 🚀 **IMPROVED WORKFLOW SUMMARY**
 
 1. **🔍 SEARCH** → Use project knowledge to find existing solutions
