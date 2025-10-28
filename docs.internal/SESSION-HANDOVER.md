@@ -19,6 +19,7 @@ Following the roadmap in `docs.internal/features/code-quality-8.5-10.md`
 
 **Status:** Complete and committed
 **Files Changed:**
+
 - ✅ `src/layer-parser-utils.ts` (NEW) - 168 lines of shared utilities
 - ✅ `src/background-layers.ts` - Refactored to use shared code
 - ✅ `src/mask-layers.ts` - Simplified with generic factory
@@ -26,6 +27,7 @@ Following the roadmap in `docs.internal/features/code-quality-8.5-10.md`
 - ✅ `src/transition-layers.ts` - Most simplified
 
 **Results:**
+
 - ✅ **-180 lines** of duplication eliminated
 - ✅ **Duplication:** 8% → 3% (-5%)
 - ✅ **Quality Score:** 8.5/10 → 8.8/10 (+0.3)
@@ -49,17 +51,18 @@ Following the roadmap in `docs.internal/features/code-quality-8.5-10.md`
 **What to Do:**
 
 1. **Create base interface** (`src/property-handler.ts`):
+
    ```typescript
    import { z } from "zod";
-   
+
    // Schema for handler options
    export const PropertyHandlerOptionsSchema = z.object({
      strict: z.boolean().default(false),
      preserveCustomProperties: z.boolean().default(true),
    });
-   
+
    export type PropertyHandlerOptions = z.infer<typeof PropertyHandlerOptionsSchema>;
-   
+
    // Base handler interface
    export interface PropertyHandler {
      name: string;
@@ -67,7 +70,7 @@ Following the roadmap in `docs.internal/features/code-quality-8.5-10.md`
      reconstruct?: (properties: Record<string, string>) => string | undefined;
      validate?: (value: string) => boolean;
    }
-   
+
    // Factory for creating handlers
    export function createPropertyHandler(config: PropertyHandler): PropertyHandler {
      return {
@@ -86,6 +89,7 @@ Following the roadmap in `docs.internal/features/code-quality-8.5-10.md`
    - `src/border.ts` - Complex, do last
 
 3. **Update `src/index.ts`** to use new interface:
+
    ```typescript
    const handlers: Record<string, PropertyHandler> = {
      overflow: overflowHandler,
@@ -109,11 +113,13 @@ Following the roadmap in `docs.internal/features/code-quality-8.5-10.md`
 
 **Estimated Effort:** 16-24 hours
 **What to Extract:**
+
 - Position/size parsing utilities (shared logic)
 - Repeat value parsing
 - Box value handling (origin/clip)
 
 **Key Files:**
+
 - `src/background-layers.ts` - `processCssChildren()` is 150+ lines
 - `src/mask-layers.ts` - Similar pattern, 200+ lines
 
@@ -127,6 +133,7 @@ Following the roadmap in `docs.internal/features/code-quality-8.5-10.md`
 **Libraries:** Consider `fast-check` for property-based testing
 
 **Example:**
+
 ```typescript
 import fc from 'fast-check';
 
@@ -374,18 +381,21 @@ If stuck or need clarification:
 ## ✨ Final Notes
 
 **What Worked Well:**
+
 - ✅ Incremental refactoring (one file at a time)
 - ✅ Test after every change
 - ✅ Generic factories > inheritance
 - ✅ Functional programming style
 
 **Avoid:**
+
 - ❌ Big bang refactorings
 - ❌ Breaking existing tests
 - ❌ Hand-written types (use Zod schemas)
 - ❌ Inheritance hierarchies (use composition)
 
 **Remember:**
+
 - This is a **production library** with 808 tests
 - Changes must be **backward compatible**
 - Type safety is **non-negotiable**
