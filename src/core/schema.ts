@@ -324,12 +324,3 @@ export interface StylesheetValidation {
   /** Array of property validation warnings */
   warnings: BStyleWarning[];
 }
-
-/**
- * Helper function to validate StylesheetValidation structure
- */
-export function isValidStylesheetValidation(obj: unknown): obj is StylesheetValidation {
-  if (typeof obj !== "object" || obj === null) return false;
-  const v = obj as Record<string, unknown>;
-  return typeof v.ok === "boolean" && Array.isArray(v.errors) && Array.isArray(v.warnings);
-}

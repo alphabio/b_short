@@ -1,4 +1,5 @@
 // b_path:: src/internal/layer-parser-utils.ts
+import * as csstree from "css-tree";
 
 /**
  * Shared utilities for parsing multi-layer CSS properties (background, mask, animation, transition).
@@ -143,8 +144,8 @@ export function parseLayersGeneric<T>(
  * @param ast - css-tree AST (must contain Value nodes)
  * @returns Flattened array of child nodes
  */
-export function collectCssTreeChildren(ast: unknown): unknown[] {
-  const children: unknown[] = [];
+export function collectCssTreeChildren(ast: csstree.CssNode): csstree.CssNode[] {
+  const children: csstree.CssNode[] = [];
 
   // Type guard to ensure we have a valid css-tree node
   if (!ast || typeof ast !== "object") {
@@ -152,10 +153,9 @@ export function collectCssTreeChildren(ast: unknown): unknown[] {
   }
 
   // Walk the AST and collect children from Value nodes
-  const csstree = require("css-tree");
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: { children?: Iterable<unknown> }) => {
+    enter: (node: { children?: Iterable<csstree.CssNode> }) => {
       if (node.children) {
         for (const child of node.children) {
           children.push(child);

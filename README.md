@@ -14,7 +14,7 @@
 
 ## Why b_short?
 
-- **📦 Tiny**: 61KB minified+brotli (~18KB gzipped)
+- **📦 Tiny**: ~16KB compressed
 - **⚡ Fast**: Optimized TypeScript with smart caching
 - **🎯 Complete**: 35+ CSS shorthands including modern features
 - **🔒 Type-Safe**: Full TypeScript support
@@ -177,7 +177,7 @@ if (!result.ok) {
 ## Performance
 
 - **Fast**: Optimized for performance with LRU caching
-- **Small**: 61KB minified+brotli
+- **Small**: ~16KB compressed (brotli)
 - **Efficient**: Handles 808 test cases in <1 second
 
 ## TypeScript Support
@@ -223,6 +223,6 @@ MIT © [alphabio](https://github.com/alphabio)
 
 **[⭐ Star on GitHub](https://github.com/alphabio/b_short)** • **[📖 Docs](https://github.com/alphabio/b_short#readme)** • **[🐛 Issues](https://github.com/alphabio/b_short/issues)**
 
-Made with ❤️ by [alphabio](https://alphab.io)
+⚡ [alphabio](https://alphab.io)
 
 </div>
