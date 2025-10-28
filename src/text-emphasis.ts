@@ -52,8 +52,10 @@ export default function textEmphasis(value: string): Record<string, string> | un
     }
   }
 
-  // CSS spec: text-emphasis shorthand always sets style and color
   // Use defaults for missing properties
+  // Per CSS spec, the default values for text-emphasis shorthand are:
+  //   style: 'none', color: 'currentcolor'
+  // See: https://www.w3.org/TR/css-text-decor-3/#propdef-text-emphasis
   return sortProperties({
     "text-emphasis-style": parsed.style || "none",
     "text-emphasis-color": parsed.color || "currentcolor",

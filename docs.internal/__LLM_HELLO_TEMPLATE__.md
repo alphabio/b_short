@@ -1,6 +1,6 @@
 **Before writing ANY code, you MUST:**
 
-1. **Read `llm_map.txt` FIRST** - Get complete file system overview
+1. **Read `./docs.llm/llm_map.txt` FIRST** - Get complete file system overview
 
 Use the knowledge base to help
 Use llm_map.txt to get a quick overview of the file system <-- this is essential reading
