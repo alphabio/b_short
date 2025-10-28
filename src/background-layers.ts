@@ -2,6 +2,7 @@
 
 import * as csstree from "css-tree";
 import isColor from "./is-color";
+import { hasTopLevelCommas, splitLayers } from "./layer-parser-utils";
 import type { BackgroundLayer, BackgroundResult } from "./schema";
 
 // CSS default values for background properties
@@ -19,67 +20,7 @@ export const BACKGROUND_DEFAULTS = {
  * Detects if a background value needs advanced parsing (multi-layer backgrounds)
  */
 export function needsAdvancedParser(value: string): boolean {
-  // Only use advanced parsing for actual multi-layer backgrounds (comma-separated)
-  // Must ignore commas inside parentheses/brackets (functions, rgba(), etc.)
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this indicates multiple layers
-      return true;
-    }
-  }
-
-  return false;
-}
-
-/**
- * Splits a background value into layers, respecting nested functions
- */
-function splitLayers(value: string): string[] {
-  const layers: string[] = [];
-  let currentLayer = "";
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this separates layers
-      layers.push(currentLayer.trim());
-      currentLayer = "";
-      continue;
-    }
-
-    currentLayer += char;
-  }
-
-  // Add the last layer
-  if (currentLayer.trim()) {
-    layers.push(currentLayer.trim());
-  }
-
-  return layers;
+  return hasTopLevelCommas(value);
 }
 
 /**

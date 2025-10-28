@@ -1,6 +1,7 @@
 // b_path:: src/mask-layers.ts
 
 import * as csstree from "css-tree";
+import { hasTopLevelCommas, parseLayersGeneric } from "./layer-parser-utils";
 import type { MaskLayer, MaskResult } from "./schema";
 
 // CSS default values for mask properties
@@ -19,99 +20,15 @@ export const MASK_DEFAULTS = {
  * Detects if a mask value needs advanced parsing (multi-layer masks)
  */
 export function needsAdvancedParser(value: string): boolean {
-  // Only use advanced parsing for actual multi-layer masks (comma-separated)
-  // Must ignore commas inside parentheses/brackets (functions, rgba(), etc.)
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this indicates multiple layers
-      return true;
-    }
-  }
-
-  return false;
-}
-
-/**
- * Splits a mask value into layers, respecting nested functions
- */
-function splitLayers(value: string): string[] {
-  const layers: string[] = [];
-  let currentLayer = "";
-  let parenDepth = 0;
-  let bracketDepth = 0;
-
-  for (let i = 0; i < value.length; i++) {
-    const char = value[i];
-
-    if (char === "(") {
-      parenDepth++;
-    } else if (char === ")") {
-      parenDepth--;
-    } else if (char === "[") {
-      bracketDepth++;
-    } else if (char === "]") {
-      bracketDepth--;
-    } else if (char === "," && parenDepth === 0 && bracketDepth === 0) {
-      // Found a comma at the top level - this separates layers
-      layers.push(currentLayer.trim());
-      currentLayer = "";
-      continue;
-    }
-
-    currentLayer += char;
-  }
-
-  // Add the last layer
-  if (currentLayer.trim()) {
-    layers.push(currentLayer.trim());
-  }
-
-  return layers;
+  return hasTopLevelCommas(value);
 }
 
 /**
  * Parses a complex mask value using css-tree AST parsing
  */
 export function parseMaskLayers(value: string): MaskResult | undefined {
-  try {
-    // Split into layers
-    const layerStrings = splitLayers(value);
-    if (layerStrings.length === 0) {
-      return undefined;
-    }
-
-    // Parse each layer to extract all properties
-    const layers: MaskLayer[] = [];
-
-    for (const layerStr of layerStrings) {
-      const parsedLayer = parseSingleLayer(layerStr);
-      if (!parsedLayer) {
-        // Bail out if any layer fails parsing (stricter error handling)
-        return undefined;
-      }
-      layers.push(parsedLayer);
-    }
-
-    return {
-      layers,
-    };
-  } catch (_error) {
-    // If parsing fails, return undefined to indicate invalid input
-    return undefined;
-  }
+  const layers = parseLayersGeneric(value, parseSingleLayer);
+  return layers ? { layers } : undefined;
 }
 
 /**
