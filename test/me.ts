@@ -4,14 +4,16 @@ import { expand } from "../src/index";
 
 // Test the user's desired usage pattern
 // const css = "margin: 10px; padding: 5px;";
-const css = "columns: red;";
+// const css = "columns: red;";
+
+const css = "border: solid;";
 
 console.log("Testing partial options...");
 
 // Test 1: Only indent specified
-const result1 = expand(css, { indent: 2 });
-console.log("Result with indent: 2");
-console.log(result1);
+const result1 = expand(css, { indent: 0 });
+console.log("Result with indent: 0");
+console.log(result1.result);
 console.log("---");
 
 // Test 2: Only format specified
