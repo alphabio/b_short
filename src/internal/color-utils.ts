@@ -166,27 +166,27 @@ export function hexColorRegex(opts?: { strict?: boolean }): RegExp {
 export function hslRegex(options?: { exact?: boolean }): RegExp {
   options = options || {};
   return options.exact
-    ? /^hsl\(\s*(\d+)\s*,\s*(\d*(?:\.\d+)?%)\s*,\s*(\d*(?:\.\d+)?%)\)$/
-    : /hsl\(\s*(\d+)\s*,\s*(\d*(?:\.\d+)?%)\s*,\s*(\d*(?:\.\d+)?%)\)/gi;
+    ? /^hsl\(\s*(\d+)\s*[,\s]?\s*(\d*(?:\.\d+)?%)\s*[,\s]?\s*(\d*(?:\.\d+)?%)(?:\s*\/?\s*(\d*(?:\.\d+)?%?))?\s*\)$/
+    : /hsl\(\s*(\d+)\s*[,\s]?\s*(\d*(?:\.\d+)?%)\s*[,\s]?\s*(\d*(?:\.\d+)?%)(?:\s*\/?\s*(\d*(?:\.\d+)?%?))?\s*\)/gi;
 }
 
 export function hslaRegex(options?: { exact?: boolean }): RegExp {
   options = options || {};
   return options.exact
-    ? /^hsla\((\d+),\s*([\d.]+)%,\s*([\d.]+)%,\s*(\d*(?:\.\d+)?)\)$/
-    : /hsla\((\d+),\s*([\d.]+)%,\s*([\d.]+)%,\s*(\d*(?:\.\d+)?)\)/gi;
+    ? /^hsla\(\s*(\d+)\s*[,\s]?\s*(\d*(?:\.\d+)?%)\s*[,\s]?\s*(\d*(?:\.\d+)?%)\s*[,/]?\s*(\d*(?:\.\d+)?%?)\s*\)$/
+    : /hsla\(\s*(\d+)\s*[,\s]?\s*(\d*(?:\.\d+)?%)\s*[,\s]?\s*(\d*(?:\.\d+)?%)\s*[,/]?\s*(\d*(?:\.\d+)?%?)\s*\)/gi;
 }
 
 export function rgbRegex(options?: { exact?: boolean }): RegExp {
   options = options || {};
   return options.exact
-    ? /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/
-    : /rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)/gi;
+    ? /^rgb\(\s*(\d{1,3})\s*[,\s]?\s*(\d{1,3})\s*[,\s]?\s*(\d{1,3})(?:\s*\/?\s*(\d*(?:\.\d+)?%?))?\s*\)$/
+    : /rgb\(\s*(\d{1,3})\s*[,\s]?\s*(\d{1,3})\s*[,\s]?\s*(\d{1,3})(?:\s*\/?\s*(\d*(?:\.\d+)?%?))?\s*\)/gi;
 }
 
 export function rgbaRegex(options?: { exact?: boolean }): RegExp {
   options = options || {};
   return options.exact
-    ? /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)$/
-    : /rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)/gi;
+    ? /^rgba\(\s*(\d{1,3})\s*[,\s]?\s*(\d{1,3})\s*[,\s]?\s*(\d{1,3})\s*[,/]?\s*(\d*(?:\.\d+)?%?)\s*\)$/
+    : /rgba\(\s*(\d{1,3})\s*[,\s]?\s*(\d{1,3})\s*[,\s]?\s*(\d{1,3})\s*[,/]?\s*(\d*(?:\.\d+)?%?)\s*\)/gi;
 }

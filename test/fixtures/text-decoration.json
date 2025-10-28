@@ -232,5 +232,29 @@
     "textDecorationStyle": "solid",
     "textDecorationColor": "var(--my-color)",
     "textDecorationThickness": "auto"
+  },
+  "hsl(210 100% 50%)": {
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "hsl(210,100%,50%)",
+    "textDecorationThickness": "auto"
+  },
+  "hsl(210 100% 50% / 0.8)": {
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "hsl(210,100%,50%/0.8)",
+    "textDecorationThickness": "auto"
+  },
+  "rgb(255 0 0 / 50%)": {
+    "textDecorationLine": "none",
+    "textDecorationStyle": "solid",
+    "textDecorationColor": "rgb(255,0,0/50%)",
+    "textDecorationThickness": "auto"
+  },
+  "underline overline wavy hsl(210 100% 50% / 0.8) 0.1em": {
+    "textDecorationLine": "underline overline",
+    "textDecorationStyle": "wavy",
+    "textDecorationColor": "hsl(210,100%,50%/0.8)",
+    "textDecorationThickness": "0.1em"
   }
 }
