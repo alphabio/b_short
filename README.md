@@ -27,7 +27,7 @@ b_short is a TypeScript-first library that expands CSS shorthand properties into
 ### Why b_short?
 
 - **🚀 Fast**: Zero-dependency core, optimized for performance
-- **📦 Lightweight**: ~15KB minified
+- **📦 Lightweight**: ~65KB minified, ~18KB gzipped
 - **🎨 Complete**: Supports 35+ CSS shorthands including modern features
 - **🔒 Type-Safe**: Full TypeScript support with comprehensive type definitions
 - **✅ Reliable**: 808 tests ensuring 100% accuracy

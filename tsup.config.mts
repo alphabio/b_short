@@ -8,6 +8,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   treeshake: true,
+  minify: true,
   target: "es2020",
   outDir: "dist",
   outExtension({ format }) {

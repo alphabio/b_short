@@ -1382,21 +1382,21 @@ const border: BorderFunction = (value: string): Record<string, string> | undefin
     result["box-sizing"] = longhand.boxSizing;
   }
 
-  // Handle border properties
-  for (const key in longhand) {
-    if (key === "boxSizing") continue; // Already handled above
+  // CSS spec: border shorthand always sets width, style, and color
+  // Use defaults for missing properties
+  const width = longhand.width || "medium";
+  const style = longhand.style || "none";
+  const color = longhand.color || "currentcolor";
 
-    const propValue = longhand[key as keyof BorderProperties];
-    if (propValue) {
-      const propFunction = border[key as keyof BorderFunction] as (
-        value: string
-      ) => Record<string, string> | undefined;
-      const props = propFunction(propValue);
-      if (props) {
-        Object.assign(result, props);
-      }
-    }
-  }
+  // Expand all three border properties
+  const widthProps = border.width(width);
+  const styleProps = border.style(style);
+  const colorProps = border.color(color);
+
+  if (widthProps) Object.assign(result, widthProps);
+  if (styleProps) Object.assign(result, styleProps);
+  if (colorProps) Object.assign(result, colorProps);
+
   return sortProperties(result);
 };
 
@@ -1629,25 +1629,31 @@ export default function columnRule(value: string): Record<string, string> | unde
     });
   }
 
-  const result: Record<string, string> = {};
+  const parsed: { width?: string; style?: string; color?: string } = {};
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
 
     if (isLength(v) || WIDTH.test(v)) {
-      if (result["column-rule-width"]) return;
-      result["column-rule-width"] = v;
+      if (parsed.width) return;
+      parsed.width = v;
     } else if (STYLE.test(v)) {
-      if (result["column-rule-style"]) return;
-      result["column-rule-style"] = v;
+      if (parsed.style) return;
+      parsed.style = v;
     } else if (isColor(v)) {
-      if (result["column-rule-color"]) return;
-      result["column-rule-color"] = v;
+      if (parsed.color) return;
+      parsed.color = v;
     } else {
       return;
     }
   }
 
-  return sortProperties(result);
+  // CSS spec: column-rule shorthand always sets width, style, and color
+  // Use defaults for missing properties
+  return sortProperties({
+    "column-rule-width": parsed.width || "medium",
+    "column-rule-style": parsed.style || "none",
+    "column-rule-color": parsed.color || "currentcolor",
+  });
 }
 
 
@@ -5055,25 +5061,31 @@ export default function outline(value: string): Record<string, string> | undefin
     });
   }
 
-  const result: Record<string, string> = {};
+  const parsed: { width?: string; style?: string; color?: string } = {};
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
 
     if (isLength(v) || WIDTH.test(v)) {
-      if (result["outline-width"]) return;
-      result["outline-width"] = v;
+      if (parsed.width) return;
+      parsed.width = v;
     } else if (STYLE.test(v)) {
-      if (result["outline-style"]) return;
-      result["outline-style"] = v;
+      if (parsed.style) return;
+      parsed.style = v;
     } else if (isColor(v)) {
-      if (result["outline-color"]) return;
-      result["outline-color"] = v;
+      if (parsed.color) return;
+      parsed.color = v;
     } else {
       return;
     }
   }
 
-  return sortProperties(result);
+  // CSS spec: outline shorthand always sets width, style, and color
+  // Use defaults for missing properties
+  return sortProperties({
+    "outline-width": parsed.width || "medium",
+    "outline-style": parsed.style || "none",
+    "outline-color": parsed.color || "currentcolor",
+  });
 }
 
 
@@ -5732,41 +5744,46 @@ export default function textEmphasis(value: string): Record<string, string> | un
     });
   }
 
-  const result: Record<string, string> = {};
+  const parsed: { style?: string; color?: string } = {};
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
 
     if (v === "none") {
-      if (result["text-emphasis-style"]) return;
-      result["text-emphasis-style"] = v;
+      if (parsed.style) return;
+      parsed.style = v;
     } else if (STRING_VALUE.test(v)) {
-      if (result["text-emphasis-style"]) return;
-      result["text-emphasis-style"] = v;
+      if (parsed.style) return;
+      parsed.style = v;
     } else if (FILL.test(v)) {
-      if (result["text-emphasis-style"]) return;
+      if (parsed.style) return;
       if (i + 1 < values.length && SHAPE.test(values[i + 1])) {
-        result["text-emphasis-style"] = `${v} ${values[i + 1]}`;
+        parsed.style = `${v} ${values[i + 1]}`;
         i++;
       } else {
-        result["text-emphasis-style"] = v;
+        parsed.style = v;
       }
     } else if (SHAPE.test(v)) {
-      if (result["text-emphasis-style"]) return;
+      if (parsed.style) return;
       if (i + 1 < values.length && FILL.test(values[i + 1])) {
-        result["text-emphasis-style"] = `${values[i + 1]} ${v}`;
+        parsed.style = `${values[i + 1]} ${v}`;
         i++;
       } else {
-        result["text-emphasis-style"] = v;
+        parsed.style = v;
       }
     } else if (isColor(v)) {
-      if (result["text-emphasis-color"]) return;
-      result["text-emphasis-color"] = v;
+      if (parsed.color) return;
+      parsed.color = v;
     } else {
       return;
     }
   }
 
-  return sortProperties(result);
+  // CSS spec: text-emphasis shorthand always sets style and color
+  // Use defaults for missing properties
+  return sortProperties({
+    "text-emphasis-style": parsed.style || "none",
+    "text-emphasis-color": parsed.color || "currentcolor",
+  });
 }
 
 

@@ -1,0 +1,48 @@
+📦 Bundle Size Report (Generated: 2025-10-28)
+══════════════════════════════════════════════════════════════
+
+Format              Minified    Gzipped    Brotli
+────────────────────────────────────────────────────────────
+ESM (index.mjs)       64.7KB     18.1KB    15.5KB
+CJS (index.js)        65.8KB     18.3KB    15.6KB
+
+Build Configuration:
+────────────────────────────────────────────────────────────
+✅ Minification: Enabled (tsup with esbuild)
+✅ Tree-shaking: Enabled
+✅ Sourcemaps: Enabled
+✅ Target: ES2020
+
+Comparison with Previous Estimate:
+────────────────────────────────────────────────────────────
+Previous claim: ~15KB minified ❌ (INCORRECT)
+Actual size:    ~65KB minified ✅ (ACCURATE)
+                ~18KB gzipped  ✅ (MOST RELEVANT)
+
+Why the difference?
+────────────────────────────────────────────────────────────
+The ~15KB estimate was likely based on:
+- Outdated measurement
+- Only counting core logic (not full build)
+- Confusion with gzipped size
+
+The actual 65KB minified includes:
+- 35+ CSS shorthand handlers
+- Zod validation schemas
+- Full TypeScript compiled output
+- Color normalization utilities
+- Comprehensive CSS parsing logic
+
+Recommended README claim:
+────────────────────────────────────────────────────────────
+**📦 Lightweight**: ~65KB minified, ~18KB gzipped
+
+Note: 18KB gzipped is the most relevant metric for web delivery
+as all modern servers/CDNs serve gzipped/brotli by default.
+
+Verification:
+────────────────────────────────────────────────────────────
+✅ Build: npm run build
+✅ Tests: 808 passing
+✅ Size check: node accurate-size.mjs
+
