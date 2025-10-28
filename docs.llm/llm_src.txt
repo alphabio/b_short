@@ -1474,7 +1474,7 @@ import { parseCssDeclaration, parseInputString, stripComments } from "../interna
 import { kebabToCamelCase, objectToCss, sortProperties } from "../internal/property-sorter";
 import { shorthand } from "../internal/shorthand-registry";
 import type { BStyleWarning, ExpandOptions, ExpandResult } from "./schema";
-import { FORMAT_CSS, FORMAT_JS, GROUPING_BY_PROPERTY } from "./schema";
+import { DEFAULT_EXPAND_OPTIONS, FORMAT_CSS, FORMAT_JS } from "./schema";
 import { validate } from "./validate";
 
 /**
@@ -1502,12 +1502,13 @@ import { validate } from "./validate";
 export function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResult {
   const cleanedInput = stripComments(input);
 
+  // Apply defaults using DEFAULT_EXPAND_OPTIONS
   const {
-    format = FORMAT_CSS,
-    indent = 0,
-    separator = "\n",
-    propertyGrouping = GROUPING_BY_PROPERTY,
-    expandPartialLonghand = false,
+    format = DEFAULT_EXPAND_OPTIONS.format,
+    indent = DEFAULT_EXPAND_OPTIONS.indent,
+    separator = DEFAULT_EXPAND_OPTIONS.separator,
+    propertyGrouping = DEFAULT_EXPAND_OPTIONS.propertyGrouping,
+    expandPartialLonghand = DEFAULT_EXPAND_OPTIONS.expandPartialLonghand,
   } = options;
 
   const validation = validate(cleanedInput);
@@ -1756,284 +1757,340 @@ export function expand(input: string, options: Partial<ExpandOptions> = {}): Exp
 
 === File: src/core/schema.ts ===
 // b_path:: src/core/schema.ts
-import { z } from "zod";
 
 /**
- * Base CSS value schemas
+ * Base CSS value types
  */
-export const CssValueSchema = z.string().describe("CSS property value");
-export const CssPropertySchema = z.string().describe("CSS property name");
-export const CssDeclarationSchema = z.string().describe("CSS declaration string");
+export type CssValue = string;
+export type CssProperty = string;
+export type CssDeclaration = string;
 
 /**
- * Output format enum schema
+ * Output format enum
  * - 'css': Returns kebab-case CSS string (e.g., "margin-top: 10px;")
  * - 'js': Returns camelCase JavaScript object (e.g., { marginTop: '10px' })
  */
-export const FormatEnumSchema = z.enum(["css", "js"]);
+export const FORMAT_VALUES = ["css", "js"] as const;
+export type Format = (typeof FORMAT_VALUES)[number];
 
 /**
- * Property grouping strategy enum schema
+ * Property grouping strategy enum
  * - 'by-property': Groups by property type (e.g., all margins, then all borders)
  * - 'by-side': Groups by directional side (e.g., all top properties, then all right properties)
  */
-export const PropertyGroupingEnumSchema = z.enum(["by-property", "by-side"]);
+export const PROPERTY_GROUPING_VALUES = ["by-property", "by-side"] as const;
+export type PropertyGrouping = (typeof PROPERTY_GROUPING_VALUES)[number];
 
-// Derive enum arrays from schemas for runtime use
-export const FORMAT_VALUES = FormatEnumSchema.options;
-export const PROPERTY_GROUPING_VALUES = PropertyGroupingEnumSchema.options;
-
-// Named constants for better readability (derived directly from schema)
+// Named constants for better readability
 export const FORMAT_CSS = "css" as const;
 export const FORMAT_JS = "js" as const;
 export const GROUPING_BY_PROPERTY = "by-property" as const;
 export const GROUPING_BY_SIDE = "by-side" as const;
 
 /**
- * Options schema for CSS shorthand expansion
+ * Options for CSS shorthand expansion
  */
-export const ExpandOptionsSchema = z
-  .object({
-    format: FormatEnumSchema.default("css").describe("Output format"),
-    indent: z.number().min(0).default(0).describe("Indentation for CSS output"),
-    separator: z.string().default("\n").describe("Separator between CSS declarations"),
-    propertyGrouping: PropertyGroupingEnumSchema.default("by-property").describe(
-      "Property grouping strategy: 'by-property' groups by property type (e.g., all margins, then all borders), 'by-side' groups by directional side (e.g., all top properties, then all right properties)"
-    ),
-    expandPartialLonghand: z
-      .boolean()
-      .default(false)
-      .describe(
-        "Expand partial directional longhand properties (e.g., margin-top) by filling in missing sides with CSS default values"
-      ),
-  })
-  .describe("Options for CSS expansion");
+export interface ExpandOptions {
+  /** Output format: "css" (kebab-case string) or "js" (camelCase object). Default: "css" */
+  format?: Format;
+
+  /** Indentation spaces for CSS output (min: 0). Default: 0 */
+  indent?: number;
+
+  /** Separator between CSS declarations. Default: "\n" */
+  separator?: string;
+
+  /**
+   * Property grouping strategy. Default: "by-property"
+   * - 'by-property': Groups by property type (e.g., all margins, then all borders)
+   * - 'by-side': Groups by directional side (e.g., all top properties, then all right properties)
+   */
+  propertyGrouping?: PropertyGrouping;
+
+  /**
+   * Expand partial directional longhand properties (e.g., margin-top) by filling in missing sides with CSS default values.
+   * Default: false
+   */
+  expandPartialLonghand?: boolean;
+}
 
 /**
- * CSS Tree and custom warning types for validation
+ * Enum-style namespace for ExpandOptions values
+ * Provides better autocomplete and discoverability
+ *
+ * @example
+ * ```typescript
+ * import * as b from 'b_short';
+ *
+ * b.expand('background: red', {
+ *   format: b.ExpandOptions.Format.CSS,
+ *   propertyGrouping: b.ExpandOptions.PropertyGrouping.BY_PROPERTY,
+ *   separator: b.ExpandOptions.Separator.NEWLINE,
+ *   indent: b.ExpandOptions.Indent.NONE
+ * });
+ * ```
  */
-export const CssTreeSyntaxParseErrorSchema = z
-  .object({
-    name: z.string(),
-    message: z.string(),
-    line: z.number(),
-    column: z.number(),
-    property: z.string().optional(),
-    offset: z.number().optional(),
-    length: z.number().optional(),
-  })
-  .describe("CSS Tree syntax parsing error");
+export namespace ExpandOptions {
+  /**
+   * Output format values
+   */
+  export enum Format {
+    /** CSS format: kebab-case strings like "margin-top: 10px;" */
+    CSS = "css",
+    /** JS format: camelCase objects like { marginTop: '10px' } */
+    JS = "js",
+  }
 
-export const BStyleWarningSchema = z
-  .object({
-    property: z.string().describe("CSS property that has the warning"),
-    name: z.string().describe("Warning name/type"),
-    syntax: z.string().optional().describe("CSS syntax that caused the warning"),
-    formattedWarning: z.string().optional().describe("Formatted warning message for display"),
-  })
-  .describe("Custom warning for CSS property validation");
+  /**
+   * Property grouping strategy values
+   */
+  export enum PropertyGrouping {
+    /** Group by property type (all margins, then all borders) */
+    BY_PROPERTY = "by-property",
+    /** Group by directional side (all top properties, then all right) */
+    BY_SIDE = "by-side",
+  }
+
+  /**
+   * Common separator values
+   */
+  export enum Separator {
+    /** Newline separator (default) */
+    NEWLINE = "\n",
+    /** Space separator */
+    SPACE = " ",
+    /** Semicolon with space */
+    SEMICOLON = "; ",
+    /** Empty string (compact) */
+    NONE = "",
+  }
+
+  /**
+   * Common indentation values
+   */
+  export enum Indent {
+    /** No indentation (default) */
+    NONE = 0,
+    /** 2 spaces */
+    TWO_SPACES = 2,
+    /** 4 spaces */
+    FOUR_SPACES = 4,
+    /** Tab character (8 spaces equivalent) */
+    TAB = 8,
+  }
+
+  /**
+   * Boolean option values for expandPartialLonghand
+   */
+  export const ExpandPartialLonghand = {
+    /** Don't expand partial longhand properties (default) */
+    DISABLED: false,
+    /** Expand partial longhand properties with CSS defaults */
+    ENABLED: true,
+  } as const;
+}
 
 /**
- * Background layer schema for multi-layer background parsing
+ * Default values for ExpandOptions
+ * Users can spread this and override specific values
+ *
+ * @example
+ * ```typescript
+ * import { expand, DEFAULT_EXPAND_OPTIONS } from 'b_short';
+ *
+ * const myOptions = {
+ *   ...DEFAULT_EXPAND_OPTIONS,
+ *   indent: 2,
+ *   format: 'js'
+ * };
+ *
+ * expand('margin: 10px', myOptions);
+ * ```
  */
-export const BackgroundLayerSchema = z
-  .object({
-    image: z.string().optional().describe("Background image (url, gradient, or none)"),
-    position: z.string().optional().describe("Background position (e.g., '10px 20px')"),
-    size: z.string().optional().describe("Background size (e.g., 'cover', '100px 200px')"),
-    repeat: z.string().optional().describe("Background repeat (e.g., 'no-repeat', 'repeat-x')"),
-    attachment: z.string().optional().describe("Background attachment (e.g., 'fixed', 'scroll')"),
-    origin: z.string().optional().describe("Background origin (e.g., 'padding-box', 'border-box')"),
-    clip: z.string().optional().describe("Background clip (e.g., 'padding-box', 'border-box')"),
-  })
-  .describe("Single layer in a multi-layer background");
+export const DEFAULT_EXPAND_OPTIONS: Required<ExpandOptions> = {
+  format: "css",
+  indent: 0,
+  separator: "\n",
+  propertyGrouping: "by-property",
+  expandPartialLonghand: false,
+};
 
 /**
- * Multi-layer background parsing result
+ * CSS Tree syntax parsing error
  */
-export const BackgroundResultSchema = z
-  .object({
-    layers: z.array(BackgroundLayerSchema).describe("Array of background layers"),
-    color: z.string().optional().describe("Global background color applied to all layers"),
-  })
-  .describe("Result of parsing multi-layer background declaration");
+export interface CssTreeSyntaxParseError {
+  name: string;
+  message: string;
+  line?: number;
+  column?: number;
+  property?: string;
+  offset?: number;
+  length?: number;
+}
 
 /**
- * Mask layer schema for multi-layer mask parsing
+ * Custom warning for CSS property validation
  */
-export const MaskLayerSchema = z
-  .object({
-    image: z.string().optional().describe("Mask image (url, gradient, or none)"),
-    mode: z
-      .string()
-      .optional()
-      .describe("Masking mode (e.g., 'alpha', 'luminance', 'match-source')"),
-    position: z.string().optional().describe("Mask position (e.g., '10px 20px', 'center')"),
-    size: z.string().optional().describe("Mask size (e.g., 'cover', '100px 200px', 'auto')"),
-    repeat: z.string().optional().describe("Mask repeat (e.g., 'no-repeat', 'repeat-x')"),
-    origin: z
-      .string()
-      .optional()
-      .describe("Mask origin (e.g., 'padding-box', 'border-box', 'content-box')"),
-    clip: z
-      .string()
-      .optional()
-      .describe("Mask clip (e.g., 'padding-box', 'border-box', 'content-box', 'no-clip')"),
-    composite: z
-      .string()
-      .optional()
-      .describe("Mask composite (e.g., 'add', 'subtract', 'intersect', 'exclude')"),
-  })
-  .describe("Single layer in a multi-layer mask");
+export interface BStyleWarning {
+  /** CSS property that has the warning */
+  property: string;
+  /** Warning name/type */
+  name: string;
+  /** CSS syntax that caused the warning */
+  syntax?: string;
+  /** Formatted warning message for display */
+  formattedWarning?: string;
+}
 
 /**
- * Multi-layer mask parsing result
+ * Single layer in a multi-layer background
  */
-export const MaskResultSchema = z
-  .object({
-    layers: z.array(MaskLayerSchema).describe("Array of mask layers"),
-  })
-  .describe("Result of parsing multi-layer mask declaration");
+export interface BackgroundLayer {
+  /** Background image (url, gradient, or none) */
+  image?: string;
+  /** Background position (e.g., '10px 20px') */
+  position?: string;
+  /** Background size (e.g., 'cover', '100px 200px') */
+  size?: string;
+  /** Background repeat (e.g., 'no-repeat', 'repeat-x') */
+  repeat?: string;
+  /** Background attachment (e.g., 'fixed', 'scroll') */
+  attachment?: string;
+  /** Background origin (e.g., 'padding-box', 'border-box') */
+  origin?: string;
+  /** Background clip (e.g., 'padding-box', 'border-box') */
+  clip?: string;
+}
 
 /**
- * Transition layer schema for multi-layer transition parsing
+ * Result of parsing multi-layer background declaration
  */
-export const TransitionLayerSchema = z
-  .object({
-    property: z
-      .string()
-      .optional()
-      .describe("Transition property (e.g., 'opacity', 'all', 'transform')"),
-    duration: z.string().optional().describe("Transition duration (e.g., '300ms', '0.5s')"),
-    timingFunction: z
-      .string()
-      .optional()
-      .describe("Transition timing function (e.g., 'ease', 'cubic-bezier(0.4, 0, 0.2, 1)')"),
-    delay: z.string().optional().describe("Transition delay (e.g., '100ms', '0s')"),
-  })
-  .describe("Single layer in a multi-layer transition");
+export interface BackgroundResult {
+  /** Array of background layers */
+  layers: BackgroundLayer[];
+  /** Global background color applied to all layers */
+  color?: string;
+}
 
 /**
- * Multi-layer transition parsing result
+ * Single layer in a multi-layer mask
  */
-export const TransitionResultSchema = z
-  .object({
-    layers: z.array(TransitionLayerSchema).describe("Array of transition layers"),
-  })
-  .describe("Result of parsing multi-layer transition declaration");
+export interface MaskLayer {
+  /** Mask image (url, gradient, or none) */
+  image?: string;
+  /** Masking mode (e.g., 'alpha', 'luminance', 'match-source') */
+  mode?: string;
+  /** Mask position (e.g., '10px 20px', 'center') */
+  position?: string;
+  /** Mask size (e.g., 'cover', '100px 200px', 'auto') */
+  size?: string;
+  /** Mask repeat (e.g., 'no-repeat', 'repeat-x') */
+  repeat?: string;
+  /** Mask origin (e.g., 'padding-box', 'border-box', 'content-box') */
+  origin?: string;
+  /** Mask clip (e.g., 'padding-box', 'border-box', 'content-box', 'no-clip') */
+  clip?: string;
+  /** Mask composite (e.g., 'add', 'subtract', 'intersect', 'exclude') */
+  composite?: string;
+}
 
 /**
- * Animation layer schema for multi-layer animation parsing
+ * Result of parsing multi-layer mask declaration
  */
-export const AnimationLayerSchema = z
-  .object({
-    name: z.string().optional().describe("Animation name (e.g., 'spin', 'none')"),
-    duration: z.string().optional().describe("Animation duration (e.g., '1s', '300ms')"),
-    timingFunction: z
-      .string()
-      .optional()
-      .describe("Animation timing function (e.g., 'ease', 'cubic-bezier(0.4, 0, 0.2, 1)')"),
-    delay: z.string().optional().describe("Animation delay (e.g., '100ms', '0s')"),
-    iterationCount: z
-      .string()
-      .optional()
-      .describe("Animation iteration count (e.g., '3', 'infinite')"),
-    direction: z
-      .string()
-      .optional()
-      .describe(
-        "Animation direction (e.g., 'normal', 'reverse', 'alternate', 'alternate-reverse')"
-      ),
-    fillMode: z
-      .string()
-      .optional()
-      .describe("Animation fill mode (e.g., 'none', 'forwards', 'backwards', 'both')"),
-    playState: z.string().optional().describe("Animation play state (e.g., 'running', 'paused')"),
-  })
-  .describe("Single layer in a multi-layer animation");
+export interface MaskResult {
+  /** Array of mask layers */
+  layers: MaskLayer[];
+}
 
 /**
- * Multi-layer animation parsing result
+ * Single layer in a multi-layer transition
  */
-export const AnimationResultSchema = z
-  .object({
-    layers: z.array(AnimationLayerSchema).describe("Array of animation layers"),
-  })
-  .describe("Result of parsing multi-layer animation declaration");
+export interface TransitionLayer {
+  /** Transition property (e.g., 'opacity', 'all', 'transform') */
+  property?: string;
+  /** Transition duration (e.g., '300ms', '0.5s') */
+  duration?: string;
+  /** Transition timing function (e.g., 'ease', 'cubic-bezier(0.4, 0, 0.2, 1)') */
+  timingFunction?: string;
+  /** Transition delay (e.g., '100ms', '0s') */
+  delay?: string;
+}
 
 /**
- * Main expansion result schema
+ * Result of parsing multi-layer transition declaration
  */
-export const ExpandResultSchema = z
-  .object({
-    ok: z.boolean().describe("Whether expansion was successful (no syntax errors)"),
-    result: z
-      .union([
-        z
-          .record(z.string(), z.string())
-          .describe(
-            "JavaScript object format result (multiple declarations are merged, with later properties overriding earlier ones)"
-          ),
-        z.string().describe("CSS string format result (multiple declarations are joined)"),
-        z.undefined().describe("No result when input is empty or invalid"),
-      ])
-      .describe("The expanded CSS result"),
-    issues: z
-      .array(z.union([CssTreeSyntaxParseErrorSchema, BStyleWarningSchema]))
-      .describe("Array of syntax errors and validation warnings"),
-  })
-  .describe("Result of CSS shorthand expansion");
+export interface TransitionResult {
+  /** Array of transition layers */
+  layers: TransitionLayer[];
+}
 
 /**
- * Stylesheet validation result schema
+ * Single layer in a multi-layer animation
  */
-export const StylesheetValidationSchema = z
-  .object({
-    ok: z.boolean().describe("Whether validation passed (no errors)"),
-    errors: z.array(CssTreeSyntaxParseErrorSchema).describe("Array of syntax parsing errors"),
-    warnings: z.array(BStyleWarningSchema).describe("Array of property validation warnings"),
-  })
-  .describe("Result of CSS stylesheet validation");
+export interface AnimationLayer {
+  /** Animation name (e.g., 'spin', 'none') */
+  name?: string;
+  /** Animation duration (e.g., '1s', '300ms') */
+  duration?: string;
+  /** Animation timing function (e.g., 'ease', 'cubic-bezier(0.4, 0, 0.2, 1)') */
+  timingFunction?: string;
+  /** Animation delay (e.g., '100ms', '0s') */
+  delay?: string;
+  /** Animation iteration count (e.g., '3', 'infinite') */
+  iterationCount?: string;
+  /** Animation direction (e.g., 'normal', 'reverse', 'alternate', 'alternate-reverse') */
+  direction?: string;
+  /** Animation fill mode (e.g., 'none', 'forwards', 'backwards', 'both') */
+  fillMode?: string;
+  /** Animation play state (e.g., 'running', 'paused') */
+  playState?: string;
+}
 
-// Derived TypeScript types from schemas
-export type Format = z.infer<typeof FormatEnumSchema>;
-export type PropertyGrouping = z.infer<typeof PropertyGroupingEnumSchema>;
-export type ExpandOptions = z.infer<typeof ExpandOptionsSchema>;
-export type ExpandResult = z.infer<typeof ExpandResultSchema>;
-export type BackgroundLayer = z.infer<typeof BackgroundLayerSchema>;
-export type BackgroundResult = z.infer<typeof BackgroundResultSchema>;
-export type MaskLayer = z.infer<typeof MaskLayerSchema>;
-export type MaskResult = z.infer<typeof MaskResultSchema>;
-export type TransitionLayer = z.infer<typeof TransitionLayerSchema>;
-export type TransitionResult = z.infer<typeof TransitionResultSchema>;
-export type AnimationLayer = z.infer<typeof AnimationLayerSchema>;
-export type AnimationResult = z.infer<typeof AnimationResultSchema>;
-export type BStyleWarning = z.infer<typeof BStyleWarningSchema>;
-export type StylesheetValidation = z.infer<typeof StylesheetValidationSchema>;
-export type CssValue = z.infer<typeof CssValueSchema>;
-export type CssProperty = z.infer<typeof CssPropertySchema>;
-export type CssDeclaration = z.infer<typeof CssDeclarationSchema>;
+/**
+ * Result of parsing multi-layer animation declaration
+ */
+export interface AnimationResult {
+  /** Array of animation layers */
+  layers: AnimationLayer[];
+}
 
-// Export schemas for runtime validation
-export const schemas = {
-  Format: FormatEnumSchema,
-  PropertyGrouping: PropertyGroupingEnumSchema,
-  ExpandOptions: ExpandOptionsSchema,
-  ExpandResult: ExpandResultSchema,
-  BackgroundLayer: BackgroundLayerSchema,
-  BackgroundResult: BackgroundResultSchema,
-  MaskLayer: MaskLayerSchema,
-  MaskResult: MaskResultSchema,
-  TransitionLayer: TransitionLayerSchema,
-  TransitionResult: TransitionResultSchema,
-  AnimationLayer: AnimationLayerSchema,
-  AnimationResult: AnimationResultSchema,
-  BStyleWarning: BStyleWarningSchema,
-  StylesheetValidation: StylesheetValidationSchema,
-  CssValue: CssValueSchema,
-  CssProperty: CssPropertySchema,
-  CssDeclaration: CssDeclarationSchema,
-} as const;
+/**
+ * Result of CSS shorthand expansion
+ */
+export interface ExpandResult {
+  /** Whether expansion was successful (no syntax errors) */
+  ok: boolean;
+  /**
+   * The expanded CSS result
+   * - JavaScript object format (multiple declarations are merged, with later properties overriding earlier ones)
+   * - CSS string format (multiple declarations are joined)
+   * - undefined when input is empty or invalid
+   */
+  result?: Record<string, string> | string;
+  /** Array of syntax errors and validation warnings */
+  issues: Array<CssTreeSyntaxParseError | BStyleWarning>;
+}
+
+/**
+ * Result of CSS stylesheet validation
+ */
+export interface StylesheetValidation {
+  /** Whether validation passed (no errors) */
+  ok: boolean;
+  /** Array of syntax parsing errors */
+  errors: CssTreeSyntaxParseError[];
+  /** Array of property validation warnings */
+  warnings: BStyleWarning[];
+}
+
+/**
+ * Helper function to validate StylesheetValidation structure
+ */
+export function isValidStylesheetValidation(obj: unknown): obj is StylesheetValidation {
+  if (typeof obj !== "object" || obj === null) return false;
+  const v = obj as Record<string, unknown>;
+  return typeof v.ok === "boolean" && Array.isArray(v.errors) && Array.isArray(v.warnings);
+}
 
 
 === File: src/core/validate.ts ===
@@ -2065,11 +2122,7 @@ export const schemas = {
  */
 
 import * as csstree from "css-tree";
-import {
-  type BStyleWarning,
-  type StylesheetValidation,
-  StylesheetValidationSchema,
-} from "./schema";
+import type { BStyleWarning, StylesheetValidation } from "./schema";
 
 // Constants
 const DEFAULT_MAX_LINE_WIDTH = 80;
@@ -2211,15 +2264,14 @@ export function validate(css: string): StylesheetValidation {
     }
   }
 
-  // Validate and return using Zod schema for type safety
-  const result = {
+  // Return result with runtime type safety
+  const result: StylesheetValidation = {
     ok: errors.length === 0,
     errors,
     warnings: formattedWarnings,
   };
 
-  // Validate the result against our Zod schema for runtime type safety
-  return StylesheetValidationSchema.parse(result);
+  return result;
 }
 
 export function validateDeclaration(value: string, prop: string): StylesheetValidation {
@@ -3508,12 +3560,14 @@ export { validate } from "./core/validate";
 
 export type {
   BStyleWarning,
-  ExpandOptions,
   ExpandResult,
   Format,
   PropertyGrouping,
   StylesheetValidation,
 } from "./core/schema";
+
+// Export ExpandOptions as namespace (includes both interface and enums)
+export { ExpandOptions } from "./core/schema";
 
 // ============================================================================
 // LAYER TYPES - Multi-layer parsing result types
@@ -3535,6 +3589,7 @@ export type {
 // ============================================================================
 
 export {
+  DEFAULT_EXPAND_OPTIONS,
   FORMAT_CSS,
   FORMAT_JS,
   FORMAT_VALUES,
@@ -4528,67 +4583,52 @@ export function parseCssDeclaration(
 
 === File: src/internal/property-handler.ts ===
 // b_path:: src/internal/property-handler.ts
-import { z } from "zod";
 
 /**
- * Schema for property handler options
+ * Options for property handler behavior
  */
-export const PropertyHandlerOptionsSchema = z
-  .object({
-    strict: z
-      .boolean()
-      .default(false)
-      .describe("Enable strict validation mode (reject invalid values)"),
-    preserveCustomProperties: z
-      .boolean()
-      .default(true)
-      .describe("Preserve custom properties (CSS variables) in output"),
-  })
-  .describe("Options for property handler behavior");
+export interface PropertyHandlerOptions {
+  /** Enable strict validation mode (reject invalid values). Default: false */
+  strict?: boolean;
+  /** Preserve custom properties (CSS variables) in output. Default: true */
+  preserveCustomProperties?: boolean;
+}
 
 /**
- * Derived type for property handler options
+ * Default values for PropertyHandlerOptions
  */
-export type PropertyHandlerOptions = z.infer<typeof PropertyHandlerOptionsSchema>;
+export const DEFAULT_PROPERTY_HANDLER_OPTIONS: Required<PropertyHandlerOptions> = {
+  strict: false,
+  preserveCustomProperties: true,
+};
 
 /**
- * Property category enumeration schema
+ * Property category enumeration
  */
-export const PropertyCategorySchema = z.enum([
+export const PROPERTY_CATEGORIES = [
   "box-model",
   "visual",
   "layout",
   "animation",
   "typography",
   "other",
-]);
+] as const;
+
+export type PropertyCategory = (typeof PROPERTY_CATEGORIES)[number];
 
 /**
- * Derived type for property categories
+ * Metadata describing a property handler
  */
-export type PropertyCategory = z.infer<typeof PropertyCategorySchema>;
-
-/**
- * Schema for property handler metadata
- */
-export const PropertyHandlerMetadataSchema = z
-  .object({
-    shorthand: z.string().describe("The shorthand property name (e.g., 'border')"),
-    longhands: z
-      .array(z.string())
-      .describe("Array of longhand property names this shorthand expands to"),
-    defaults: z
-      .record(z.string(), z.string())
-      .optional()
-      .describe("Default values for longhand properties when not specified"),
-    category: PropertyCategorySchema.describe("Property category classification"),
-  })
-  .describe("Metadata describing a property handler");
-
-/**
- * Derived type for property handler metadata
- */
-export type PropertyHandlerMetadata = z.infer<typeof PropertyHandlerMetadataSchema>;
+export interface PropertyHandlerMetadata {
+  /** The shorthand property name (e.g., 'border') */
+  shorthand: string;
+  /** Array of longhand property names this shorthand expands to */
+  longhands: string[];
+  /** Default values for longhand properties when not specified */
+  defaults?: Record<string, string>;
+  /** Property category classification */
+  category: PropertyCategory;
+}
 
 /**
  * Property handler interface for CSS shorthand expansion
@@ -4702,10 +4742,11 @@ export function createPropertyHandler(config: PropertyHandler): PropertyHandler 
       options?: PropertyHandlerOptions
     ): Record<string, string> | undefined => {
       try {
-        // Validate options if provided
-        const validatedOptions = options
-          ? PropertyHandlerOptionsSchema.parse(options)
-          : PropertyHandlerOptionsSchema.parse({});
+        // Apply default options
+        const validatedOptions: Required<PropertyHandlerOptions> = {
+          ...DEFAULT_PROPERTY_HANDLER_OPTIONS,
+          ...options,
+        };
 
         // Call the underlying expand function with validated options
         return config.expand(value, validatedOptions);

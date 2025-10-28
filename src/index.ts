@@ -21,12 +21,14 @@ export { validate } from "./core/validate";
 
 export type {
   BStyleWarning,
-  ExpandOptions,
   ExpandResult,
   Format,
   PropertyGrouping,
   StylesheetValidation,
 } from "./core/schema";
+
+// Export ExpandOptions as namespace (includes both interface and enums)
+export { ExpandOptions } from "./core/schema";
 
 // ============================================================================
 // LAYER TYPES - Multi-layer parsing result types
