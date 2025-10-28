@@ -37,6 +37,7 @@ src/place-content.ts
 src/place-items.ts
 src/place-self.ts
 src/place-utils.ts
+src/property-handler.ts
 src/schema.ts
 src/text-decoration.ts
 src/text-emphasis.ts

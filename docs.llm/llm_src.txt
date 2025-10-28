@@ -1985,44 +1985,79 @@ export function expandDirectionalProperties(
 
 === File: src/flex-flow.ts ===
 // b_path:: src/flex-flow.ts
-export default function (value: string): Record<string, string> | undefined {
-  // Handle global CSS keywords first
-  if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
-      "flex-direction": value,
-      "flex-wrap": value,
-    };
-  }
+import { createPropertyHandler, type PropertyHandler } from "./property-handler";
 
-  // Parse normal values
-  const parts = value.trim().split(/\s+/);
-  if (parts.length > 2) return undefined;
+/**
+ * Property handler for the 'flex-flow' CSS shorthand property
+ *
+ * Expands flex-flow into flex-direction and flex-wrap.
+ *
+ * @example
+ * ```typescript
+ * flexFlowHandler.expand('row wrap'); // { 'flex-direction': 'row', 'flex-wrap': 'wrap' }
+ * flexFlowHandler.expand('column'); // { 'flex-direction': 'column' }
+ * ```
+ */
+export const flexFlowHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "flex-flow",
+    longhands: ["flex-direction", "flex-wrap"],
+    defaults: {
+      "flex-direction": "row",
+      "flex-wrap": "nowrap",
+    },
+    category: "layout",
+  },
 
-  // Define keyword patterns
-  const directionPattern = /^(row|row-reverse|column|column-reverse)$/i;
-  const wrapPattern = /^(nowrap|wrap|wrap-reverse)$/i;
-
-  // Value classification logic
-  let direction: string | undefined;
-  let wrap: string | undefined;
-
-  for (const part of parts) {
-    if (directionPattern.test(part)) {
-      if (direction !== undefined) return undefined; // duplicate
-      direction = part;
-    } else if (wrapPattern.test(part)) {
-      if (wrap !== undefined) return undefined; // duplicate
-      wrap = part;
-    } else {
-      return undefined; // invalid
+  expand: (value: string): Record<string, string> | undefined => {
+    // Handle global CSS keywords first
+    if (/^(inherit|initial|unset|revert)$/i.test(value)) {
+      return {
+        "flex-direction": value,
+        "flex-wrap": value,
+      };
     }
-  }
 
-  // Return result
-  const result: Record<string, string> = {};
-  if (direction) result["flex-direction"] = direction;
-  if (wrap) result["flex-wrap"] = wrap;
-  return Object.keys(result).length > 0 ? result : undefined;
+    // Parse normal values
+    const parts = value.trim().split(/\s+/);
+    if (parts.length > 2) return undefined;
+
+    // Define keyword patterns
+    const directionPattern = /^(row|row-reverse|column|column-reverse)$/i;
+    const wrapPattern = /^(nowrap|wrap|wrap-reverse)$/i;
+
+    // Value classification logic
+    let direction: string | undefined;
+    let wrap: string | undefined;
+
+    for (const part of parts) {
+      if (directionPattern.test(part)) {
+        if (direction !== undefined) return undefined; // duplicate
+        direction = part;
+      } else if (wrapPattern.test(part)) {
+        if (wrap !== undefined) return undefined; // duplicate
+        wrap = part;
+      } else {
+        return undefined; // invalid
+      }
+    }
+
+    // Return result
+    const result: Record<string, string> = {};
+    if (direction) result["flex-direction"] = direction;
+    if (wrap) result["flex-wrap"] = wrap;
+    return Object.keys(result).length > 0 ? result : undefined;
+  },
+
+  validate: (value: string): boolean => {
+    const result = flexFlowHandler.expand(value);
+    return result !== undefined;
+  },
+});
+
+// Export default for backward compatibility with existing code
+export default function (value: string): Record<string, string> | undefined {
+  return flexFlowHandler.expand(value);
 }
 
 
@@ -3849,6 +3884,20 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
 // Export named functions only (no default export to avoid CJS/ESM ambiguity)
 export { expand, validate, sortProperties, PROPERTY_ORDER_MAP };
 
+export { flexFlowHandler } from "./flex-flow";
+// Export refactored handlers (optional - for advanced use cases)
+export { overflowHandler } from "./overflow";
+export { placeContentHandler } from "./place-content";
+export { placeItemsHandler } from "./place-items";
+export { placeSelfHandler } from "./place-self";
+// Export PropertyHandler types and utilities
+export type {
+  PropertyCategory,
+  PropertyHandler,
+  PropertyHandlerMetadata,
+  PropertyHandlerOptions,
+} from "./property-handler";
+export { createPropertyHandler } from "./property-handler";
 // Re-export types for convenience
 export type {
   AnimationLayer,
@@ -5039,253 +5088,389 @@ export default function outline(value: string): Record<string, string> | undefin
 
 === File: src/overflow.ts ===
 // b_path:: src/overflow.ts
-export default (value: string): Record<string, string> | undefined => {
-  // Handle global CSS keywords
-  if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
-      "overflow-x": value,
-      "overflow-y": value,
-    };
-  }
+import { createPropertyHandler, type PropertyHandler } from "./property-handler";
 
-  // Split values on whitespace
-  const values = value.trim().split(/\s+/);
+/**
+ * Property handler for the 'overflow' CSS shorthand property
+ *
+ * Expands overflow into overflow-x and overflow-y.
+ *
+ * @example
+ * ```typescript
+ * overflowHandler.expand('hidden'); // { 'overflow-x': 'hidden', 'overflow-y': 'hidden' }
+ * overflowHandler.expand('auto scroll'); // { 'overflow-x': 'auto', 'overflow-y': 'scroll' }
+ * ```
+ */
+export const overflowHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "overflow",
+    longhands: ["overflow-x", "overflow-y"],
+    category: "visual",
+  },
 
-  // Validate value count - max 2 values
-  if (values.length > 2) {
+  expand: (value: string): Record<string, string> | undefined => {
+    // Handle global CSS keywords
+    if (/^(inherit|initial|unset|revert)$/i.test(value)) {
+      return {
+        "overflow-x": value,
+        "overflow-y": value,
+      };
+    }
+
+    // Split values on whitespace
+    const values = value.trim().split(/\s+/);
+
+    // Validate value count - max 2 values
+    if (values.length > 2) {
+      return undefined;
+    }
+
+    // Valid overflow values
+    const validValues = /^(visible|hidden|clip|scroll|auto)$/i;
+
+    // Handle single value - both x and y get the same value
+    if (values.length === 1) {
+      if (!validValues.test(values[0])) {
+        return undefined;
+      }
+      return {
+        "overflow-x": values[0],
+        "overflow-y": values[0],
+      };
+    }
+
+    // Handle two values - first=x, second=y
+    if (values.length === 2) {
+      if (!validValues.test(values[0]) || !validValues.test(values[1])) {
+        return undefined;
+      }
+      return {
+        "overflow-x": values[0],
+        "overflow-y": values[1],
+      };
+    }
+
     return undefined;
-  }
+  },
 
-  // Valid overflow values
-  const validValues = /^(visible|hidden|clip|scroll|auto)$/i;
+  validate: (value: string): boolean => {
+    const result = overflowHandler.expand(value);
+    return result !== undefined;
+  },
+});
 
-  // Handle single value - both x and y get the same value
-  if (values.length === 1) {
-    if (!validValues.test(values[0])) {
-      return undefined;
-    }
-    return {
-      "overflow-x": values[0],
-      "overflow-y": values[0],
-    };
-  }
-
-  // Handle two values - first=x, second=y
-  if (values.length === 2) {
-    if (!validValues.test(values[0]) || !validValues.test(values[1])) {
-      return undefined;
-    }
-    return {
-      "overflow-x": values[0],
-      "overflow-y": values[1],
-    };
-  }
-
-  return undefined;
+// Export default for backward compatibility with existing code
+export default (value: string): Record<string, string> | undefined => {
+  return overflowHandler.expand(value);
 };
 
 
 === File: src/place-content.ts ===
 // b_path:: src/place-content.ts
+
 import { consolidatePlaceTokens } from "./place-utils";
+import { createPropertyHandler, type PropertyHandler } from "./property-handler";
 
-export default (value: string): Record<string, string> | undefined => {
-  // Handle global CSS keywords
-  if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
-      "align-content": value,
-      "justify-content": value,
-    };
-  }
+/**
+ * Property handler for the 'place-content' CSS shorthand property
+ *
+ * Expands place-content into align-content and justify-content.
+ *
+ * @example
+ * ```typescript
+ * placeContentHandler.expand('center'); // { 'align-content': 'center', 'justify-content': 'center' }
+ * placeContentHandler.expand('start space-between'); // { 'align-content': 'start', 'justify-content': 'space-between' }
+ * ```
+ */
+export const placeContentHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "place-content",
+    longhands: ["align-content", "justify-content"],
+    defaults: {
+      "align-content": "normal",
+      "justify-content": "normal",
+    },
+    category: "layout",
+  },
 
-  // Process tokens with lookahead for compound keywords
-  const processedValues = consolidatePlaceTokens(
-    value,
-    /^(center|start|end|flex-start|flex-end)$/i
-  );
-  if (!processedValues) {
-    return undefined;
-  }
+  expand: (value: string): Record<string, string> | undefined => {
+    // Handle global CSS keywords
+    if (/^(inherit|initial|unset|revert)$/i.test(value)) {
+      return {
+        "align-content": value,
+        "justify-content": value,
+      };
+    }
 
-  // Validate processed values
-  const validValuePattern =
-    /^(normal|space-between|space-around|space-evenly|stretch|center|start|end|flex-start|flex-end|baseline|first baseline|last baseline|safe center|safe start|safe end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe flex-start|unsafe flex-end)$/i;
-
-  for (const val of processedValues) {
-    if (!validValuePattern.test(val)) {
+    // Process tokens with lookahead for compound keywords
+    const processedValues = consolidatePlaceTokens(
+      value,
+      /^(center|start|end|flex-start|flex-end)$/i
+    );
+    if (!processedValues) {
       return undefined;
     }
-  }
 
-  // Handle single value - both properties get the same value
-  if (processedValues.length === 1) {
-    return {
-      "align-content": processedValues[0],
-      "justify-content": processedValues[0],
-    };
-  }
+    // Validate processed values
+    const validValuePattern =
+      /^(normal|space-between|space-around|space-evenly|stretch|center|start|end|flex-start|flex-end|baseline|first baseline|last baseline|safe center|safe start|safe end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe flex-start|unsafe flex-end)$/i;
 
-  // Handle two values - first=align-content, second=justify-content
-  if (processedValues.length === 2) {
-    return {
-      "align-content": processedValues[0],
-      "justify-content": processedValues[1],
-    };
-  }
+    for (const val of processedValues) {
+      if (!validValuePattern.test(val)) {
+        return undefined;
+      }
+    }
 
-  return undefined;
+    // Handle single value - both properties get the same value
+    if (processedValues.length === 1) {
+      return {
+        "align-content": processedValues[0],
+        "justify-content": processedValues[0],
+      };
+    }
+
+    // Handle two values - first=align-content, second=justify-content
+    if (processedValues.length === 2) {
+      return {
+        "align-content": processedValues[0],
+        "justify-content": processedValues[1],
+      };
+    }
+
+    return undefined;
+  },
+
+  validate: (value: string): boolean => {
+    const result = placeContentHandler.expand(value);
+    return result !== undefined;
+  },
+});
+
+// Export default for backward compatibility with existing code
+export default (value: string): Record<string, string> | undefined => {
+  return placeContentHandler.expand(value);
 };
 
 
 === File: src/place-items.ts ===
 // b_path:: src/place-items.ts
+
 import { consolidatePlaceTokens } from "./place-utils";
+import { createPropertyHandler, type PropertyHandler } from "./property-handler";
 
-export default (value: string): Record<string, string> | undefined => {
-  // Handle global CSS keywords
-  if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
-      "align-items": value,
-      "justify-items": value,
+/**
+ * Property handler for the 'place-items' CSS shorthand property
+ *
+ * Expands place-items into align-items and justify-items.
+ *
+ * @example
+ * ```typescript
+ * placeItemsHandler.expand('center'); // { 'align-items': 'center', 'justify-items': 'center' }
+ * placeItemsHandler.expand('start end'); // { 'align-items': 'start', 'justify-items': 'end' }
+ * ```
+ */
+export const placeItemsHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "place-items",
+    longhands: ["align-items", "justify-items"],
+    defaults: {
+      "align-items": "normal",
+      "justify-items": "legacy",
+    },
+    category: "layout",
+  },
+
+  expand: (value: string): Record<string, string> | undefined => {
+    // Handle global CSS keywords
+    if (/^(inherit|initial|unset|revert)$/i.test(value)) {
+      return {
+        "align-items": value,
+        "justify-items": value,
+      };
+    }
+
+    // Process tokens with lookahead for compound keywords
+    const processedValues = consolidatePlaceTokens(
+      value,
+      /^(center|start|end|self-start|self-end|flex-start|flex-end)$/i
+    );
+    if (!processedValues) {
+      return undefined;
+    }
+
+    // Helper functions for validation
+    const isValidAlignItemsValue = (val: string): boolean => {
+      return /^(normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
+        val
+      );
     };
-  }
 
-  // Process tokens with lookahead for compound keywords
-  const processedValues = consolidatePlaceTokens(
-    value,
-    /^(center|start|end|self-start|self-end|flex-start|flex-end)$/i
-  );
-  if (!processedValues) {
+    const isValidJustifyItemsValue = (val: string): boolean => {
+      return /^(normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|left|right|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
+        val
+      );
+    };
+
+    // Validate processed values
+    for (const val of processedValues) {
+      if (!isValidAlignItemsValue(val) && !isValidJustifyItemsValue(val)) {
+        return undefined;
+      }
+    }
+
+    // Handle single value - both properties get the same value, but left/right are invalid for single value
+    if (processedValues.length === 1) {
+      const val = processedValues[0];
+      if (val === "left" || val === "right") {
+        return undefined;
+      }
+      if (!isValidAlignItemsValue(val)) {
+        return undefined;
+      }
+      return {
+        "align-items": val,
+        "justify-items": val,
+      };
+    }
+
+    // Handle two values - first=align-items, second=justify-items
+    if (processedValues.length === 2) {
+      const [alignVal, justifyVal] = processedValues;
+      if (!isValidAlignItemsValue(alignVal) || alignVal === "left" || alignVal === "right") {
+        return undefined;
+      }
+      if (!isValidJustifyItemsValue(justifyVal)) {
+        return undefined;
+      }
+      return {
+        "align-items": alignVal,
+        "justify-items": justifyVal,
+      };
+    }
+
     return undefined;
-  }
+  },
 
-  // Helper functions for validation
-  const isValidAlignItemsValue = (val: string): boolean => {
-    return /^(normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
-      val
-    );
-  };
+  validate: (value: string): boolean => {
+    const result = placeItemsHandler.expand(value);
+    return result !== undefined;
+  },
+});
 
-  const isValidJustifyItemsValue = (val: string): boolean => {
-    return /^(normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|left|right|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
-      val
-    );
-  };
-
-  // Validate processed values
-  for (const val of processedValues) {
-    if (!isValidAlignItemsValue(val) && !isValidJustifyItemsValue(val)) {
-      return undefined;
-    }
-  }
-
-  // Handle single value - both properties get the same value, but left/right are invalid for single value
-  if (processedValues.length === 1) {
-    const val = processedValues[0];
-    if (val === "left" || val === "right") {
-      return undefined; // Cannot apply left/right to both properties
-    }
-    if (!isValidAlignItemsValue(val)) {
-      return undefined;
-    }
-    return {
-      "align-items": val,
-      "justify-items": val,
-    };
-  }
-
-  // Handle two values - first=align-items, second=justify-items
-  if (processedValues.length === 2) {
-    const [alignVal, justifyVal] = processedValues;
-    if (!isValidAlignItemsValue(alignVal) || alignVal === "left" || alignVal === "right") {
-      return undefined; // left/right cannot be used for align-items
-    }
-    if (!isValidJustifyItemsValue(justifyVal)) {
-      return undefined;
-    }
-    return {
-      "align-items": alignVal,
-      "justify-items": justifyVal,
-    };
-  }
-
-  return undefined;
+// Export default for backward compatibility with existing code
+export default (value: string): Record<string, string> | undefined => {
+  return placeItemsHandler.expand(value);
 };
 
 
 === File: src/place-self.ts ===
 // b_path:: src/place-self.ts
+
 import { consolidatePlaceTokens } from "./place-utils";
+import { createPropertyHandler, type PropertyHandler } from "./property-handler";
 
-export default (value: string): Record<string, string> | undefined => {
-  // Handle global CSS keywords
-  if (/^(inherit|initial|unset|revert)$/i.test(value)) {
-    return {
-      "align-self": value,
-      "justify-self": value,
+/**
+ * Property handler for the 'place-self' CSS shorthand property
+ *
+ * Expands place-self into align-self and justify-self.
+ *
+ * @example
+ * ```typescript
+ * placeSelfHandler.expand('center'); // { 'align-self': 'center', 'justify-self': 'center' }
+ * placeSelfHandler.expand('start end'); // { 'align-self': 'start', 'justify-self': 'end' }
+ * ```
+ */
+export const placeSelfHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "place-self",
+    longhands: ["align-self", "justify-self"],
+    defaults: {
+      "align-self": "auto",
+      "justify-self": "auto",
+    },
+    category: "layout",
+  },
+
+  expand: (value: string): Record<string, string> | undefined => {
+    // Handle global CSS keywords
+    if (/^(inherit|initial|unset|revert)$/i.test(value)) {
+      return {
+        "align-self": value,
+        "justify-self": value,
+      };
+    }
+
+    // Process tokens with lookahead for compound keywords
+    const processedValues = consolidatePlaceTokens(
+      value,
+      /^(center|start|end|self-start|self-end|flex-start|flex-end)$/i
+    );
+    if (!processedValues) {
+      return undefined;
+    }
+
+    // Helper functions for validation
+    const isValidAlignSelfValue = (val: string): boolean => {
+      return /^(auto|normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|anchor-center|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
+        val
+      );
     };
-  }
 
-  // Process tokens with lookahead for compound keywords
-  const processedValues = consolidatePlaceTokens(
-    value,
-    /^(center|start|end|self-start|self-end|flex-start|flex-end)$/i
-  );
-  if (!processedValues) {
+    const isValidJustifySelfValue = (val: string): boolean => {
+      return /^(auto|normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|left|right|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
+        val
+      );
+    };
+
+    // Validate processed values
+    for (const val of processedValues) {
+      if (!isValidAlignSelfValue(val) && !isValidJustifySelfValue(val)) {
+        return undefined;
+      }
+    }
+
+    // Handle single value - both properties get the same value, but left/right are invalid for single value
+    if (processedValues.length === 1) {
+      const val = processedValues[0];
+      if (val === "left" || val === "right") {
+        return undefined;
+      }
+      if (!isValidAlignSelfValue(val)) {
+        return undefined;
+      }
+      return {
+        "align-self": val,
+        "justify-self": val,
+      };
+    }
+
+    // Handle two values - first=align-self, second=justify-self
+    if (processedValues.length === 2) {
+      const [alignVal, justifyVal] = processedValues;
+      if (!isValidAlignSelfValue(alignVal) || alignVal === "left" || alignVal === "right") {
+        return undefined;
+      }
+      if (!isValidJustifySelfValue(justifyVal)) {
+        return undefined;
+      }
+      return {
+        "align-self": alignVal,
+        "justify-self": justifyVal,
+      };
+    }
+
     return undefined;
-  }
+  },
 
-  // Helper functions for validation
-  const isValidAlignSelfValue = (val: string): boolean => {
-    return /^(auto|normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|anchor-center|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
-      val
-    );
-  };
+  validate: (value: string): boolean => {
+    const result = placeSelfHandler.expand(value);
+    return result !== undefined;
+  },
+});
 
-  const isValidJustifySelfValue = (val: string): boolean => {
-    return /^(auto|normal|stretch|center|start|end|self-start|self-end|flex-start|flex-end|baseline|first baseline|last baseline|left|right|safe center|safe start|safe end|safe self-start|safe self-end|safe flex-start|safe flex-end|unsafe center|unsafe start|unsafe end|unsafe self-start|unsafe self-end|unsafe flex-start|unsafe flex-end)$/i.test(
-      val
-    );
-  };
-
-  // Validate processed values
-  for (const val of processedValues) {
-    if (!isValidAlignSelfValue(val) && !isValidJustifySelfValue(val)) {
-      return undefined;
-    }
-  }
-
-  // Handle single value - both properties get the same value, but left/right are invalid for single value
-  if (processedValues.length === 1) {
-    const val = processedValues[0];
-    if (val === "left" || val === "right") {
-      return undefined; // Cannot apply left/right to both properties
-    }
-    if (!isValidAlignSelfValue(val)) {
-      return undefined;
-    }
-    return {
-      "align-self": val,
-      "justify-self": val,
-    };
-  }
-
-  // Handle two values - first=align-self, second=justify-self
-  if (processedValues.length === 2) {
-    const [alignVal, justifyVal] = processedValues;
-    if (!isValidAlignSelfValue(alignVal) || alignVal === "left" || alignVal === "right") {
-      return undefined; // left/right cannot be used for align-self
-    }
-    if (!isValidJustifySelfValue(justifyVal)) {
-      return undefined;
-    }
-    return {
-      "align-self": alignVal,
-      "justify-self": justifyVal,
-    };
-  }
-
-  return undefined;
+// Export default for backward compatibility with existing code
+export default (value: string): Record<string, string> | undefined => {
+  return placeSelfHandler.expand(value);
 };
 
 
@@ -5316,6 +5501,198 @@ export function consolidatePlaceTokens(
     out.push(t);
   }
   return out.length <= 2 ? out : undefined;
+}
+
+
+=== File: src/property-handler.ts ===
+// b_path:: src/property-handler.ts
+import { z } from "zod";
+
+/**
+ * Schema for property handler options
+ */
+export const PropertyHandlerOptionsSchema = z
+  .object({
+    strict: z
+      .boolean()
+      .default(false)
+      .describe("Enable strict validation mode (reject invalid values)"),
+    preserveCustomProperties: z
+      .boolean()
+      .default(true)
+      .describe("Preserve custom properties (CSS variables) in output"),
+  })
+  .describe("Options for property handler behavior");
+
+/**
+ * Derived type for property handler options
+ */
+export type PropertyHandlerOptions = z.infer<typeof PropertyHandlerOptionsSchema>;
+
+/**
+ * Property category enumeration schema
+ */
+export const PropertyCategorySchema = z.enum([
+  "box-model",
+  "visual",
+  "layout",
+  "animation",
+  "typography",
+  "other",
+]);
+
+/**
+ * Derived type for property categories
+ */
+export type PropertyCategory = z.infer<typeof PropertyCategorySchema>;
+
+/**
+ * Schema for property handler metadata
+ */
+export const PropertyHandlerMetadataSchema = z
+  .object({
+    shorthand: z.string().describe("The shorthand property name (e.g., 'border')"),
+    longhands: z
+      .array(z.string())
+      .describe("Array of longhand property names this shorthand expands to"),
+    defaults: z
+      .record(z.string(), z.string())
+      .optional()
+      .describe("Default values for longhand properties when not specified"),
+    category: PropertyCategorySchema.describe("Property category classification"),
+  })
+  .describe("Metadata describing a property handler");
+
+/**
+ * Derived type for property handler metadata
+ */
+export type PropertyHandlerMetadata = z.infer<typeof PropertyHandlerMetadataSchema>;
+
+/**
+ * Property handler interface for CSS shorthand expansion
+ *
+ * All property handlers must implement this interface to ensure:
+ * - Consistent API across all handlers
+ * - Type-safe expansion logic
+ * - Introspection capabilities
+ * - Future extensibility (e.g., collapse API)
+ */
+export interface PropertyHandler {
+  /**
+   * Metadata describing the handler's properties
+   */
+  readonly meta: PropertyHandlerMetadata;
+
+  /**
+   * Expand a CSS shorthand value into its longhand properties
+   *
+   * @param value - The CSS value to expand
+   * @param options - Optional handler options
+   * @returns Object mapping longhand property names to values, or undefined if invalid
+   *
+   * @example
+   * ```typescript
+   * const handler = overflowHandler;
+   * handler.expand('hidden auto'); // { 'overflow-x': 'hidden', 'overflow-y': 'auto' }
+   * handler.expand('invalid'); // undefined
+   * ```
+   */
+  expand(value: string, options?: PropertyHandlerOptions): Record<string, string> | undefined;
+
+  /**
+   * Optional: Validate a CSS value without expanding it
+   *
+   * @param value - The CSS value to validate
+   * @returns true if valid, false otherwise
+   */
+  validate?(value: string): boolean;
+
+  /**
+   * Optional: Reconstruct a shorthand value from longhand properties (future feature)
+   *
+   * This method enables the "collapse API" - converting longhand properties back
+   * into their shorthand equivalent.
+   *
+   * @param properties - Object mapping longhand property names to values
+   * @returns The reconstructed shorthand value, or undefined if cannot be collapsed
+   *
+   * @example
+   * ```typescript
+   * const handler = overflowHandler;
+   * handler.reconstruct?.({ 'overflow-x': 'hidden', 'overflow-y': 'hidden' }); // 'hidden'
+   * handler.reconstruct?.({ 'overflow-x': 'hidden', 'overflow-y': 'auto' }); // 'hidden auto'
+   * ```
+   */
+  reconstruct?(properties: Record<string, string>): string | undefined;
+
+  /**
+   * Optional: Sub-handlers for related shorthands
+   *
+   * Some properties like 'border' have sub-properties (border-width, border-style, etc.)
+   * that are themselves shorthands. This allows hierarchical composition.
+   *
+   * @example
+   * ```typescript
+   * const borderHandler: PropertyHandler = {
+   *   meta: { shorthand: 'border', ... },
+   *   expand: (value) => { ... },
+   *   handlers: {
+   *     width: borderWidthHandler,
+   *     style: borderStyleHandler,
+   *     color: borderColorHandler,
+   *   }
+   * };
+   * ```
+   */
+  readonly handlers?: Readonly<Record<string, PropertyHandler>>;
+}
+
+/**
+ * Factory function for creating property handlers with consistent behavior
+ *
+ * This factory wraps handler logic with:
+ * - Option validation and defaults
+ * - Error handling (returns undefined on exceptions)
+ * - Consistent return types
+ *
+ * @param config - Property handler configuration
+ * @returns A fully-formed PropertyHandler instance
+ *
+ * @example
+ * ```typescript
+ * export const overflowHandler = createPropertyHandler({
+ *   meta: {
+ *     shorthand: 'overflow',
+ *     longhands: ['overflow-x', 'overflow-y'],
+ *     category: 'visual',
+ *   },
+ *   expand: (value) => {
+ *     // Handler implementation
+ *   },
+ * });
+ * ```
+ */
+export function createPropertyHandler(config: PropertyHandler): PropertyHandler {
+  return {
+    ...config,
+    expand: (
+      value: string,
+      options?: PropertyHandlerOptions
+    ): Record<string, string> | undefined => {
+      try {
+        // Validate options if provided
+        const validatedOptions = options
+          ? PropertyHandlerOptionsSchema.parse(options)
+          : PropertyHandlerOptionsSchema.parse({});
+
+        // Call the underlying expand function with validated options
+        return config.expand(value, validatedOptions);
+      } catch (_error) {
+        // Return undefined on any errors (invalid options, parsing failures, etc.)
+        return undefined;
+      }
+    },
+  };
 }
 
 
