@@ -25,6 +25,7 @@ src/is-color.ts
 src/is-length.ts
 src/is-time.ts
 src/is-timing-function.ts
+src/layer-parser-utils.ts
 src/list-style.ts
 src/mask-layers.ts
 src/mask.ts
