@@ -867,6 +867,20 @@ function expand(input: string, options: Partial<ExpandOptions> = {}): ExpandResu
 // Export named functions only (no default export to avoid CJS/ESM ambiguity)
 export { expand, validate, sortProperties, PROPERTY_ORDER_MAP };
 
+export { flexFlowHandler } from "./flex-flow";
+// Export refactored handlers (optional - for advanced use cases)
+export { overflowHandler } from "./overflow";
+export { placeContentHandler } from "./place-content";
+export { placeItemsHandler } from "./place-items";
+export { placeSelfHandler } from "./place-self";
+// Export PropertyHandler types and utilities
+export type {
+  PropertyCategory,
+  PropertyHandler,
+  PropertyHandlerMetadata,
+  PropertyHandlerOptions,
+} from "./property-handler";
+export { createPropertyHandler } from "./property-handler";
 // Re-export types for convenience
 export type {
   AnimationLayer,
