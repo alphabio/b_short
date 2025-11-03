@@ -1,6 +1,6 @@
 // b_path:: src/handlers/overflow/collapse.ts
 
-import { type CollapseHandler, createCollapseHandler } from "../../internal/collapse-handler";
+import { type CollapseHandler, createCollapseHandler } from "@/internal/collapse-handler";
 
 /**
  * Collapse handler for the overflow shorthand property.

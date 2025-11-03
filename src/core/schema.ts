@@ -324,3 +324,20 @@ export interface StylesheetValidation {
   /** Array of property validation warnings */
   warnings: BStyleWarning[];
 }
+
+/**
+ * Result of CSS shorthand collapse operation
+ */
+export interface CollapseResult {
+  /** Whether collapse was successful (no errors) */
+  ok: boolean;
+  /**
+   * The collapsed CSS result
+   * - JavaScript object format
+   * - CSS string format
+   * - undefined when input is empty
+   */
+  result?: Record<string, string> | string;
+  /** Array of warnings about incomplete longhands that couldn't be collapsed */
+  issues: BStyleWarning[];
+}

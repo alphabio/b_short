@@ -4,9 +4,38 @@
  * Main collapse API for reconstructing shorthand properties from longhands.
  * @module collapse
  */
-
 import { collapseRegistry } from "../internal/collapse-registry";
-import { registry as handlerRegistry } from "../internal/handler-registry";
+import { parseCssDeclaration, parseInputString, stripComments } from "../internal/parsers";
+import type { BStyleWarning, CollapseResult } from "./schema";
+
+/**
+ * Parse CSS string input into a properties object
+ * @internal
+ */
+function parseCssToObject(css: string): Record<string, string> {
+  const cleaned = stripComments(css);
+  const declarations = parseInputString(cleaned);
+  const properties: Record<string, string> = {};
+
+  for (const decl of declarations) {
+    const parsed = parseCssDeclaration(decl);
+    if (parsed) {
+      properties[parsed.property] = parsed.value;
+    }
+  }
+
+  return properties;
+}
+
+/**
+ * Format properties object back to CSS string
+ * @internal
+ */
+function formatCssString(properties: Record<string, string>): string {
+  return Object.entries(properties)
+    .map(([prop, value]) => `  ${prop}: ${value};`)
+    .join("\n");
+}
 
 /**
  * Collapse longhand properties into shorthand values where possible.
@@ -20,50 +49,136 @@ import { registry as handlerRegistry } from "../internal/handler-registry";
  * 2. For each group, check if all required longhands are present
  * 3. If yes, attempt to collapse using the registered collapse handler
  * 4. If successful, replace longhands with shorthand in output
- * 5. If not, keep the longhand properties
+ * 5. If not, keep the longhand properties and report issues
  *
- * @param properties - Object mapping CSS property names to values
- * @returns Object with shorthands used where possible, longhands otherwise
+ * @param input - CSS properties as object or CSS string
+ * @returns Result object with collapsed properties/CSS, success status, and any issues
  *
  * @example
  * ```typescript
  * import { collapse } from 'b_short';
  *
- * // Simple case - same values
+ * // Object input - complete longhands
  * collapse({ 'overflow-x': 'hidden', 'overflow-y': 'hidden' });
- * // { overflow: 'hidden' }
+ * // → { ok: true, result: { overflow: 'hidden' }, issues: [] }
  *
- * // Different values
- * collapse({ 'overflow-x': 'hidden', 'overflow-y': 'auto' });
- * // { overflow: 'hidden auto' }
- *
- * // Mixed - some can collapse, some can't
- * collapse({
- *   'overflow-x': 'hidden',
- *   'overflow-y': 'hidden',
- *   'margin-top': '10px',
- * });
- * // { overflow: 'hidden', 'margin-top': '10px' }
- *
- * // Missing longhands - keep as-is
+ * // Object input - incomplete longhands (with warning)
  * collapse({ 'overflow-x': 'hidden' });
- * // { 'overflow-x': 'hidden' }
+ * // → {
+ * //     ok: true,
+ * //     result: { 'overflow-x': 'hidden' },
+ * //     issues: [{ property: 'overflow', name: 'incomplete-longhands', ... }]
+ * //   }
+ *
+ * // CSS string input
+ * collapse(`
+ *   overflow-x: hidden;
+ *   overflow-y: auto;
+ *   margin-top: 10px;
+ * `);
+ * // → {
+ * //     ok: true,
+ * //     result: "overflow: hidden auto;\n  margin-top: 10px;",
+ * //     issues: []
+ * //   }
  * ```
  */
-export function collapse(properties: Record<string, string>): Record<string, string> {
+export function collapse(input: Record<string, string> | string): CollapseResult {
+  // Handle string input
+  if (typeof input === "string") {
+    const properties = parseCssToObject(input);
+    const { properties: collapsed, issues } = collapseProperties(properties);
+    return {
+      ok: true,
+      result: formatCssString(collapsed),
+      issues,
+    };
+  }
+
+  // Handle object input
+  const { properties: collapsed, issues } = collapseProperties(input);
+  return {
+    ok: true,
+    result: collapsed,
+    issues,
+  };
+}
+
+/**
+ * Internal function to collapse properties object with issue tracking
+ * @internal
+ */
+function collapseProperties(properties: Record<string, string>): {
+  properties: Record<string, string>;
+  issues: BStyleWarning[];
+} {
   const result: Record<string, string> = {};
   const processedLonghands = new Set<string>();
+  const issues: BStyleWarning[] = [];
 
   // Get all available shorthands that have collapse handlers
   const availableShorthands = collapseRegistry.getAllShorthands();
 
+  // Define shorthand priority - more specific shorthands should be processed first
+  // This ensures grid-area takes precedence over grid-column/grid-row
+  const shorthandPriority: Record<string, number> = {
+    "grid-area": 100, // Highest priority (4 longhands)
+    "grid-column": 50, // Medium priority (2 longhands)
+    "grid-row": 50, // Medium priority (2 longhands)
+  };
+
+  // Sort shorthands by priority (higher first), then by number of longhands (more first)
+  const sortedShorthands = availableShorthands.sort((a, b) => {
+    const priorityA = shorthandPriority[a] || 0;
+    const priorityB = shorthandPriority[b] || 0;
+    if (priorityA !== priorityB) return priorityB - priorityA;
+
+    // If priority is equal, prefer shorthands with more longhands
+    const handlerA = collapseRegistry.get(a);
+    const handlerB = collapseRegistry.get(b);
+    const lengthA = handlerA?.meta.longhands.length || 0;
+    const lengthB = handlerB?.meta.longhands.length || 0;
+    return lengthB - lengthA;
+  });
+
   // Try to collapse each shorthand
-  for (const shorthand of availableShorthands) {
+  for (const shorthand of sortedShorthands) {
     const collapseHandler = collapseRegistry.get(shorthand);
     if (!collapseHandler) continue;
 
+    // Skip if any of the required longhands have already been processed
+    const hasProcessedLonghand = collapseHandler.meta.longhands.some((longhand) =>
+      processedLonghands.has(longhand)
+    );
+    if (hasProcessedLonghand) continue;
+
     // Check if we can collapse this shorthand
-    if (!collapseHandler.canCollapse(properties)) continue;
+    const canCollapse = collapseHandler.canCollapse(properties);
+
+    // If we can't collapse, check if there are some (but not all) longhands present
+    if (!canCollapse) {
+      const presentLonghands = collapseHandler.meta.longhands.filter(
+        (longhand) => longhand in properties
+      );
+
+      // If some longhands are present but not all, report as issue
+      if (
+        presentLonghands.length > 0 &&
+        presentLonghands.length < collapseHandler.meta.longhands.length
+      ) {
+        const missingLonghands = collapseHandler.meta.longhands.filter(
+          (longhand) => !(longhand in properties)
+        );
+
+        issues.push({
+          property: shorthand,
+          name: "incomplete-longhands",
+          formattedWarning: `Cannot collapse to '${shorthand}': missing ${missingLonghands.join(", ")}. Present: ${presentLonghands.join(", ")}.`,
+        });
+      }
+
+      continue;
+    }
 
     // Attempt to collapse
     const collapsedValue = collapseHandler.collapse(properties);
@@ -85,7 +200,7 @@ export function collapse(properties: Record<string, string>): Record<string, str
     }
   }
 
-  return result;
+  return { properties: result, issues };
 }
 
 /**

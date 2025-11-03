@@ -6,7 +6,22 @@
  * @module collapse-registry
  */
 
+import { borderRadiusCollapser } from "../handlers/border-radius/collapse";
+import { columnRuleCollapser } from "../handlers/column-rule/collapse";
+import { columnsCollapser } from "../handlers/columns/collapse";
+import { containIntrinsicSizeCollapser } from "../handlers/contain-intrinsic-size/collapse";
+import { flexFlowCollapser } from "../handlers/flex-flow/collapse";
+import { gridAreaCollapser } from "../handlers/grid-area/collapse";
+import { gridColumnCollapser } from "../handlers/grid-column/collapse";
+import { gridRowCollapser } from "../handlers/grid-row/collapse";
+import { listStyleCollapser } from "../handlers/list-style/collapse";
+import { outlineCollapser } from "../handlers/outline/collapse";
 import { overflowCollapser } from "../handlers/overflow/collapse";
+import { placeContentCollapser } from "../handlers/place-content/collapse";
+import { placeItemsCollapser } from "../handlers/place-items/collapse";
+import { placeSelfCollapser } from "../handlers/place-self/collapse";
+import { textDecorationCollapser } from "../handlers/text-decoration/collapse";
+import { textEmphasisCollapser } from "../handlers/text-emphasis/collapse";
 import type { CollapseHandler } from "./collapse-handler";
 
 /**
@@ -31,7 +46,24 @@ export interface CollapseRegistry {
  * Will be populated as handlers are implemented.
  * @internal
  */
-const collapseHandlerMap = new Map<string, CollapseHandler>([["overflow", overflowCollapser]]);
+const collapseHandlerMap = new Map<string, CollapseHandler>([
+  ["border-radius", borderRadiusCollapser],
+  ["column-rule", columnRuleCollapser],
+  ["columns", columnsCollapser],
+  ["contain-intrinsic-size", containIntrinsicSizeCollapser],
+  ["flex-flow", flexFlowCollapser],
+  ["grid-area", gridAreaCollapser],
+  ["grid-column", gridColumnCollapser],
+  ["grid-row", gridRowCollapser],
+  ["list-style", listStyleCollapser],
+  ["outline", outlineCollapser],
+  ["overflow", overflowCollapser],
+  ["place-content", placeContentCollapser],
+  ["place-items", placeItemsCollapser],
+  ["place-self", placeSelfCollapser],
+  ["text-decoration", textDecorationCollapser],
+  ["text-emphasis", textEmphasisCollapser],
+]);
 
 /**
  * Global collapse handler registry.
