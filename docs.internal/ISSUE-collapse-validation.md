@@ -78,9 +78,38 @@ const result = expand("overflow: xyz auto;");
 2. Directly concatenates values: `"${x} ${y}"`
 3. No validation that values are valid CSS
 
+## Important Discovery: validate() Already Detects Invalid Values!
+
+The `validate()` function **already validates CSS values**:
+
+```javascript
+import { validate } from 'b_short';
+
+validate(`
+  overflow-x: xyz;
+  overflow-y: auto;
+`);
+
+// Returns:
+{
+  ok: true,
+  errors: [],
+  warnings: [
+    {
+      property: 'overflow-x',
+      name: 'SyntaxMatchError',
+      syntax: 'visible | hidden | clip | scroll | auto',
+      formattedWarning: '...'
+    }
+  ]
+}
+```
+
+This means we have a **ready-made validation system** that we can leverage!
+
 ## Proposed Solution
 
-### Option 1: Validate before collapse (Recommended)
+### Option 1: Validate before collapse (Quick Fix)
 
 Each collapse handler should validate values before collapsing:
 
@@ -110,24 +139,39 @@ export const overflowCollapser: CollapseHandler = createCollapseHandler({
 });
 ```
 
-### Option 2: Use expand handler for validation
+### Option 2: Use validate() API (NEW - Leverages existing validation!)
 
 ```typescript
+import { validate } from '@/core/validate';
+
 collapse(properties: Record<string, string>): string | undefined {
   const x = properties["overflow-x"];
   const y = properties["overflow-y"];
 
   if (!x || !y) return undefined;
   
-  // Try to expand a test shorthand with each value
-  if (!overflowHandler.expand(x) || !overflowHandler.expand(y)) {
-    return undefined;
+  // Validate using the existing validate() API
+  const validationX = validate(`overflow-x: ${x};`);
+  const validationY = validate(`overflow-y: ${y};`);
+  
+  if (validationX.warnings.length > 0 || validationY.warnings.length > 0) {
+    return undefined;  // Don't collapse if validation fails
   }
 
   if (x === y) return x;
   return `${x} ${y}`;
 }
 ```
+
+**Advantages:**
+- Reuses existing, robust validation
+- Consistent with expand behavior
+- No duplication of validation logic
+- Already supports all CSS properties
+
+**Disadvantages:**
+- Requires string construction for validation
+- May have performance impact (needs benchmarking)
 
 ### Option 3: Shared validation utilities
 
@@ -171,12 +215,24 @@ This affects every collapse handler because none of them currently validate valu
 
 ## Recommendation
 
-**Implement Option 3** (Shared validation utilities):
+**Implement Option 2** (Use validate() API) - **UPDATED**:
 
-1. Extract validation logic from each expand handler
-2. Create shared validation functions/constants
-3. Use same validation in both expand and collapse
-4. Ensures consistent behavior across the API
+The `validate()` function already provides comprehensive CSS value validation:
+- Uses css-tree lexer (same as expand)
+- Validates against CSS specifications
+- Reports SyntaxMatchError for invalid values
+- Already available and tested
+
+Implementation strategy:
+1. Update collapse handlers to validate values before collapsing
+2. Use `validate()` API for each longhand value
+3. Return `undefined` if any validation warnings
+4. Optionally report validation issues in collapse result
+
+**Alternative: Option 3** for performance-critical paths:
+- Extract validation regexes to shared constants
+- Use lightweight validation where performance matters
+- Fall back to validate() for complex properties
 
 ## Testing Strategy
 
