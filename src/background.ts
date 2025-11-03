@@ -1,10 +1,15 @@
 // b_path:: src/background.ts
 
+// NOTE: This handler contains complex multi-layer parsing logic that is a candidate
+// for future refactoring. The position/size parsing could be simplified with better
+// abstractions for coordinate and dimension handling.
+
 import { parseBackgroundLayers, reconstructLayers } from "./background-layers";
 import { cssUrlRegex } from "./internal/color-utils";
 import isColor from "./internal/is-color";
 import isLength from "./internal/is-length";
 import normalizeColor from "./internal/normalize-color";
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 
 const ATTACHMENT = /^(fixed|local|scroll)$/;
 const BOX = /^(border-box|padding-box|content-box)$/;
@@ -31,7 +36,7 @@ const normalizeUrl = (value: string): string =>
     match.replace(/^url\(\s+/, "url(").replace(/\s+\)$/, ")")
   );
 
-export default function background(value: string): Record<string, string> | undefined {
+function parseBackgroundValue(value: string): Record<string, string> | undefined {
   // Use advanced parsing for all cases - it handles both simple and complex syntax better
   const layeredResult = parseBackgroundLayers(value);
   if (layeredResult) {
@@ -140,4 +145,45 @@ function simpleBackgroundParser(value: string): Record<string, string> | undefin
     }
   }
   return finalResult;
+}
+
+/**
+ * Property handler for the 'background' CSS shorthand property
+ *
+ * Expands background into background-image, background-position, background-size,
+ * background-repeat, background-attachment, background-origin, background-clip,
+ * and background-color.
+ *
+ * @example
+ * ```typescript
+ * backgroundHandler.expand('red');
+ * backgroundHandler.expand('url(bg.png) center / cover no-repeat');
+ * ```
+ */
+export const backgroundHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "background",
+    longhands: [
+      "background-image",
+      "background-position",
+      "background-size",
+      "background-repeat",
+      "background-attachment",
+      "background-clip",
+      "background-color",
+    ],
+    category: "visual",
+  },
+
+  expand: (value: string): Record<string, string> | undefined => {
+    return parseBackgroundValue(value);
+  },
+
+  validate: (value: string): boolean => {
+    return backgroundHandler.expand(value) !== undefined;
+  },
+});
+
+export default function background(value: string): Record<string, string> | undefined {
+  return backgroundHandler.expand(value);
 }

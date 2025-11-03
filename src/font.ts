@@ -1,8 +1,14 @@
 // b_path:: src/font.ts
+
+// NOTE: This handler contains complex state machine parsing logic from css-font-parser
+// that is a candidate for future refactoring. The order-dependent parsing and font-family
+// handling with quotes and commas adds significant complexity.
+
 /**
  * Copied from https://github.com/bramstein/css-font-parser
  */
 
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 import { sortProperties } from "./internal/property-sorter";
 
 /**
@@ -97,7 +103,7 @@ function parse(input: string): FontResult | null {
   }
 }
 
-export default function font(input: string): Record<string, string> | undefined {
+function parseFontValue(input: string): Record<string, string> | undefined {
   if (/^(inherit|initial)$/.test(input)) {
     return sortProperties({
       "font-size": input,
@@ -144,4 +150,44 @@ export default function font(input: string): Record<string, string> | undefined 
   }
 
   return undefined;
+}
+
+/**
+ * Property handler for the 'font' CSS shorthand property
+ *
+ * Expands font into font-style, font-variant, font-weight, font-stretch,
+ * font-size, line-height, and font-family.
+ *
+ * @example
+ * ```typescript
+ * fontHandler.expand('italic bold 16px/1.5 Arial, sans-serif');
+ * fontHandler.expand('12px "Helvetica Neue", Helvetica');
+ * ```
+ */
+export const fontHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "font",
+    longhands: [
+      "font-style",
+      "font-variant",
+      "font-weight",
+      "font-stretch",
+      "font-size",
+      "line-height",
+      "font-family",
+    ],
+    category: "typography",
+  },
+
+  expand: (value: string): Record<string, string> | undefined => {
+    return parseFontValue(value);
+  },
+
+  validate: (value: string): boolean => {
+    return fontHandler.expand(value) !== undefined;
+  },
+});
+
+export default function font(value: string): Record<string, string> | undefined {
+  return fontHandler.expand(value);
 }

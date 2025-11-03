@@ -1,5 +1,9 @@
 // b_path:: src/animation.ts
 
+// NOTE: This handler contains complex multi-layer parsing logic that is a candidate
+// for future refactoring. The current implementation works correctly but could be
+// simplified with better abstractions for timing/iteration/direction parsing.
+
 import {
   ANIMATION_DEFAULTS,
   needsAdvancedParser,
@@ -8,6 +12,7 @@ import {
 } from "./animation-layers";
 import isTime from "./internal/is-time";
 import isTimingFunction from "./internal/is-timing-function";
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
 const ITERATION_COUNT = /^(infinite|[0-9]+(\.[0-9]+)?)$/;
@@ -15,7 +20,7 @@ const DIRECTION = /^(normal|reverse|alternate|alternate-reverse)$/i;
 const FILL_MODE = /^(none|forwards|backwards|both)$/i;
 const PLAY_STATE = /^(running|paused)$/i;
 
-export default function animation(value: string): Record<string, string> | undefined {
+function parseAnimationValue(value: string): Record<string, string> | undefined {
   // Handle global keywords first
   if (KEYWORD.test(value.trim())) {
     return {
@@ -132,4 +137,56 @@ export default function animation(value: string): Record<string, string> | undef
     "animation-fill-mode": result["animation-fill-mode"] || ANIMATION_DEFAULTS.fillMode,
     "animation-play-state": result["animation-play-state"] || ANIMATION_DEFAULTS.playState,
   };
+}
+
+/**
+ * Property handler for the 'animation' CSS shorthand property
+ *
+ * Expands animation into animation-name, animation-duration, animation-timing-function,
+ * animation-delay, animation-iteration-count, animation-direction, animation-fill-mode,
+ * and animation-play-state.
+ *
+ * @example
+ * ```typescript
+ * animationHandler.expand('slide 300ms ease-in');
+ * animationHandler.expand('bounce 1s infinite');
+ * ```
+ */
+export const animationHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "animation",
+    longhands: [
+      "animation-name",
+      "animation-duration",
+      "animation-timing-function",
+      "animation-delay",
+      "animation-iteration-count",
+      "animation-direction",
+      "animation-fill-mode",
+      "animation-play-state",
+    ],
+    defaults: {
+      "animation-name": ANIMATION_DEFAULTS.name,
+      "animation-duration": ANIMATION_DEFAULTS.duration,
+      "animation-timing-function": ANIMATION_DEFAULTS.timingFunction,
+      "animation-delay": ANIMATION_DEFAULTS.delay,
+      "animation-iteration-count": ANIMATION_DEFAULTS.iterationCount,
+      "animation-direction": ANIMATION_DEFAULTS.direction,
+      "animation-fill-mode": ANIMATION_DEFAULTS.fillMode,
+      "animation-play-state": ANIMATION_DEFAULTS.playState,
+    },
+    category: "animation",
+  },
+
+  expand: (value: string): Record<string, string> | undefined => {
+    return parseAnimationValue(value);
+  },
+
+  validate: (value: string): boolean => {
+    return animationHandler.expand(value) !== undefined;
+  },
+});
+
+export default function animation(value: string): Record<string, string> | undefined {
+  return animationHandler.expand(value);
 }

@@ -1,10 +1,14 @@
 // b_path:: src/mask.ts
 
+// NOTE: This handler contains complex multi-layer parsing logic that is a candidate
+// for future refactoring. Masking syntax parsing could be simplified with better abstractions.
+
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 import { needsAdvancedParser, parseMaskLayers, reconstructLayers } from "./mask-layers";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
 
-export default function mask(value: string): Record<string, string> | undefined {
+function parseMaskValue(value: string): Record<string, string> | undefined {
   // Trim the input value
   const trimmedValue = value.trim();
 
@@ -39,4 +43,45 @@ export default function mask(value: string): Record<string, string> | undefined 
   }
 
   return undefined;
+}
+
+/**
+ * Property handler for the 'mask' CSS shorthand property
+ *
+ * Expands mask into mask-image, mask-mode, mask-position, mask-size,
+ * mask-repeat, mask-origin, mask-clip, and mask-composite.
+ *
+ * @example
+ * ```typescript
+ * maskHandler.expand('url(mask.svg)');
+ * maskHandler.expand('linear-gradient(black, transparent) center / contain');
+ * ```
+ */
+export const maskHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "mask",
+    longhands: [
+      "mask-image",
+      "mask-mode",
+      "mask-position",
+      "mask-size",
+      "mask-repeat",
+      "mask-origin",
+      "mask-clip",
+      "mask-composite",
+    ],
+    category: "visual",
+  },
+
+  expand: (value: string): Record<string, string> | undefined => {
+    return parseMaskValue(value);
+  },
+
+  validate: (value: string): boolean => {
+    return maskHandler.expand(value) !== undefined;
+  },
+});
+
+export default function mask(value: string): Record<string, string> | undefined {
+  return maskHandler.expand(value);
 }
