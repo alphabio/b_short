@@ -15,45 +15,19 @@
 
 ## 📋 Implementation Checklist
 
-### **Phase 4.1: Foundation** (~2 hours)
+### **Phase 4.1: Foundation** (~2 hours) ✅ COMPLETE
 
-- [ ] Create `src/internal/collapse-handler.ts` interface
+- [x] Create `src/internal/collapse-handler.ts` interface
+- [x] Create `src/internal/collapse-registry.ts`
+- [x] Create `src/core/collapse.ts` main API
+- [x] Add tests for collapse infrastructure
+- [x] Implement overflow collapser (first handler)
+- [x] Export from main index
+- [x] **Status: 862 tests passing (852 + 10 new)**
 
-  ```typescript
-  export interface CollapseHandler {
-    readonly meta: {
-      shorthand: string;
-      longhands: string[];
-    };
-    collapse(properties: Record<string, string>): string | undefined;
-    canCollapse(properties: Record<string, string>): boolean;
-  }
-  ```
+### **Phase 4.2: Simple Handlers** (~3 hours) 🔄 NEXT
 
-- [ ] Create `src/internal/collapse-registry.ts`
-  - Map of shorthand → CollapseHandler
-  - Export `collapseRegistry`
-
-- [ ] Create `src/core/collapse.ts` main API
-
-  ```typescript
-  export function collapse(properties: Record<string, string>): Record<string, string>
-  ```
-
-  - Smart algorithm: try to collapse compatible property groups
-  - Return mix of shorthands + remaining longhands
-
-- [ ] Add tests for collapse infrastructure
-  - Test collapse registry
-  - Test main collapse() function with simple cases
-
-### **Phase 4.2: Simple Handlers** (~3 hours)
-
-Implement collapse for 5 simple handlers:
-
-- [ ] `src/handlers/overflow/collapse.ts`
-  - If `overflow-x` === `overflow-y` → single value
-  - Else → two values
+Implement collapse for 4 remaining simple handlers:
 
 - [ ] `src/handlers/flex-flow/collapse.ts`
   - Reconstruct from `flex-direction` + `flex-wrap`
@@ -67,8 +41,8 @@ Implement collapse for 5 simple handlers:
 - [ ] `src/handlers/place-self/collapse.ts`
   - Reconstruct from `align-self` + `justify-self`
 
+- [ ] Register all in collapse-registry.ts
 - [ ] Update each handler's `index.ts` to export collapser
-- [ ] Register in collapse-registry.ts
 - [ ] Add tests for each
 
 ### **Phase 4.3: Medium Handlers** (~4 hours)
