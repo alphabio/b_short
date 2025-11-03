@@ -7,7 +7,7 @@ describe("Handler Registry", () => {
   describe("registry.getAllShorthands()", () => {
     test("returns all 25 handlers", () => {
       const shorthands = registry.getAllShorthands();
-      expect(shorthands).toHaveLength(25);
+      expect(shorthands).toHaveLength(26);
     });
 
     test("includes expected shorthands", () => {
@@ -232,7 +232,7 @@ describe("Handler Registry", () => {
   describe("registry.handlers", () => {
     test("is read-only map", () => {
       expect(registry.handlers).toBeInstanceOf(Map);
-      expect(registry.handlers.size).toBe(25);
+      expect(registry.handlers.size).toBe(26);
     });
 
     test("contains all handlers", () => {

@@ -11,6 +11,9 @@ import { columnRuleCollapser } from "../handlers/column-rule/collapse";
 import { columnsCollapser } from "../handlers/columns/collapse";
 import { containIntrinsicSizeCollapser } from "../handlers/contain-intrinsic-size/collapse";
 import { flexFlowCollapser } from "../handlers/flex-flow/collapse";
+import { fontCollapser } from "../handlers/font/collapse";
+import { gapCollapser } from "../handlers/gap/collapse";
+import { gridCollapser } from "../handlers/grid/collapse";
 import { gridAreaCollapser } from "../handlers/grid-area/collapse";
 import { gridColumnCollapser } from "../handlers/grid-column/collapse";
 import { gridRowCollapser } from "../handlers/grid-row/collapse";
@@ -52,6 +55,9 @@ const collapseHandlerMap = new Map<string, CollapseHandler>([
   ["columns", columnsCollapser],
   ["contain-intrinsic-size", containIntrinsicSizeCollapser],
   ["flex-flow", flexFlowCollapser],
+  ["font", fontCollapser],
+  ["gap", gapCollapser],
+  ["grid", gridCollapser],
   ["grid-area", gridAreaCollapser],
   ["grid-column", gridColumnCollapser],
   ["grid-row", gridRowCollapser],

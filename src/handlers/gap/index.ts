@@ -1,4 +1,4 @@
-// b_path:: src/handlers/font/index.ts
+// b_path:: src/handlers/gap/index.ts
 
 export * from "./collapse";
 export * from "./expand";

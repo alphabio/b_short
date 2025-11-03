@@ -224,6 +224,190 @@ describe("Collapse API", () => {
       expect(result.result).toEqual({ "grid-row": "2 / 4" });
     });
 
+    test("collapses font with minimal values", () => {
+      const result = collapse({
+        "font-size": "16px",
+        "font-family": "Arial",
+      });
+      expect(result.result).toEqual({ font: "16px Arial" });
+    });
+
+    test("collapses font with all optional values", () => {
+      const result = collapse({
+        "font-style": "italic",
+        "font-variant": "small-caps",
+        "font-weight": "bold",
+        "font-stretch": "condensed",
+        "font-size": "16px",
+        "line-height": "1.5",
+        "font-family": "Arial",
+      });
+      expect(result.result).toEqual({ font: "italic small-caps bold condensed 16px/1.5 Arial" });
+    });
+
+    test("collapses font omitting normal values", () => {
+      const result = collapse({
+        "font-style": "normal",
+        "font-variant": "normal",
+        "font-weight": "bold",
+        "font-stretch": "normal",
+        "font-size": "14px",
+        "font-family": '"Helvetica Neue"',
+      });
+      expect(result.result).toEqual({ font: 'bold 14px "Helvetica Neue"' });
+    });
+
+    test("collapses font with line-height", () => {
+      const result = collapse({
+        "font-size": "12px",
+        "line-height": "1.5",
+        "font-family": "monospace",
+      });
+      expect(result.result).toEqual({ font: "12px/1.5 monospace" });
+    });
+
+    test("does not collapse font without size", () => {
+      const result = collapse({
+        "font-family": "Arial",
+        "font-weight": "bold",
+      });
+      expect(result.result).toEqual({
+        "font-family": "Arial",
+        "font-weight": "bold",
+      });
+      expect(result.issues).toHaveLength(1);
+      expect(result.issues[0].property).toBe("font");
+    });
+
+    test("does not collapse font without family", () => {
+      const result = collapse({
+        "font-size": "16px",
+        "font-weight": "bold",
+      });
+      expect(result.result).toEqual({
+        "font-size": "16px",
+        "font-weight": "bold",
+      });
+      expect(result.issues).toHaveLength(1);
+      expect(result.issues[0].property).toBe("font");
+    });
+
+    test("collapses grid to none when all defaults", () => {
+      const result = collapse({
+        "grid-template-rows": "none",
+        "grid-template-columns": "none",
+        "grid-template-areas": "none",
+        "grid-auto-rows": "auto",
+        "grid-auto-columns": "auto",
+        "grid-auto-flow": "row",
+      });
+      expect(result.result).toEqual({
+        grid: "none",
+      });
+    });
+
+    test("collapses grid simple template", () => {
+      const result = collapse({
+        "grid-template-rows": "100px 200px",
+        "grid-template-columns": "1fr 2fr",
+        "grid-template-areas": "none",
+        "grid-auto-rows": "auto",
+        "grid-auto-columns": "auto",
+        "grid-auto-flow": "row",
+      });
+      expect(result.result).toEqual({
+        grid: "100px 200px / 1fr 2fr",
+      });
+    });
+
+    test("collapses grid auto-flow columns", () => {
+      const result = collapse({
+        "grid-template-rows": "100px 200px",
+        "grid-template-columns": "none",
+        "grid-template-areas": "none",
+        "grid-auto-rows": "auto",
+        "grid-auto-columns": "auto",
+        "grid-auto-flow": "row",
+      });
+      expect(result.result).toMatchObject({ grid: "100px 200px / auto-flow" });
+    });
+
+    test("collapses grid auto-flow columns with dense", () => {
+      const result = collapse({
+        "grid-template-rows": "100px",
+        "grid-template-columns": "none",
+        "grid-template-areas": "none",
+        "grid-auto-rows": "auto",
+        "grid-auto-columns": "50px",
+        "grid-auto-flow": "row dense",
+      });
+      expect(result.result).toMatchObject({ grid: "100px / auto-flow dense 50px" });
+    });
+
+    test("collapses grid auto-flow rows", () => {
+      const result = collapse({
+        "grid-template-rows": "none",
+        "grid-template-columns": "100px 200px",
+        "grid-template-areas": "none",
+        "grid-auto-rows": "auto",
+        "grid-auto-columns": "auto",
+        "grid-auto-flow": "column",
+      });
+      expect(result.result).toMatchObject({ grid: "auto-flow / 100px 200px" });
+    });
+
+    test("collapses grid auto-flow rows with auto-rows", () => {
+      const result = collapse({
+        "grid-template-rows": "none",
+        "grid-template-columns": "1fr 2fr",
+        "grid-template-areas": "none",
+        "grid-auto-rows": "minmax(100px, auto)",
+        "grid-auto-columns": "auto",
+        "grid-auto-flow": "column",
+      });
+      expect(result.result).toMatchObject({ grid: "auto-flow minmax(100px, auto) / 1fr 2fr" });
+    });
+
+    test("collapses grid with template areas", () => {
+      const result = collapse({
+        "grid-template-rows": "100px",
+        "grid-template-columns": "1fr",
+        "grid-template-areas": '"header"',
+        "grid-auto-rows": "auto",
+        "grid-auto-columns": "auto",
+        "grid-auto-flow": "row",
+      });
+      expect(result.result).toMatchObject({ grid: '"header" 100px / 1fr' });
+    });
+
+    test("collapses grid with multi-row template areas", () => {
+      const result = collapse({
+        "grid-template-rows": "100px 1fr",
+        "grid-template-columns": "200px 1fr",
+        "grid-template-areas": '"header header" "sidebar content"',
+        "grid-auto-rows": "auto",
+        "grid-auto-columns": "auto",
+        "grid-auto-flow": "row",
+      });
+      expect(result.result).toMatchObject({
+        grid: '"header header" 100px "sidebar content" 1fr / 200px 1fr',
+      });
+    });
+
+    test("collapses grid with custom gaps", () => {
+      const result = collapse({
+        "grid-template-rows": "100px",
+        "grid-template-columns": "1fr",
+        "grid-template-areas": "none",
+        "grid-auto-rows": "auto",
+        "grid-auto-columns": "auto",
+        "grid-auto-flow": "row",
+      });
+      expect(result.result).toMatchObject({
+        grid: "100px / 1fr",
+      });
+    });
+
     test("collapses grid-area named area", () => {
       const result = collapse({
         "grid-row-start": "header",
@@ -272,6 +456,36 @@ describe("Collapse API", () => {
       `);
       expect(result.result).toContain("overflow-x: hidden");
       expect(result.result).toContain("margin-top: 10px");
+    });
+
+    test("collapses CSS string with default indent (0)", () => {
+      const result = collapse(`
+        font-size: 16px;
+        font-family: Arial;
+      `);
+      expect(result.result).toBe("font: 16px Arial;");
+    });
+
+    test("collapses CSS string with custom indent", () => {
+      const result = collapse(
+        `
+        font-size: 16px;
+        font-family: Arial;
+      `,
+        { indent: 2 }
+      );
+      expect(result.result).toBe("    font: 16px Arial;");
+    });
+
+    test("collapses CSS string with indent 1", () => {
+      const result = collapse(
+        `
+        overflow-x: hidden;
+        overflow-y: auto;
+      `,
+        { indent: 1 }
+      );
+      expect(result.result).toBe("  overflow: hidden auto;");
     });
   });
 

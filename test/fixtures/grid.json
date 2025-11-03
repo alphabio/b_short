@@ -5,9 +5,7 @@
     "gridTemplateAreas": "inherit",
     "gridAutoRows": "inherit",
     "gridAutoColumns": "inherit",
-    "gridAutoFlow": "inherit",
-    "rowGap": "inherit",
-    "columnGap": "inherit"
+    "gridAutoFlow": "inherit"
   },
   "initial": {
     "gridTemplateRows": "initial",
@@ -15,9 +13,7 @@
     "gridTemplateAreas": "initial",
     "gridAutoRows": "initial",
     "gridAutoColumns": "initial",
-    "gridAutoFlow": "initial",
-    "rowGap": "initial",
-    "columnGap": "initial"
+    "gridAutoFlow": "initial"
   },
   "unset": {
     "gridTemplateRows": "unset",
@@ -25,9 +21,7 @@
     "gridTemplateAreas": "unset",
     "gridAutoRows": "unset",
     "gridAutoColumns": "unset",
-    "gridAutoFlow": "unset",
-    "rowGap": "unset",
-    "columnGap": "unset"
+    "gridAutoFlow": "unset"
   },
   "revert": {
     "gridTemplateRows": "revert",
@@ -35,9 +29,7 @@
     "gridTemplateAreas": "revert",
     "gridAutoRows": "revert",
     "gridAutoColumns": "revert",
-    "gridAutoFlow": "revert",
-    "rowGap": "revert",
-    "columnGap": "revert"
+    "gridAutoFlow": "revert"
   },
   "none": {
     "gridTemplateRows": "none",
@@ -45,9 +37,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "100px / 200px": {
     "gridTemplateRows": "100px",
@@ -55,9 +45,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "100px 200px / 1fr 2fr": {
     "gridTemplateRows": "100px 200px",
@@ -65,9 +53,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "repeat(3, 1fr) / auto": {
     "gridTemplateRows": "repeat(3,1fr)",
@@ -75,9 +61,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "minmax(100px, 1fr) / minmax(200px, 2fr)": {
     "gridTemplateRows": "minmax(100px,1fr)",
@@ -85,9 +69,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "auto 1fr auto / 100px 200px": {
     "gridTemplateRows": "auto 1fr auto",
@@ -95,9 +77,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "[line1] 100px [line2] 200px / 1fr 2fr": {
     "gridTemplateRows": "100px 200px",
@@ -105,9 +85,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "fit-content(300px) / 1fr": {
     "gridTemplateRows": "fit-content(300px)",
@@ -115,9 +93,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "\"header header\" 100px \"sidebar content\" 200px / 1fr 2fr": {
     "gridTemplateRows": "100px 200px",
@@ -125,9 +101,7 @@
     "gridTemplateAreas": "\"header header\" \"sidebar content\"",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "\"a a\" \"b c\" / 1fr 1fr": {
     "gridTemplateRows": "none",
@@ -135,9 +109,7 @@
     "gridTemplateAreas": "\"a a\" \"b c\"",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "\"header\" \"main\" \"footer\" / 100%": {
     "gridTemplateRows": "none",
@@ -145,9 +117,7 @@
     "gridTemplateAreas": "\"header\" \"main\" \"footer\"",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "\"nav header header\" \"nav main aside\" \"nav footer footer\" / 150px 1fr 200px": {
     "gridTemplateRows": "none",
@@ -155,9 +125,7 @@
     "gridTemplateAreas": "\"nav header header\" \"nav main aside\" \"nav footer footer\"",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "100px / auto-flow": {
     "gridTemplateRows": "100px",
@@ -165,9 +133,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "column",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "column"
   },
   "100px 200px / auto-flow": {
     "gridTemplateRows": "100px 200px",
@@ -175,9 +141,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "column",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "column"
   },
   "1fr 2fr / auto-flow dense": {
     "gridTemplateRows": "1fr 2fr",
@@ -185,9 +149,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "column dense",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "column dense"
   },
   "100px / auto-flow 200px": {
     "gridTemplateRows": "100px",
@@ -195,9 +157,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "200px",
-    "gridAutoFlow": "column",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "column"
   },
   "100px / auto-flow dense 150px": {
     "gridTemplateRows": "100px",
@@ -205,9 +165,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "150px",
-    "gridAutoFlow": "column dense",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "column dense"
   },
   "repeat(3, 100px) / auto-flow minmax(100px, 1fr)": {
     "gridTemplateRows": "repeat(3,100px)",
@@ -215,9 +173,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "minmax(100px,1fr)",
-    "gridAutoFlow": "column",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "column"
   },
   "minmax(100px, auto) / auto-flow dense": {
     "gridTemplateRows": "minmax(100px,auto)",
@@ -225,9 +181,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "column dense",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "column dense"
   },
   "auto-flow / 100px": {
     "gridTemplateRows": "none",
@@ -235,9 +189,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "auto-flow / 100px 200px": {
     "gridTemplateRows": "none",
@@ -245,9 +197,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "auto-flow dense / 1fr 2fr": {
     "gridTemplateRows": "none",
@@ -255,9 +205,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row dense",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row dense"
   },
   "auto-flow 200px / 100px": {
     "gridTemplateRows": "none",
@@ -265,9 +213,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "200px",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "auto-flow dense 150px / 100px": {
     "gridTemplateRows": "none",
@@ -275,9 +221,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "150px",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row dense",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row dense"
   },
   "auto-flow minmax(100px, 1fr) / repeat(3, 100px)": {
     "gridTemplateRows": "none",
@@ -285,9 +229,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "minmax(100px,1fr)",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "auto-flow dense / minmax(100px, auto)": {
     "gridTemplateRows": "none",
@@ -295,9 +237,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row dense",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row dense"
   },
   "auto / auto": {
     "gridTemplateRows": "auto",
@@ -305,9 +245,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "1fr / 1fr": {
     "gridTemplateRows": "1fr",
@@ -315,9 +253,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "100% / 100%": {
     "gridTemplateRows": "100%",
@@ -325,9 +261,7 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   },
   "min-content / max-content": {
     "gridTemplateRows": "min-content",
@@ -335,8 +269,6 @@
     "gridTemplateAreas": "none",
     "gridAutoRows": "auto",
     "gridAutoColumns": "auto",
-    "gridAutoFlow": "row",
-    "rowGap": "normal",
-    "columnGap": "normal"
+    "gridAutoFlow": "row"
   }
 }

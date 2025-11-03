@@ -326,6 +326,21 @@ export interface StylesheetValidation {
 }
 
 /**
+ * Options for CSS shorthand collapse
+ */
+export interface CollapseOptions {
+  /** Indentation spaces for CSS string output (min: 0). Default: 0 */
+  indent?: number;
+}
+
+/**
+ * Default values for CollapseOptions
+ */
+export const DEFAULT_COLLAPSE_OPTIONS: Required<CollapseOptions> = {
+  indent: 0,
+};
+
+/**
  * Result of CSS shorthand collapse operation
  */
 export interface CollapseResult {

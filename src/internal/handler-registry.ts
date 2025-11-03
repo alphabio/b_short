@@ -17,6 +17,7 @@ import { containIntrinsicSizeHandler } from "../handlers/contain-intrinsic-size"
 import { flexHandler } from "../handlers/flex";
 import { flexFlowHandler } from "../handlers/flex-flow";
 import { fontHandler } from "../handlers/font";
+import { gapHandler } from "../handlers/gap";
 import { gridHandler } from "../handlers/grid";
 import { gridAreaHandler } from "../handlers/grid-area";
 import { gridColumnHandler } from "../handlers/grid-column";
@@ -75,6 +76,7 @@ const handlerMap = new Map<string, PropertyHandler>([
   ["flex", flexHandler],
   ["flex-flow", flexFlowHandler],
   ["font", fontHandler],
+  ["gap", gapHandler],
   ["grid", gridHandler],
   ["grid-area", gridAreaHandler],
   ["grid-column", gridColumnHandler],

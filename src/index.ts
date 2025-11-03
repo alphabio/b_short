@@ -83,6 +83,8 @@ export type {
 // ============================================================================
 
 export { collapse, getCollapsibleShorthands } from "./core/collapse";
+export type { CollapseOptions, CollapseResult } from "./core/schema";
+export { DEFAULT_COLLAPSE_OPTIONS } from "./core/schema";
 export type { CollapseHandler, CollapseHandlerMetadata } from "./internal/collapse-handler";
 export type { CollapseRegistry } from "./internal/collapse-registry";
 export { collapseRegistry } from "./internal/collapse-registry";

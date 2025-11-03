@@ -6,7 +6,8 @@
  */
 import { collapseRegistry } from "../internal/collapse-registry";
 import { parseCssDeclaration, parseInputString, stripComments } from "../internal/parsers";
-import type { BStyleWarning, CollapseResult } from "./schema";
+import type { BStyleWarning, CollapseOptions, CollapseResult } from "./schema";
+import { DEFAULT_COLLAPSE_OPTIONS } from "./schema";
 
 /**
  * Parse CSS string input into a properties object
@@ -31,9 +32,10 @@ function parseCssToObject(css: string): Record<string, string> {
  * Format properties object back to CSS string
  * @internal
  */
-function formatCssString(properties: Record<string, string>): string {
+function formatCssString(properties: Record<string, string>, indent = 0): string {
+  const indentStr = "  ".repeat(indent);
   return Object.entries(properties)
-    .map(([prop, value]) => `  ${prop}: ${value};`)
+    .map(([prop, value]) => `${indentStr}${prop}: ${value};`)
     .join("\n");
 }
 
@@ -52,6 +54,7 @@ function formatCssString(properties: Record<string, string>): string {
  * 5. If not, keep the longhand properties and report issues
  *
  * @param input - CSS properties as object or CSS string
+ * @param options - Configuration options for collapse behavior
  * @returns Result object with collapsed properties/CSS, success status, and any issues
  *
  * @example
@@ -70,27 +73,31 @@ function formatCssString(properties: Record<string, string>): string {
  * //     issues: [{ property: 'overflow', name: 'incomplete-longhands', ... }]
  * //   }
  *
- * // CSS string input
+ * // CSS string input with indentation
  * collapse(`
  *   overflow-x: hidden;
  *   overflow-y: auto;
- *   margin-top: 10px;
- * `);
+ * `, { indent: 2 });
  * // → {
  * //     ok: true,
- * //     result: "overflow: hidden auto;\n  margin-top: 10px;",
+ * //     result: "    overflow: hidden auto;",
  * //     issues: []
  * //   }
  * ```
  */
-export function collapse(input: Record<string, string> | string): CollapseResult {
+export function collapse(
+  input: Record<string, string> | string,
+  options: Partial<CollapseOptions> = {}
+): CollapseResult {
+  const { indent = DEFAULT_COLLAPSE_OPTIONS.indent } = options;
+
   // Handle string input
   if (typeof input === "string") {
     const properties = parseCssToObject(input);
     const { properties: collapsed, issues } = collapseProperties(properties);
     return {
       ok: true,
-      result: formatCssString(collapsed),
+      result: formatCssString(collapsed, indent),
       issues,
     };
   }

@@ -9,6 +9,7 @@ import * as csstree from "css-tree";
 import { createPropertyHandler, type PropertyHandler } from "@/internal/property-handler";
 
 // CSS default values for grid properties
+// NOTE: row-gap and column-gap are NOT part of grid shorthand
 export const GRID_DEFAULTS = {
   "grid-template-rows": "none",
   "grid-template-columns": "none",
@@ -16,8 +17,6 @@ export const GRID_DEFAULTS = {
   "grid-auto-rows": "auto",
   "grid-auto-columns": "auto",
   "grid-auto-flow": "row",
-  "row-gap": "normal",
-  "column-gap": "normal",
 } as const;
 
 /**
@@ -252,8 +251,6 @@ function parseTemplateForm(
     "grid-auto-rows": GRID_DEFAULTS["grid-auto-rows"],
     "grid-auto-columns": GRID_DEFAULTS["grid-auto-columns"],
     "grid-auto-flow": GRID_DEFAULTS["grid-auto-flow"],
-    "row-gap": GRID_DEFAULTS["row-gap"],
-    "column-gap": GRID_DEFAULTS["column-gap"],
   };
 }
 
@@ -329,8 +326,6 @@ function parseExplicitRowsForm(
     "grid-auto-rows": GRID_DEFAULTS["grid-auto-rows"],
     "grid-auto-columns": autoColumns || GRID_DEFAULTS["grid-auto-columns"],
     "grid-auto-flow": autoFlow,
-    "row-gap": GRID_DEFAULTS["row-gap"],
-    "column-gap": GRID_DEFAULTS["column-gap"],
   };
 }
 
@@ -406,8 +401,6 @@ function parseExplicitColumnsForm(
     "grid-auto-rows": autoRows || GRID_DEFAULTS["grid-auto-rows"],
     "grid-auto-columns": GRID_DEFAULTS["grid-auto-columns"],
     "grid-auto-flow": autoFlow,
-    "row-gap": GRID_DEFAULTS["row-gap"],
-    "column-gap": GRID_DEFAULTS["column-gap"],
   };
 }
 
@@ -421,8 +414,6 @@ function parseGridValue(value: string): Record<string, string> | undefined {
       "grid-auto-rows": value,
       "grid-auto-columns": value,
       "grid-auto-flow": value,
-      "row-gap": value,
-      "column-gap": value,
     };
   }
 
@@ -461,8 +452,8 @@ export const gridHandler: PropertyHandler = createPropertyHandler({
       "grid-auto-rows",
       "grid-auto-columns",
       "grid-auto-flow",
-      "row-gap",
-      "column-gap",
+      // NOTE: row-gap and column-gap are NOT part of grid shorthand
+      // They have their own 'gap' shorthand
     ],
     defaults: GRID_DEFAULTS,
     category: "layout",
