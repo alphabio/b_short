@@ -58,3 +58,22 @@ export {
   GROUPING_BY_SIDE,
   PROPERTY_GROUPING_VALUES,
 } from "./core/schema";
+
+// ============================================================================
+// HANDLER REGISTRY - PropertyHandler infrastructure
+// ============================================================================
+
+export type { HandlerRegistry } from "./internal/handler-registry";
+export {
+  expandProperty,
+  isShorthandProperty,
+  registry,
+  validateProperty,
+} from "./internal/handler-registry";
+
+export type {
+  PropertyCategory,
+  PropertyHandler,
+  PropertyHandlerMetadata,
+  PropertyHandlerOptions,
+} from "./internal/property-handler";
