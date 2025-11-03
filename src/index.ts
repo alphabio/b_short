@@ -58,24 +58,3 @@ export {
   GROUPING_BY_SIDE,
   PROPERTY_GROUPING_VALUES,
 } from "./core/schema";
-
-// ============================================================================
-// PROPERTY HANDLERS - Advanced API for direct handler access
-// ============================================================================
-
-// Individual property handlers (refactored with PropertyHandler interface)
-export { columnsHandler } from "./columns";
-export { containIntrinsicSizeHandler } from "./contain-intrinsic-size";
-export { flexFlowHandler } from "./flex-flow";
-export type {
-  PropertyCategory,
-  PropertyHandler,
-  PropertyHandlerMetadata,
-  PropertyHandlerOptions,
-} from "./internal/property-handler";
-export { createPropertyHandler, PROPERTY_CATEGORIES } from "./internal/property-handler";
-export { listStyleHandler } from "./list-style";
-export { overflowHandler } from "./overflow";
-export { placeContentHandler } from "./place-content";
-export { placeItemsHandler } from "./place-items";
-export { placeSelfHandler } from "./place-self";
