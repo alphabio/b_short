@@ -1,6 +1,12 @@
 // b_path:: src/grid.ts
 
+// NOTE: This handler contains extremely complex grid template syntax parsing logic
+// (~446 lines) that is a candidate for future refactoring. The implementation handles
+// named grid lines, track sizes, repeat() notation, area names, and multiple syntaxes
+// (template form, explicit-rows, explicit-columns). The parsing logic is preserved as-is.
+
 import * as csstree from "css-tree";
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 
 // CSS default values for grid properties
 export const GRID_DEFAULTS = {
@@ -405,7 +411,7 @@ function parseExplicitColumnsForm(
   };
 }
 
-export default (value: string): Record<string, string> | undefined => {
+function parseGridValue(value: string): Record<string, string> | undefined {
   // Handle global CSS keywords
   if (/^(inherit|initial|unset|revert)$/i.test(value)) {
     return {
@@ -443,4 +449,30 @@ export default (value: string): Record<string, string> | undefined => {
     default:
       return undefined;
   }
+}
+
+export const gridHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "grid",
+    longhands: [
+      "grid-template-rows",
+      "grid-template-columns",
+      "grid-template-areas",
+      "grid-auto-rows",
+      "grid-auto-columns",
+      "grid-auto-flow",
+      "row-gap",
+      "column-gap",
+    ],
+    defaults: GRID_DEFAULTS,
+    category: "layout",
+  },
+
+  expand: (value: string) => parseGridValue(value),
+
+  validate: (value: string) => gridHandler.expand(value) !== undefined,
+});
+
+export default (value: string): Record<string, string> | undefined => {
+  return gridHandler.expand(value);
 };

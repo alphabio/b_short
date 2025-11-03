@@ -1,8 +1,14 @@
 // b_path:: src/border.ts
+
+// NOTE: This handler contains complex hierarchical logic with sub-handlers that is a
+// candidate for future refactoring. The border property expands to multiple directions
+// (top/right/bottom/left) and properties (width/style/color), plus a box-sizing edge case.
+
 import directional from "./internal/directional";
 import isColor from "./internal/is-color";
 import isLength from "./internal/is-length";
 import normalizeColor from "./internal/normalize-color";
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 import { sortProperties } from "./internal/property-sorter";
 
 const WIDTH = /^(thin|medium|thick)$/;
@@ -116,7 +122,7 @@ const all = (value: string): BorderResult | undefined => {
   return result;
 };
 
-const border: BorderFunction = (value: string): Record<string, string> | undefined => {
+function parseBorderValue(value: string): Record<string, string> | undefined {
   const longhand = all(value);
 
   if (!longhand) return;
@@ -137,15 +143,58 @@ const border: BorderFunction = (value: string): Record<string, string> | undefin
   const color = longhand.color || "currentcolor";
 
   // Expand all three border properties
-  const widthProps = border.width(width);
-  const styleProps = border.style(style);
-  const colorProps = border.color(color);
+  const widthProps = suffix("width")(width);
+  const styleProps = suffix("style")(style);
+  const colorProps = suffix("color")(color);
 
   if (widthProps) Object.assign(result, widthProps);
   if (styleProps) Object.assign(result, styleProps);
   if (colorProps) Object.assign(result, colorProps);
 
   return sortProperties(result);
+}
+
+export const borderHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "border",
+    longhands: [
+      "border-top-width",
+      "border-right-width",
+      "border-bottom-width",
+      "border-left-width",
+      "border-top-style",
+      "border-right-style",
+      "border-bottom-style",
+      "border-left-style",
+      "border-top-color",
+      "border-right-color",
+      "border-bottom-color",
+      "border-left-color",
+    ],
+    defaults: {
+      "border-top-width": "medium",
+      "border-right-width": "medium",
+      "border-bottom-width": "medium",
+      "border-left-width": "medium",
+      "border-top-style": "none",
+      "border-right-style": "none",
+      "border-bottom-style": "none",
+      "border-left-style": "none",
+      "border-top-color": "currentcolor",
+      "border-right-color": "currentcolor",
+      "border-bottom-color": "currentcolor",
+      "border-left-color": "currentcolor",
+    },
+    category: "box-model",
+  },
+
+  expand: (value: string) => parseBorderValue(value),
+
+  validate: (value: string) => borderHandler.expand(value) !== undefined,
+});
+
+const border: BorderFunction = (value: string): Record<string, string> | undefined => {
+  return borderHandler.expand(value);
 };
 
 border.width = suffix("width");

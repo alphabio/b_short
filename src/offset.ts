@@ -1,6 +1,14 @@
 // b_path:: src/offset.ts
+
+// NOTE: This handler contains complex path syntax and coordinate system parsing logic
+// (~273 lines) that is a candidate for future refactoring. The implementation handles
+// offset-position, offset-path (with path() and basic shapes), offset-distance,
+// offset-rotate, and offset-anchor with various coordinate systems. The parsing logic
+// is preserved as-is.
+
 import isAngle from "./internal/is-angle";
 import isLength from "./internal/is-length";
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 
 function splitTopLevelSlash(input: string): [string, string?] | null {
   let depth = 0;
@@ -202,7 +210,7 @@ function parseAnchor(anchor: string): string | null {
   return null;
 }
 
-export default (value: string): Record<string, string> | undefined => {
+function parseOffsetValue(value: string): Record<string, string> | undefined {
   // Handle global keywords
   if (/^(inherit|initial|unset|revert)$/i.test(value)) {
     return {
@@ -270,4 +278,33 @@ export default (value: string): Record<string, string> | undefined => {
   }
 
   return result;
+}
+
+export const offsetHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "offset",
+    longhands: [
+      "offset-position",
+      "offset-path",
+      "offset-distance",
+      "offset-rotate",
+      "offset-anchor",
+    ],
+    defaults: {
+      "offset-position": "normal",
+      "offset-path": "none",
+      "offset-distance": "0",
+      "offset-rotate": "auto",
+      "offset-anchor": "auto",
+    },
+    category: "visual",
+  },
+
+  expand: (value: string) => parseOffsetValue(value),
+
+  validate: (value: string) => offsetHandler.expand(value) !== undefined,
+});
+
+export default (value: string): Record<string, string> | undefined => {
+  return offsetHandler.expand(value);
 };
