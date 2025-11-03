@@ -4,16 +4,17 @@
 **Branch:** `develop`
 **Last Commits:**
 
-- `c4d48eb` - test: add gap fixtures for expand validation tests
-- `27e97b3` - feat: add font, grid, and gap collapse handlers
-- (NEW) - feat: add flex collapse handler with comprehensive tests
-**Status:** 20/26 handlers complete - Continue with remaining handlers
+- `287f644` - feat: add flex collapse handler with comprehensive tests
+- `f93efeb` - feat: add background collapse handler - first multi-layer property
+- `6af94e2` - feat: add transition collapse handler - second multi-layer property
+- `2333a58` - feat: add animation collapse handler - third multi-layer property
+**Status:** 23/26 handlers complete - Only 3 remaining! (88% complete)
 
 ---
 
 ## 🎯 Current Status
 
-### **Completed Handlers (20/26)**
+### **Completed Handlers (23/26)**
 
 #### Expand + Collapse
 
@@ -35,25 +36,56 @@
 16. ✅ grid-area
 17. ✅ **font** (complex - order-dependent)
 18. ✅ **grid** (complex - 4 forms, template areas support)
-19. ✅ **gap** (NEW - separate shorthand for row-gap/column-gap)
-20. ✅ **flex** (NEW - 3 longhands with keyword optimization)
+19. ✅ **gap** (separate shorthand for row-gap/column-gap)
+20. ✅ **flex** (3 longhands with keyword optimization)
+21. ✅ **background** (NEW - first multi-layer, 8 longhands + color)
+22. ✅ **transition** (NEW - multi-layer, 4 longhands)
+23. ✅ **animation** (NEW - multi-layer, 8 longhands)
 
-### **Remaining Handlers (6/26)**
+### **Remaining Handlers (3/26)**
 
-1. **animation** - Multi-layer (8 longhands per layer)
-2. **background** - Multi-layer (8 longhands + color)
-3. **border** - Hierarchical
-4. **mask** - Multi-layer (8 longhands per layer)
-5. **offset** - Path syntax (5 longhands)
-6. **transition** - Multi-layer (4 longhands per layer)
+1. **mask** - Multi-layer (8 longhands, similar to background)
+2. **border** - Hierarchical (3 longhands, simple)
+3. **offset** - Path syntax (5 longhands, unique)
 
 ---
 
 ## 📊 Test Status
 
-- **941 tests passing** ✅ (up from 910)
+- **955 tests passing** ✅ (up from 910 at session start)
 - **All builds passing** ✅
 - **All lints passing** ✅
+
+---
+
+## 🔥 This Session's Achievements
+
+### **Major Milestone: Multi-Layer Properties**
+
+Successfully implemented the **first-ever multi-layer collapse handlers**! Established a reusable modular pattern:
+
+1. **flex** - Simple 3-longhand property (warmup)
+2. **background** - Complex 8 longhands + color, position/size special handling
+3. **transition** - 4 longhands, cleaner multi-layer
+4. **animation** - 8 longhands with flexible ordering
+
+### **Pattern Established: KISS Modular Architecture**
+
+Each multi-layer handler split into 4 clean files:
+- `collapse-constants.ts` - Defaults and validation helpers
+- `collapse-parser.ts` - Parse comma-separated longhands into layers
+- `collapse-layer.ts` - Collapse single layer to shorthand
+- `collapse.ts` - Main handler coordination
+
+This pattern is now proven and ready to reuse for **mask**!
+
+### **Tests Added**
+
+- 10 flex collapse tests + 21 roundtrip tests
+- 6 background collapse tests
+- 4 transition collapse tests
+- 4 animation collapse tests
+- **Total: 45 new tests this session**
 
 ---
 
@@ -135,29 +167,55 @@
 
 ---
 
-## 🚀 Next Steps - Recommended Order
+## 🚀 Next Steps - Final Push!
 
-### **Tier 1: Simple (Continue Here)**
+### **Tier 1: Multi-Layer (Use Proven Pattern)**
 
-1. ~~**flex**~~ - ✅ COMPLETED
-   - Only 3 longhands, straightforward
-   - All tests passing
+1. **mask** - 8 longhands, nearly identical to background
+   - Copy background structure and adapt
+   - Longhands: mask-image, mask-position, mask-size, mask-repeat, mask-origin, mask-clip, mask-composite, mask-mode
+   - Should be fastest remaining handler
 
-2. **border** - Hierarchical but well-defined
+### **Tier 2: Simple**
+
+2. **border** - Only 3 longhands, straightforward
    - `border: <width> <style> <color>`
-   - All three values optional, order flexible
-   - Start here next!
+   - All values optional, flexible order
+   - Simplest of the remaining 3
 
-### **Tier 2: Multi-layer**
+### **Tier 3: Unique**
 
-3. **transition** - Simplest multi-layer (4 longhands)
-4. **animation** - More complex (8 longhands)
-5. **background** - Complex (8 longhands + color)
-6. **mask** - Similar to background (8 longhands)
+3. **offset** - Path syntax, special handling needed
+   - 5 longhands with path-specific syntax
+   - Most complex of the 3 remaining
 
-### **Tier 3: Advanced**
+---
 
-7. **offset** - Path syntax requires special handling
+## 📝 Key Learnings This Session
+
+### **1. Multi-Layer Pattern Works Perfectly**
+
+The modular 4-file pattern crushes complexity:
+- Each file has one clear responsibility
+- Easy to test and debug
+- Reusable across similar properties
+
+### **2. Background Was The Hardest**
+
+Once we conquered background's complexity:
+- Transition was straightforward
+- Animation was just "more of the same"
+- Pattern is rock-solid and proven
+
+### **3. Test Coverage Strategy**
+
+- Basic collapse tests in `collapse.test.ts`
+- Dedicated roundtrip test file for complex cases (flex)
+- Validates expand-collapse-expand cycle
+
+### **4. KISS Principle Wins**
+
+Breaking down complex problems into bite-sized pieces made everything manageable. Never tried to do too much in one file.
 
 ---
 
@@ -181,28 +239,52 @@
 
 ### Created
 
-- `src/handlers/flex/collapse.ts` - Flex collapse handler
-- `test/flex-collapse-roundtrip.test.ts` - Comprehensive roundtrip tests
+**Flex (Handler #20):**
+- `src/handlers/flex/collapse.ts`
+- `test/flex-collapse-roundtrip.test.ts`
+
+**Background (Handler #21 - First Multi-Layer):**
+- `src/handlers/background/collapse-constants.ts`
+- `src/handlers/background/collapse-parser.ts`
+- `src/handlers/background/collapse-layer.ts`
+- `src/handlers/background/collapse.ts`
+
+**Transition (Handler #22):**
+- `src/handlers/transition/collapse-constants.ts`
+- `src/handlers/transition/collapse-parser.ts`
+- `src/handlers/transition/collapse-layer.ts`
+- `src/handlers/transition/collapse.ts`
+
+**Animation (Handler #23):**
+- `src/handlers/animation/collapse-constants.ts`
+- `src/handlers/animation/collapse-parser.ts`
+- `src/handlers/animation/collapse-layer.ts`
+- `src/handlers/animation/collapse.ts`
 
 ### Modified
 
 - `src/handlers/flex/index.ts` - Added collapse export
-- `src/internal/collapse-registry.ts` - Added flex collapse handler
-- `test/collapse.test.ts` - Added 10 flex collapse tests
+- `src/handlers/background/index.ts` - Added collapse export
+- `src/handlers/transition/index.ts` - Added collapse export
+- `src/handlers/animation/index.ts` - Added collapse export
+- `src/internal/collapse-registry.ts` - Added 4 new collapse handlers
+- `test/collapse.test.ts` - Added 24 collapse tests
+- `docs.internal/SESSION-HANDOVER-03.md` - Updated progress
 
 ---
 
 ## 🎯 Success Criteria (Updated)
 
-- [x] At least 10 handlers with collapse support (✅ 20 handlers)
+- [x] At least 10 handlers with collapse support (✅ 23 handlers)
 - [x] Main collapse() API working
-- [x] All existing tests still passing (941 total, up from 910)
+- [x] All existing tests still passing (955 total, up from 910)
 - [x] Build successful
 - [x] Exported from main index.ts
 - [x] Issue reporting system
 - [x] CSS string input support
 - [x] Indent option support
-- [ ] All 26 handlers complete (20/26 done - 77% complete)
+- [x] Multi-layer property support (✅ background, transition, animation)
+- [ ] All 26 handlers complete (23/26 done - 88% complete)
 - [ ] Documentation complete
 - [ ] Performance benchmarks
 
@@ -213,29 +295,32 @@
 ```bash
 cd /Users/alphab/Dev/LLM/DEV/b_short
 
-# Continue with border - it's the next simplest handler
-# 3 longhands: border-width, border-style, border-color
-# Syntax: border: <width> <style> <color>
-# All values optional, order flexible
+# Only 3 handlers left! Start with mask - it's nearly identical to background
 
-# Create border collapse handler
-# Example collapse scenarios:
-# Input: { border-width: '1px', border-style: 'solid', border-color: 'black' }
-# Output: { border: '1px solid black' }
+# Mask uses the same pattern as background:
+# 8 longhands: mask-image, mask-position, mask-size, mask-repeat, 
+#              mask-origin, mask-clip, mask-composite, mask-mode
 
-# Input: { border-width: '2px', border-style: 'solid' }
-# Output: { border: '2px solid' } (or keep longhands if incomplete)
+# Quick implementation strategy:
+# 1. Copy background handler structure (4 files)
+# 2. Adapt for mask property names
+# 3. Update defaults (check src/handlers/mask/mask-layers.ts)
+# 4. Should be < 30 minutes with the proven pattern!
+
+# Check mask expand to understand the patterns
+cat src/handlers/mask/expand.ts
+cat src/handlers/mask/mask-layers.ts
 
 # Run tests frequently
 npm test
 
-# Check border expand to understand the patterns
-cat src/handlers/border/expand.ts
+# After mask, border and offset are small compared to what we've done!
 ```
 
 ---
 
 **Session Completed:** 2025-11-03
-**Next Agent:** Implement remaining 6 collapse handlers - Start with border
-**Current Progress:** 77% complete (20/26 handlers)
-**Tests:** 941 passing (31 tests added this session)
+**Next Agent:** Finish the final 3 handlers - Start with mask (easiest)
+**Current Progress:** 88% complete (23/26 handlers)
+**Tests:** 955 passing (45 tests added this session)
+**Achievement Unlocked:** 🔥 First multi-layer collapse handlers successfully implemented!
