@@ -1,6 +1,8 @@
 // b_path:: src/list-style.ts
+
 import { cssUrlRegex } from "./internal/color-utils";
 import normalizeColor from "./internal/normalize-color";
+import { createPropertyHandler, type PropertyHandler } from "./internal/property-handler";
 import { sortProperties } from "./internal/property-sorter";
 
 const KEYWORD = /^(inherit|initial|unset|revert)$/i;
@@ -11,68 +13,102 @@ const COMMON_TYPE =
 const IDENT = /^[-_a-zA-Z][-_a-zA-Z0-9]*$/;
 const STRING_VALUE = /^["'].*["']$/;
 
-export default function listStyle(value: string): Record<string, string> | undefined {
-  const normalizedValue = normalizeColor(value);
-
-  // Special case: "none" alone sets both type and image to none, position to default
-  if (normalizedValue === "none") {
-    return sortProperties({
-      "list-style-type": "none",
+/**
+ * Property handler for the 'list-style' CSS shorthand property
+ *
+ * Expands list-style into list-style-type, list-style-position, and list-style-image.
+ *
+ * @example
+ * ```typescript
+ * listStyleHandler.expand('none'); // { 'list-style-type': 'none', 'list-style-position': 'outside', 'list-style-image': 'none' }
+ * listStyleHandler.expand('disc inside'); // { 'list-style-type': 'disc', 'list-style-position': 'inside', 'list-style-image': 'none' }
+ * listStyleHandler.expand('url(bullet.png)'); // { 'list-style-type': 'disc', 'list-style-position': 'outside', 'list-style-image': 'url(bullet.png)' }
+ * ```
+ */
+export const listStyleHandler: PropertyHandler = createPropertyHandler({
+  meta: {
+    shorthand: "list-style",
+    longhands: ["list-style-type", "list-style-position", "list-style-image"],
+    defaults: {
+      "list-style-type": "disc",
       "list-style-position": "outside",
       "list-style-image": "none",
-    });
-  }
+    },
+    category: "typography",
+  },
 
-  const values = normalizedValue.split(/\s+/);
+  expand: (value: string): Record<string, string> | undefined => {
+    const normalizedValue = normalizeColor(value);
 
-  if (values.length === 1 && KEYWORD.test(values[0])) {
-    return sortProperties({
-      "list-style-type": values[0],
-      "list-style-position": values[0],
-      "list-style-image": values[0],
-    });
-  }
+    // Special case: "none" alone sets both type and image to none, position to default
+    if (normalizedValue === "none") {
+      return sortProperties({
+        "list-style-type": "none",
+        "list-style-position": "outside",
+        "list-style-image": "none",
+      });
+    }
 
-  // Start with defaults - list-style shorthand resets all properties
-  const result: Record<string, string> = {
-    "list-style-type": "disc",
-    "list-style-position": "outside",
-    "list-style-image": "none",
-  };
+    const values = normalizedValue.split(/\s+/);
 
-  // Track what was explicitly set to detect duplicates
-  const explicitlySet = {
-    type: false,
-    position: false,
-    image: false,
-  };
+    if (values.length === 1 && KEYWORD.test(values[0])) {
+      return sortProperties({
+        "list-style-type": values[0],
+        "list-style-position": values[0],
+        "list-style-image": values[0],
+      });
+    }
 
-  for (let i = 0; i < values.length; i++) {
-    const v = values[i];
+    // Start with defaults - list-style shorthand resets all properties
+    const result: Record<string, string> = {
+      "list-style-type": "disc",
+      "list-style-position": "outside",
+      "list-style-image": "none",
+    };
 
-    if (POSITION.test(v)) {
-      if (explicitlySet.position) return;
-      result["list-style-position"] = v;
-      explicitlySet.position = true;
-    } else if (IMAGE.test(v)) {
-      if (explicitlySet.image) return;
-      result["list-style-image"] = v;
-      explicitlySet.image = true;
-    } else if (COMMON_TYPE.test(v)) {
-      if (explicitlySet.type) return;
-      result["list-style-type"] = v;
-      explicitlySet.type = true;
-    } else {
-      // Custom counter-style identifier or string value
-      if (IDENT.test(v) || STRING_VALUE.test(v)) {
+    // Track what was explicitly set to detect duplicates
+    const explicitlySet = {
+      type: false,
+      position: false,
+      image: false,
+    };
+
+    for (let i = 0; i < values.length; i++) {
+      const v = values[i];
+
+      if (POSITION.test(v)) {
+        if (explicitlySet.position) return;
+        result["list-style-position"] = v;
+        explicitlySet.position = true;
+      } else if (IMAGE.test(v)) {
+        if (explicitlySet.image) return;
+        result["list-style-image"] = v;
+        explicitlySet.image = true;
+      } else if (COMMON_TYPE.test(v)) {
         if (explicitlySet.type) return;
         result["list-style-type"] = v;
         explicitlySet.type = true;
       } else {
-        return;
+        // Custom counter-style identifier or string value
+        if (IDENT.test(v) || STRING_VALUE.test(v)) {
+          if (explicitlySet.type) return;
+          result["list-style-type"] = v;
+          explicitlySet.type = true;
+        } else {
+          return;
+        }
       }
     }
-  }
 
-  return sortProperties(result);
+    return sortProperties(result);
+  },
+
+  validate: (value: string): boolean => {
+    return listStyleHandler.expand(value) !== undefined;
+  },
+});
+
+// Export default for backward compatibility with existing code
+export default function listStyle(value: string): Record<string, string> | undefined {
+  return listStyleHandler.expand(value);
 }
