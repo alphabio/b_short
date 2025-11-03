@@ -6,6 +6,7 @@
  * @module collapse-registry
  */
 
+import { backgroundCollapser } from "../handlers/background/collapse";
 import { borderRadiusCollapser } from "../handlers/border-radius/collapse";
 import { columnRuleCollapser } from "../handlers/column-rule/collapse";
 import { columnsCollapser } from "../handlers/columns/collapse";
@@ -51,6 +52,7 @@ export interface CollapseRegistry {
  * @internal
  */
 const collapseHandlerMap = new Map<string, CollapseHandler>([
+  ["background", backgroundCollapser],
   ["border-radius", borderRadiusCollapser],
   ["column-rule", columnRuleCollapser],
   ["columns", columnsCollapser],
