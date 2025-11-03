@@ -305,6 +305,134 @@ describe("Collapse API", () => {
       expect(result.result).toEqual({ animation: "bounce 1s" });
     });
 
+    test("collapses mask with single image", () => {
+      const result = collapse({
+        "mask-image": "url(mask.svg)",
+      });
+      expect(result.result).toEqual({ mask: "url(mask.svg)" });
+    });
+
+    test("collapses mask with all defaults", () => {
+      const result = collapse({
+        "mask-image": "url(mask.svg)",
+        "mask-mode": "match-source",
+        "mask-position": "0% 0%",
+        "mask-size": "auto",
+        "mask-repeat": "repeat",
+        "mask-origin": "border-box",
+        "mask-clip": "border-box",
+        "mask-composite": "add",
+      });
+      expect(result.result).toEqual({ mask: "url(mask.svg)" });
+    });
+
+    test("collapses mask with position and size", () => {
+      const result = collapse({
+        "mask-image": "url(mask.svg)",
+        "mask-position": "center",
+        "mask-size": "contain",
+      });
+      expect(result.result).toEqual({ mask: "url(mask.svg) center / contain" });
+    });
+
+    test("collapses mask multi-layer", () => {
+      const result = collapse({
+        "mask-image": "url(a.svg), url(b.svg)",
+        "mask-repeat": "no-repeat, repeat",
+        "mask-mode": "alpha, luminance",
+      });
+      expect(result.result).toEqual({ mask: "url(a.svg) no-repeat alpha, url(b.svg) luminance" });
+    });
+
+    test("collapses border with all sides same", () => {
+      const result = collapse({
+        "border-top-width": "2px",
+        "border-right-width": "2px",
+        "border-bottom-width": "2px",
+        "border-left-width": "2px",
+        "border-top-style": "solid",
+        "border-right-style": "solid",
+        "border-bottom-style": "solid",
+        "border-left-style": "solid",
+        "border-top-color": "red",
+        "border-right-color": "red",
+        "border-bottom-color": "red",
+        "border-left-color": "red",
+      });
+      expect(result.result).toEqual({ border: "2px solid red" });
+    });
+
+    test("collapses border omitting defaults", () => {
+      const result = collapse({
+        "border-top-width": "medium",
+        "border-right-width": "medium",
+        "border-bottom-width": "medium",
+        "border-left-width": "medium",
+        "border-top-style": "solid",
+        "border-right-style": "solid",
+        "border-bottom-style": "solid",
+        "border-left-style": "solid",
+        "border-top-color": "currentcolor",
+        "border-right-color": "currentcolor",
+        "border-bottom-color": "currentcolor",
+        "border-left-color": "currentcolor",
+      });
+      expect(result.result).toEqual({ border: "solid" });
+    });
+
+    test("does not collapse border with different sides", () => {
+      const result = collapse({
+        "border-top-width": "2px",
+        "border-right-width": "3px",
+        "border-bottom-width": "2px",
+        "border-left-width": "2px",
+        "border-top-style": "solid",
+        "border-right-style": "solid",
+        "border-bottom-style": "solid",
+        "border-left-style": "solid",
+      });
+      expect(result.result).toEqual({
+        "border-top-width": "2px",
+        "border-right-width": "3px",
+        "border-bottom-width": "2px",
+        "border-left-width": "2px",
+        "border-top-style": "solid",
+        "border-right-style": "solid",
+        "border-bottom-style": "solid",
+        "border-left-style": "solid",
+      });
+    });
+
+    test("collapses offset with path", () => {
+      const result = collapse({
+        "offset-path": 'path("M 100 100 L 200 200")',
+        "offset-distance": "50%",
+      });
+      expect(result.result).toEqual({ offset: 'path("M 100 100 L 200 200") 50%' });
+    });
+
+    test("collapses offset with all properties", () => {
+      const result = collapse({
+        "offset-position": "top left",
+        "offset-path": "ray(45deg)",
+        "offset-distance": "100px",
+        "offset-rotate": "reverse",
+        "offset-anchor": "center",
+      });
+      expect(result.result).toEqual({ offset: "top left ray(45deg) 100px reverse / center" });
+    });
+
+    test("collapses offset omitting defaults", () => {
+      const result = collapse({
+        "offset-position": "normal",
+        "offset-path": 'path("M 0 0 L 100 100")',
+        "offset-distance": "0",
+        "offset-rotate": "auto",
+        "offset-anchor": "auto",
+      });
+      expect(result.result).toEqual({ offset: 'path("M 0 0 L 100 100")' });
+    });
+
     test("collapses place-content with different values", () => {
       const result = collapse({
         "align-content": "start",

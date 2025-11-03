@@ -8,6 +8,7 @@
 
 import { animationCollapser } from "../handlers/animation/collapse";
 import { backgroundCollapser } from "../handlers/background/collapse";
+import { borderCollapser } from "../handlers/border/collapse";
 import { borderRadiusCollapser } from "../handlers/border-radius/collapse";
 import { columnRuleCollapser } from "../handlers/column-rule/collapse";
 import { columnsCollapser } from "../handlers/columns/collapse";
@@ -21,6 +22,8 @@ import { gridAreaCollapser } from "../handlers/grid-area/collapse";
 import { gridColumnCollapser } from "../handlers/grid-column/collapse";
 import { gridRowCollapser } from "../handlers/grid-row/collapse";
 import { listStyleCollapser } from "../handlers/list-style/collapse";
+import { maskCollapser } from "../handlers/mask/collapse";
+import { offsetCollapser } from "../handlers/offset/collapse";
 import { outlineCollapser } from "../handlers/outline/collapse";
 import { overflowCollapser } from "../handlers/overflow/collapse";
 import { placeContentCollapser } from "../handlers/place-content/collapse";
@@ -56,6 +59,7 @@ export interface CollapseRegistry {
 const collapseHandlerMap = new Map<string, CollapseHandler>([
   ["animation", animationCollapser],
   ["background", backgroundCollapser],
+  ["border", borderCollapser],
   ["border-radius", borderRadiusCollapser],
   ["column-rule", columnRuleCollapser],
   ["columns", columnsCollapser],
@@ -69,6 +73,8 @@ const collapseHandlerMap = new Map<string, CollapseHandler>([
   ["grid-column", gridColumnCollapser],
   ["grid-row", gridRowCollapser],
   ["list-style", listStyleCollapser],
+  ["mask", maskCollapser],
+  ["offset", offsetCollapser],
   ["outline", outlineCollapser],
   ["overflow", overflowCollapser],
   ["place-content", placeContentCollapser],

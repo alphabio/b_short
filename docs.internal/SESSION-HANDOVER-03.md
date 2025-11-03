@@ -72,6 +72,7 @@ Successfully implemented the **first-ever multi-layer collapse handlers**! Estab
 ### **Pattern Established: KISS Modular Architecture**
 
 Each multi-layer handler split into 4 clean files:
+
 - `collapse-constants.ts` - Defaults and validation helpers
 - `collapse-parser.ts` - Parse comma-separated longhands into layers
 - `collapse-layer.ts` - Collapse single layer to shorthand
@@ -167,7 +168,7 @@ This pattern is now proven and ready to reuse for **mask**!
 
 ---
 
-## 🚀 Next Steps - Final Push!
+## 🚀 Next Steps - Final Push
 
 ### **Tier 1: Multi-Layer (Use Proven Pattern)**
 
@@ -196,6 +197,7 @@ This pattern is now proven and ready to reuse for **mask**!
 ### **1. Multi-Layer Pattern Works Perfectly**
 
 The modular 4-file pattern crushes complexity:
+
 - Each file has one clear responsibility
 - Easy to test and debug
 - Reusable across similar properties
@@ -203,6 +205,7 @@ The modular 4-file pattern crushes complexity:
 ### **2. Background Was The Hardest**
 
 Once we conquered background's complexity:
+
 - Transition was straightforward
 - Animation was just "more of the same"
 - Pattern is rock-solid and proven
@@ -240,22 +243,26 @@ Breaking down complex problems into bite-sized pieces made everything manageable
 ### Created
 
 **Flex (Handler #20):**
+
 - `src/handlers/flex/collapse.ts`
 - `test/flex-collapse-roundtrip.test.ts`
 
 **Background (Handler #21 - First Multi-Layer):**
+
 - `src/handlers/background/collapse-constants.ts`
 - `src/handlers/background/collapse-parser.ts`
 - `src/handlers/background/collapse-layer.ts`
 - `src/handlers/background/collapse.ts`
 
 **Transition (Handler #22):**
+
 - `src/handlers/transition/collapse-constants.ts`
 - `src/handlers/transition/collapse-parser.ts`
 - `src/handlers/transition/collapse-layer.ts`
 - `src/handlers/transition/collapse.ts`
 
 **Animation (Handler #23):**
+
 - `src/handlers/animation/collapse-constants.ts`
 - `src/handlers/animation/collapse-parser.ts`
 - `src/handlers/animation/collapse-layer.ts`
@@ -298,7 +305,7 @@ cd /Users/alphab/Dev/LLM/DEV/b_short
 # Only 3 handlers left! Start with mask - it's nearly identical to background
 
 # Mask uses the same pattern as background:
-# 8 longhands: mask-image, mask-position, mask-size, mask-repeat, 
+# 8 longhands: mask-image, mask-position, mask-size, mask-repeat,
 #              mask-origin, mask-clip, mask-composite, mask-mode
 
 # Quick implementation strategy:
