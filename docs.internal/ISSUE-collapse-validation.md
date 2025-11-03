@@ -39,6 +39,7 @@ const result = collapse({
 ## Root Cause
 
 Collapse handlers (e.g., `overflowCollapser`) only check:
+
 1. If required longhands are present
 2. Basic structural logic (e.g., same vs different values)
 
@@ -67,18 +68,20 @@ const result = expand("overflow: xyz auto;");
 }
 ```
 
-### Expand Flow (CORRECT):
+### Expand Flow (CORRECT)
+
 1. Calls `overflowHandler.expand("xyz auto")`
 2. Handler validates values using regex
 3. Returns `undefined` if invalid
 4. Keeps original shorthand, adds "expansion-failed" issue
 
-### Collapse Flow (INCORRECT):
+### Collapse Flow (INCORRECT)
+
 1. Checks if `overflow-x` and `overflow-y` exist
 2. Directly concatenates values: `"${x} ${y}"`
 3. No validation that values are valid CSS
 
-## Important Discovery: validate() Already Detects Invalid Values!
+## Important Discovery: validate() Already Detects Invalid Values
 
 The `validate()` function **already validates CSS values**:
 
@@ -117,17 +120,17 @@ Each collapse handler should validate values before collapsing:
 // overflow/collapse.ts
 export const overflowCollapser: CollapseHandler = createCollapseHandler({
   // ...
-  
+
   collapse(properties: Record<string, string>): string | undefined {
     const x = properties["overflow-x"];
     const y = properties["overflow-y"];
 
     if (!x || !y) return undefined;
-    
+
     // NEW: Validate values using the expand handler
     const validX = overflowHandler.validate(`overflow: ${x};`);
     const validY = overflowHandler.validate(`overflow: ${y};`);
-    
+
     if (!validX || !validY) {
       return undefined;  // Don't collapse if invalid
     }
@@ -149,11 +152,11 @@ collapse(properties: Record<string, string>): string | undefined {
   const y = properties["overflow-y"];
 
   if (!x || !y) return undefined;
-  
+
   // Validate using the existing validate() API
   const validationX = validate(`overflow-x: ${x};`);
   const validationY = validate(`overflow-y: ${y};`);
-  
+
   if (validationX.warnings.length > 0 || validationY.warnings.length > 0) {
     return undefined;  // Don't collapse if validation fails
   }
@@ -164,12 +167,14 @@ collapse(properties: Record<string, string>): string | undefined {
 ```
 
 **Advantages:**
+
 - Reuses existing, robust validation
 - Consistent with expand behavior
 - No duplication of validation logic
 - Already supports all CSS properties
 
 **Disadvantages:**
+
 - Requires string construction for validation
 - May have performance impact (needs benchmarking)
 
@@ -196,7 +201,7 @@ expand: (value: string) => {
 collapse: (properties: Record<string, string>) => {
   const x = properties["overflow-x"];
   const y = properties["overflow-y"];
-  
+
   if (!x || !y || !isValidOverflowValue(x) || !isValidOverflowValue(y)) {
     return undefined;
   }
@@ -209,6 +214,7 @@ collapse: (properties: Record<string, string>) => {
 **Affected Handlers:** All 26 collapse handlers
 
 This affects every collapse handler because none of them currently validate values:
+
 - Simple handlers: overflow, flex-flow, place-content, etc.
 - Complex handlers: font, grid, background, transition, animation
 - Newly added: mask, border, offset
@@ -218,18 +224,21 @@ This affects every collapse handler because none of them currently validate valu
 **Implement Option 2** (Use validate() API) - **UPDATED**:
 
 The `validate()` function already provides comprehensive CSS value validation:
+
 - Uses css-tree lexer (same as expand)
 - Validates against CSS specifications
 - Reports SyntaxMatchError for invalid values
 - Already available and tested
 
 Implementation strategy:
+
 1. Update collapse handlers to validate values before collapsing
 2. Use `validate()` API for each longhand value
 3. Return `undefined` if any validation warnings
 4. Optionally report validation issues in collapse result
 
 **Alternative: Option 3** for performance-critical paths:
+
 - Extract validation regexes to shared constants
 - Use lightweight validation where performance matters
 - Fall back to validate() for complex properties
@@ -244,7 +253,7 @@ test("does not collapse overflow with invalid values", () => {
     "overflow-x": "xyz",
     "overflow-y": "auto",
   });
-  
+
   expect(result.result).toEqual({
     "overflow-x": "xyz",
     "overflow-y": "auto",

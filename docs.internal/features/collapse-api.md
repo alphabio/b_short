@@ -1,10 +1,10 @@
 # Collapse API Proposal: Long → Short
 
-**Document Type:** Feature Proposal  
-**Status:** Design Phase  
-**Priority:** High  
-**Complexity:** High  
-**Date:** 2025-10-28  
+**Document Type:** Feature Proposal
+**Status:** Design Phase
+**Priority:** High
+**Complexity:** High
+**Date:** 2025-10-28
 **Author:** Architecture Team
 
 ---
@@ -14,6 +14,7 @@
 Proposal to add a **`collapse()` API** - the inverse of `expand()` - that intelligently converts CSS longhand properties back into their shorthand equivalents. This feature completes the bidirectional transformation story and enables powerful use cases like CSS optimization, migration tools, and style refactoring.
 
 **Key Benefits:**
+
 - 🔄 Bidirectional transformation (expand ↔ collapse)
 - 📦 CSS optimization (reduce bundle size)
 - 🎨 Developer productivity (auto-format styles)
@@ -56,21 +57,25 @@ collapse('margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left
 ### Why This Matters
 
 **1. CSS Optimization**
+
 - Reduce bundle sizes by collapsing verbose longhand into concise shorthands
 - Improve parsing performance in browsers
 - Reduce bytes over the wire
 
 **2. Developer Productivity**
+
 - Auto-format generated CSS (from CSS-in-JS)
 - Refactor verbose styles into readable shorthands
 - Migrate legacy codebases
 
 **3. Tooling Ecosystem**
+
 - Build linters that suggest shorthand usage
 - Create CSS optimizers and minifiers
 - Enable style migration tools
 
 **4. Bidirectional Workflows**
+
 - `expand()` for normalization/analysis
 - `collapse()` for optimization/output
 - Complete transformation cycle
@@ -165,15 +170,15 @@ function formatStyles(computedStyles) {
 ```typescript
 /**
  * Collapse CSS longhand properties into their shorthand equivalents
- * 
+ *
  * @param input - CSS string or object with longhand properties
  * @param options - Configuration for collapse behavior
  * @returns Collapse result with success status and collapsed properties
- * 
+ *
  * @example
  * collapse('margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;')
  * // → { ok: true, result: 'margin: 10px;', collapsed: ['margin-top', ...], remaining: [] }
- * 
+ *
  * @example
  * collapse({ borderTopWidth: '1px', borderTopStyle: 'solid' }, { strategy: 'safe' })
  * // → { ok: false, reason: 'incomplete-set', ... } (missing border-top-color)
@@ -190,49 +195,49 @@ function collapse(
 interface CollapseOptions {
   /**
    * Strategy for collapsing properties
-   * 
+   *
    * - 'safe': Only collapse when all required longhands present (default)
    * - 'aggressive': Use CSS defaults for missing longhands
    * - 'minimal': Prefer shortest valid representation
-   * 
+   *
    * @default 'safe'
    */
   strategy: 'safe' | 'aggressive' | 'minimal';
-  
+
   /**
    * Which shorthands to consider
-   * 
+   *
    * - 'all': Try all available shorthands (default)
    * - string[]: Only specific shorthands (e.g., ['margin', 'padding'])
-   * 
+   *
    * @default 'all'
    */
   shorthands: 'all' | string[];
-  
+
   /**
    * Output format
-   * 
+   *
    * - 'css': Returns CSS string with kebab-case
    * - 'js': Returns object with camelCase
-   * 
+   *
    * @default 'css'
    */
   format: 'css' | 'js';
-  
+
   /**
    * Sort strategy for remaining properties
-   * 
+   *
    * - 'original': Keep original order
    * - 'alphabetical': Sort alphabetically
    * - 'grouped': Group by property type
-   * 
+   *
    * @default 'original'
    */
   sort: 'original' | 'alphabetical' | 'grouped';
-  
+
   /**
    * Whether to include properties that couldn't be collapsed
-   * 
+   *
    * @default true
    */
   includeRemaining: boolean;
@@ -247,22 +252,22 @@ interface CollapseResult {
    * Whether collapse was successful
    */
   ok: boolean;
-  
+
   /**
    * Collapsed CSS (string or object based on format)
    */
   result?: string | Record<string, string>;
-  
+
   /**
    * List of properties that were collapsed into shorthands
    */
   collapsed: string[];
-  
+
   /**
    * List of properties that couldn't be collapsed
    */
   remaining: string[];
-  
+
   /**
    * Statistics about the collapse operation
    */
@@ -272,12 +277,12 @@ interface CollapseResult {
     savingsPercent: number;   // Percentage reduction
     bytesSaved?: number;      // Approximate bytes saved (CSS format only)
   };
-  
+
   /**
    * Warnings or issues encountered
    */
   issues: BStyleWarning[];
-  
+
   /**
    * Reason for failure (if ok === false)
    */
@@ -384,12 +389,12 @@ interface PropertyHandler {
    * Expand shorthand to longhands (existing)
    */
   expand(value: string): Record<string, string> | undefined;
-  
+
   /**
    * Collapse longhands to shorthand (new)
    */
   collapse(properties: Record<string, string>): CollapseCandidate | null;
-  
+
   /**
    * Metadata for introspection
    */
@@ -436,14 +441,14 @@ class PropertyGraph {
     // Check completeness
     // Return collapsible groups
   }
-  
+
   /**
    * Get metadata for a property
    */
   getNode(property: string): PropertyNode | undefined {
     // Lookup in registry
   }
-  
+
   /**
    * Check if a set of properties can collapse
    */
@@ -474,25 +479,25 @@ export function detectGroups(
   strategy: CollapseStrategy
 ): PropertyGroup[] {
   const groups = new Map<string, PropertyGroup>();
-  
+
   // Phase 1: Group properties by shorthand
   for (const [prop, value] of Object.entries(properties)) {
     const handler = getHandlerForProperty(prop);
     if (!handler) continue;
-    
+
     if (!groups.has(handler.meta.shorthand)) {
       groups.set(handler.meta.shorthand, createGroup(handler));
     }
-    
+
     const group = groups.get(handler.meta.shorthand)!;
     group.longhands.set(prop, value);
   }
-  
+
   // Phase 2: Analyze each group
   for (const group of groups.values()) {
     analyzeGroup(group, strategy);
   }
-  
+
   return Array.from(groups.values()).filter(g => g.collapsible);
 }
 ```
@@ -509,22 +514,22 @@ export function collapseMargin(
 ): CollapseCandidate | null {
   const sides = ['top', 'right', 'bottom', 'left'];
   const values = sides.map(side => properties[`margin-${side}`]);
-  
+
   // Check completeness
   if (strategy === 'safe' && values.some(v => v === undefined)) {
     return null; // Incomplete set
   }
-  
+
   // Fill defaults for aggressive mode
   if (strategy === 'aggressive') {
     for (let i = 0; i < values.length; i++) {
       values[i] = values[i] ?? '0';
     }
   }
-  
+
   // Check for collapsible patterns
   const [top, right, bottom, left] = values;
-  
+
   // All four sides identical
   if (top === right && right === bottom && bottom === left) {
     return {
@@ -535,7 +540,7 @@ export function collapseMargin(
       confidence: 1.0,
     };
   }
-  
+
   // Top/bottom same, left/right same
   if (top === bottom && right === left) {
     return {
@@ -546,7 +551,7 @@ export function collapseMargin(
       confidence: 1.0,
     };
   }
-  
+
   // Top unique, left/right same
   if (right === left) {
     return {
@@ -557,7 +562,7 @@ export function collapseMargin(
       confidence: 0.9,
     };
   }
-  
+
   // All different
   return {
     shorthand: 'margin',
@@ -579,7 +584,7 @@ export function collapseBorder(
 ): CollapseCandidate | null {
   const sides = ['top', 'right', 'bottom', 'left'];
   const subProps = ['width', 'style', 'color'];
-  
+
   // Extract all border properties
   const borderProps: Record<string, Record<string, string>> = {};
   for (const side of sides) {
@@ -589,14 +594,14 @@ export function collapseBorder(
       borderProps[side][subProp] = properties[key];
     }
   }
-  
+
   // Check if all sides have same width/style/color
-  const allSidesEqual = sides.every(side => 
-    subProps.every(prop => 
+  const allSidesEqual = sides.every(side =>
+    subProps.every(prop =>
       borderProps[side][prop] === borderProps[sides[0]][prop]
     )
   );
-  
+
   if (allSidesEqual) {
     // Can collapse to: border: 1px solid red;
     const { width, style, color } = borderProps.top;
@@ -608,7 +613,7 @@ export function collapseBorder(
       confidence: 1.0,
     };
   }
-  
+
   // Check if can collapse per-side
   const candidates: CollapseCandidate[] = [];
   for (const side of sides) {
@@ -623,7 +628,7 @@ export function collapseBorder(
       });
     }
   }
-  
+
   // Return best candidate(s)
   return candidates.length > 0 ? candidates[0] : null;
 }
@@ -646,21 +651,21 @@ export function optimize(
     .map(g => g.handler.collapse(g.longhands, strategy))
     .filter(c => c !== null)
     .sort((a, b) => b.savings - a.savings);
-  
+
   // Apply collapses in order
   const applied: CollapseCandidate[] = [];
   const used = new Set<string>();
-  
+
   for (const candidate of sorted) {
     // Check if any property already used
     const conflict = candidate.longhands.some(p => used.has(p));
     if (conflict) continue;
-    
+
     // Apply this collapse
     applied.push(candidate);
     candidate.longhands.forEach(p => used.add(p));
   }
-  
+
   return applied;
 }
 ```
@@ -689,16 +694,16 @@ export function optimizeDP(
 // src/collapse/strategies/safe-strategy.ts
 export const safeStrategy: CollapseStrategy = {
   name: 'safe',
-  
+
   canCollapse(group: PropertyGroup): boolean {
     // Must have ALL required longhands
     return group.complete && group.longhands.size === group.handler.meta.longhands.length;
   },
-  
+
   shouldUseDefaults(): boolean {
     return false; // Never use defaults
   },
-  
+
   minConfidence(): number {
     return 0.95; // Very high confidence required
   },
@@ -711,16 +716,16 @@ export const safeStrategy: CollapseStrategy = {
 // src/collapse/strategies/aggressive-strategy.ts
 export const aggressiveStrategy: CollapseStrategy = {
   name: 'aggressive',
-  
+
   canCollapse(group: PropertyGroup): boolean {
     // Can collapse even if some longhands missing
     return group.longhands.size >= Math.ceil(group.handler.meta.longhands.length / 2);
   },
-  
+
   shouldUseDefaults(): boolean {
     return true; // Use CSS defaults for missing values
   },
-  
+
   minConfidence(): number {
     return 0.7; // Lower confidence acceptable
   },
@@ -733,19 +738,19 @@ export const aggressiveStrategy: CollapseStrategy = {
 // src/collapse/strategies/minimal-strategy.ts
 export const minimalStrategy: CollapseStrategy = {
   name: 'minimal',
-  
+
   canCollapse(group: PropertyGroup): boolean {
     return group.complete;
   },
-  
+
   shouldUseDefaults(): boolean {
     return true;
   },
-  
+
   minConfidence(): number {
     return 0.8;
   },
-  
+
   // Prefer shortest representation
   preferShorter(a: CollapseCandidate, b: CollapseCandidate): number {
     return a.value.length - b.value.length;
@@ -959,13 +964,13 @@ export function valuesEquivalent(a: string, b: string): boolean {
 function normalizeValue(value: string): string {
   // Normalize zero values
   if (/^0(px|em|rem|%)?$/.test(value)) return '0';
-  
+
   // Normalize colors
   if (isColor(value)) return normalizeColor(value);
-  
+
   // Normalize calc()
   if (value.startsWith('calc(')) return evaluateCalc(value);
-  
+
   return value;
 }
 ```
@@ -990,11 +995,11 @@ export function detectConflicts(
 ): ConflictReport {
   // JavaScript objects can't have duplicate keys
   // But CSS strings can have duplicate properties
-  
+
   if (typeof input === 'string') {
     const parsed = parseCSS(input);
     const conflicts = findDuplicates(parsed);
-    
+
     if (conflicts.length > 0) {
       return {
         hasConflicts: true,
@@ -1003,7 +1008,7 @@ export function detectConflicts(
       };
     }
   }
-  
+
   return { hasConflicts: false };
 }
 ```
@@ -1061,19 +1066,19 @@ interface CollapseCandidate {
 
 function scoreCandidate(candidate: CollapseCandidate): number {
   let score = 0;
-  
+
   // Favor more properties collapsed
   score += candidate.longhands.length * 10;
-  
+
   // Favor fewer output properties
   score += (100 - candidate.value.split(';').length) * 5;
-  
+
   // Favor shorter output
   score += (1000 - candidate.value.length);
-  
+
   // Favor higher confidence
   score += candidate.confidence * 100;
-  
+
   return score;
 }
 ```
@@ -1094,13 +1099,13 @@ describe('collapse()', () => {
         marginBottom: '10px',
         marginLeft: '10px',
       };
-      
+
       const result = collapse(input);
       expect(result.ok).toBe(true);
       expect(result.result).toBe('margin: 10px;');
       expect(result.collapsed).toHaveLength(4);
     });
-    
+
     it('should collapse 2-value margins', () => {
       const input = {
         marginTop: '10px',
@@ -1108,17 +1113,17 @@ describe('collapse()', () => {
         marginBottom: '10px',
         marginLeft: '20px',
       };
-      
+
       const result = collapse(input);
       expect(result.result).toBe('margin: 10px 20px;');
     });
-    
+
     it('should not collapse incomplete sets in safe mode', () => {
       const input = {
         marginTop: '10px',
         marginRight: '20px',
       };
-      
+
       const result = collapse(input, { strategy: 'safe' });
       expect(result.collapsed).toHaveLength(0);
       expect(result.remaining).toHaveLength(2);
@@ -1138,30 +1143,30 @@ describe('collapse() properties', () => {
       fc.property(validCssShorthand, (input) => {
         const expanded = expand(input);
         const collapsed = collapse(expanded.result);
-        
+
         // Semantic equivalence (not string equality)
         expect(semanticallyEquivalent(input, collapsed.result)).toBe(true);
       })
     );
   });
-  
+
   it('should never increase property count', () => {
     fc.assert(
       fc.property(cssProperties, (input) => {
         const result = collapse(input);
         const outputCount = countProperties(result.result);
         const inputCount = countProperties(input);
-        
+
         expect(outputCount).toBeLessThanOrEqual(inputCount);
       })
     );
   });
-  
+
   it('should always produce valid CSS', () => {
     fc.assert(
       fc.property(cssProperties, (input) => {
         const result = collapse(input);
-        
+
         if (result.ok) {
           expect(isValidCSS(result.result)).toBe(true);
         }
@@ -1177,18 +1182,18 @@ describe('collapse() properties', () => {
 describe('collapse() integration', () => {
   it('should work with expand() roundtrip', () => {
     const original = 'margin: 10px; border: 1px solid red;';
-    
+
     // Expand
     const expanded = expand(original);
-    
+
     // Collapse
     const collapsed = collapse(expanded.result);
-    
+
     // Should get back equivalent (but not necessarily identical)
     expect(collapsed.ok).toBe(true);
     expect(semanticallyEquivalent(original, collapsed.result)).toBe(true);
   });
-  
+
   it('should handle mixed shorthand and longhand', () => {
     const input = `
       margin: 10px;
@@ -1198,7 +1203,7 @@ describe('collapse() integration', () => {
       padding-left: 5px;
       border: 1px solid red;
     `;
-    
+
     const collapsed = collapse(input);
     expect(collapsed.result).toContain('margin: 10px');
     expect(collapsed.result).toContain('padding: 5px');
@@ -1259,6 +1264,7 @@ optimize(groups); // Sort by savings (greedy)
 ### Optimization Strategies
 
 1. **Lazy Evaluation**
+
 ```typescript
 // Don't compute all candidates upfront
 class LazyCollapse {
@@ -1270,6 +1276,7 @@ class LazyCollapse {
 ```
 
 2. **Memoization**
+
 ```typescript
 // Cache collapse results for common patterns
 const collapseCache = new Map<string, CollapseCandidate>();
@@ -1283,6 +1290,7 @@ function collapseCached(key: string, fn: () => CollapseCandidate) {
 ```
 
 3. **Early Exit**
+
 ```typescript
 // Stop if we've collapsed all properties
 if (collapsed.size === properties.size) {
@@ -1302,7 +1310,7 @@ describe('collapse() performance', () => {
     const duration = performance.now() - start;
     expect(duration).toBeLessThan(10);
   });
-  
+
   it('should handle 1000 collapses in <100ms', () => {
     const start = performance.now();
     for (let i = 0; i < 1000; i++) {
@@ -1321,12 +1329,14 @@ describe('collapse() performance', () => {
 ### Phase 1: MVP (4 weeks)
 
 **Week 1-2: Foundation**
+
 - [ ] Refactor handlers to bidirectional interface
 - [ ] Create property graph
 - [ ] Build detector module
 - [ ] Write core collapse logic for directional properties
 
 **Week 3: Core Collapse**
+
 - [ ] Implement collapse rules for:
   - [ ] Margin, padding (directional)
   - [ ] Border (complex)
@@ -1334,6 +1344,7 @@ describe('collapse() performance', () => {
   - [ ] Overflow, flex-flow (simple)
 
 **Week 4: Strategies & Testing**
+
 - [ ] Implement safe, aggressive, minimal strategies
 - [ ] Write unit tests (100+ tests)
 - [ ] Add property-based tests
@@ -1346,12 +1357,14 @@ describe('collapse() performance', () => {
 ### Phase 2: Advanced Features (2 weeks)
 
 **Week 5: Optimization**
+
 - [ ] Greedy optimizer
 - [ ] Scoring system
 - [ ] Byte savings calculator
 - [ ] Statistics reporting
 
 **Week 6: Complex Shorthands**
+
 - [ ] Background (multi-layer)
 - [ ] Animation (multi-layer)
 - [ ] Grid (complex syntax)
@@ -1364,12 +1377,14 @@ describe('collapse() performance', () => {
 ### Phase 3: Polish & Tooling (2 weeks)
 
 **Week 7: Developer Experience**
+
 - [ ] Detailed error messages
 - [ ] Better warnings
 - [ ] Debug mode (explain why collapse failed)
 - [ ] CLI tool for testing
 
 **Week 8: Documentation & Examples**
+
 - [ ] API documentation
 - [ ] Usage examples
 - [ ] Migration guide
@@ -1386,10 +1401,11 @@ describe('collapse() performance', () => {
 **Question:** Should default strategy be `'safe'` or `'aggressive'`?
 
 **Options:**
+
 - **Safe:** Conservative, only collapse complete sets
   - ✅ Pro: Predictable, no surprises
   - ❌ Con: Less useful for optimization
-  
+
 - **Aggressive:** Use defaults, collapse more
   - ✅ Pro: Better optimization results
   - ❌ Con: May change semantics
@@ -1419,6 +1435,7 @@ collapse(partial, { includeRemaining: false }) → null (failed)
 **Question:** What should we optimize for?
 
 **Options:**
+
 - **Byte savings:** Minimize string length
 - **Property count:** Minimize number of declarations
 - **Readability:** Prefer familiar patterns
@@ -1465,6 +1482,7 @@ const result = collapse(props);
 ## 📝 Success Criteria
 
 ### Must Have
+
 - ✅ Collapse 8+ common shorthands (margin, padding, border, etc.)
 - ✅ Safe, aggressive, minimal strategies
 - ✅ 95%+ test coverage
@@ -1473,6 +1491,7 @@ const result = collapse(props);
 - ✅ TypeScript types + Zod schemas
 
 ### Should Have
+
 - ✅ All 35+ shorthands supported
 - ✅ Property-based tests
 - ✅ Detailed error messages
@@ -1480,6 +1499,7 @@ const result = collapse(props);
 - ✅ CLI tool
 
 ### Nice to Have
+
 - ✅ Dynamic programming optimizer (optimal solution)
 - ✅ Browser compatibility warnings
 - ✅ Readability mode
@@ -1508,8 +1528,7 @@ The `collapse()` API is a **natural complement** to `expand()` that completes th
 
 ---
 
-**Status:** Ready for review  
-**Estimated Effort:** 8 weeks (MVP in 4 weeks)  
-**Risk Level:** Medium  
+**Status:** Ready for review
+**Estimated Effort:** 8 weeks (MVP in 4 weeks)
+**Risk Level:** Medium
 **Value:** High
-

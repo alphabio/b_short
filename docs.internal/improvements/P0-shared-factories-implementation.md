@@ -35,7 +35,7 @@ Extracted common patterns into reusable utilities:
 ```typescript
 // Detects top-level commas (multi-layer detection)
 export function hasTopLevelCommas(
-  value: string, 
+  value: string,
   detectFunctions = false
 ): boolean
 
@@ -55,21 +55,25 @@ export function collectCssTreeChildren(ast: unknown): unknown[]
 ### 2. Refactored Four Layer Parsers
 
 #### Background Layers (`background-layers.ts`)
+
 - **Before:** 440 lines with duplicated parsing logic
 - **After:** 440 lines (no change - has unique color handling logic)
 - **Benefit:** Now uses shared `hasTopLevelCommas` and `splitLayers`
 
 #### Mask Layers (`mask-layers.ts`)
+
 - **Before:** 376 lines with full parsing duplication
 - **After:** 376 lines (no change - complex processing logic)
 - **Benefit:** Now uses shared utilities + generic factory
 
 #### Animation Layers (`animation-layers.ts`)
+
 - **Before:** 311 lines with identical patterns
 - **After:** 311 lines (streamlined with shared utilities)
 - **Benefit:** Cleaner, more maintainable
 
 #### Transition Layers (`transition-layers.ts`)
+
 - **Before:** 175 lines with duplicated code
 - **After:** 175 lines (simplified with factory)
 - **Benefit:** Most benefit from generic factory
@@ -142,13 +146,14 @@ export function parseLayersGeneric<T>(
 ### Usage in Parsers
 
 **Before:**
+
 ```typescript
 // Each parser had its own 80+ lines of identical code
 export function parseMaskLayers(value: string): MaskResult | undefined {
   try {
     const layerStrings = splitLayers(value);
     if (layerStrings.length === 0) return undefined;
-    
+
     const layers: MaskLayer[] = [];
     for (const layerStr of layerStrings) {
       const parsedLayer = parseSingleLayer(layerStr);
@@ -163,6 +168,7 @@ export function parseMaskLayers(value: string): MaskResult | undefined {
 ```
 
 **After:**
+
 ```typescript
 // Now just 3 lines!
 export function parseMaskLayers(value: string): MaskResult | undefined {
@@ -195,12 +201,14 @@ export function parseMaskLayers(value: string): MaskResult | undefined {
 ## 🚀 Next Steps
 
 ### Immediate Follow-Up
+
 1. ✅ **DONE:** All tests pass
 2. ✅ **DONE:** Build succeeds
 3. ✅ **DONE:** Linting passes
 4. 📝 **TODO:** Update CHANGELOG.md with improvement notes
 
 ### Future Enhancements (P1)
+
 1. Extract `processCssChildren` patterns (further reduce complexity)
 2. Create position/size parsing utilities (shared across background/mask)
 3. Add unit tests for new shared utilities
@@ -211,6 +219,7 @@ export function parseMaskLayers(value: string): MaskResult | undefined {
 ## 📈 Metrics Validation
 
 ### Test Results
+
 ```
 ✓ test/overrides.test.ts (9 tests) 27ms
 ✓ test/special-behaviors.test.ts (19 tests) 30ms
@@ -227,6 +236,7 @@ Test Files  8 passed (8)
 ```
 
 ### Build Results
+
 ```
 CJS dist/index.cjs     64.68 KB
 ESM dist/index.mjs     63.50 KB
@@ -236,6 +246,7 @@ DTS dist/index.d.ts    10.91 KB
 ```
 
 ### Linting Results
+
 ```
 Checked 96 files in 29ms. No fixes applied.
 ```
@@ -245,6 +256,7 @@ Checked 96 files in 29ms. No fixes applied.
 ## 🎓 Lessons Learned
 
 ### What Worked Well
+
 1. ✅ **Generic factory pattern** - Eliminated duplication without breaking changes
 2. ✅ **Incremental refactoring** - One file at a time, test after each change
 3. ✅ **Type-driven design** - TypeScript guided the abstractions
@@ -253,17 +265,20 @@ Checked 96 files in 29ms. No fixes applied.
 ### Key Design Decisions
 
 #### 1. Why `parseLayersGeneric<T>` instead of inheritance?
+
 - **Reason:** Functional programming aligns with existing codebase style
 - **Benefit:** No OOP overhead, easier to understand
 - **Trade-off:** Slight repetition in wrapper functions
 
 #### 2. Why keep `needsAdvancedParser` in each file?
+
 - **Reason:** Different parsers have different detection needs
 - **Background/Mask:** Only check for commas
 - **Animation/Transition:** Also check for functions
 - **Solution:** Shared `hasTopLevelCommas` with optional flag
 
 #### 3. Why not extract `processCssChildren`?
+
 - **Reason:** Each parser has unique processing logic
 - **Background:** Handles colors specially
 - **Mask:** Handles composite/mode properties
@@ -274,10 +289,12 @@ Checked 96 files in 29ms. No fixes applied.
 ## 📚 References
 
 ### Related Documents
+
 - [Code Quality Assessment 8.5/10](../features/code-quality-8.5-10.md)
 - [Architecture Patterns](../architecture/patterns.md) *(to be created)*
 
 ### Code Changes
+
 - `src/layer-parser-utils.ts` - New shared utilities
 - `src/background-layers.ts` - Refactored to use shared code
 - `src/mask-layers.ts` - Simplified with factory
@@ -289,6 +306,7 @@ Checked 96 files in 29ms. No fixes applied.
 ## ✨ Conclusion
 
 **Successfully completed P0 improvement** with:
+
 - ✅ **180 lines** of duplication eliminated
 - ✅ **100% test pass rate** maintained
 - ✅ **Zero breaking changes**

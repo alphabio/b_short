@@ -17,6 +17,7 @@ expand("overflow: xyz auto;")
 ```
 
 **Result:**
+
 ```json
 {
   "ok": true,
@@ -37,7 +38,8 @@ expand("overflow: xyz auto;")
 }
 ```
 
-**Behavior:** 
+**Behavior:**
+
 - Original shorthand preserved: `"overflow: xyz auto;"`
 - Two issues reported: SyntaxMatchError + expansion-failed
 - `ok: true` (non-fatal error)
@@ -49,6 +51,7 @@ expand("overflow: hidden auto;")
 ```
 
 **Result:**
+
 ```json
 {
   "ok": true,
@@ -58,6 +61,7 @@ expand("overflow: hidden auto;")
 ```
 
 **Behavior:**
+
 - Successfully expanded to longhands
 - No issues
 
@@ -68,6 +72,7 @@ expand({ overflow: "xyz auto" })
 ```
 
 **Result:**
+
 ```json
 {
   "ok": true,
@@ -77,6 +82,7 @@ expand({ overflow: "xyz auto" })
 ```
 
 **Behavior:**
+
 - Object is coerced to `"[object Object]"` string
 - No valid CSS declarations found
 - Returns `undefined` result (not an error, just empty)
@@ -94,21 +100,21 @@ export function expand(input: string, options: Partial<ExpandOptions> = {}): Exp
   const cleanedInput = stripComments(input);
   const validation = validate(cleanedInput);
   const inputs = parseInputString(cleanedInput);
-  
+
   for (const item of inputs) {
     const parsed = parseCssDeclaration(item);
     const { property, value } = parsed;
-    
+
     // Call handler
     const parse = shorthand[property];
     const longhand = parse?.(value);
-    
+
     if (!longhand) {
       // Handler returned undefined - validation failed!
       const result: Record<string, string> = {};
       result[property] = value;  // Keep original shorthand
       results.push(result);
-      
+
       if (property in shorthand) {
         issues.push({
           property,
@@ -118,7 +124,7 @@ export function expand(input: string, options: Partial<ExpandOptions> = {}): Exp
       }
       continue;
     }
-    
+
     // Handler succeeded - use expanded longhands
     results.push(longhand);
   }
@@ -172,7 +178,7 @@ export const overflowHandler: PropertyHandler = createPropertyHandler({
 
     return undefined;
   },
-  
+
   validate: (value: string): boolean => {
     return overflowHandler.expand(value) !== undefined;
   },
@@ -196,6 +202,7 @@ This adds additional validation issues like `SyntaxMatchError` using the css-tre
 ### 1. **Defensive Programming**
 
 Each handler validates inputs according to CSS specifications:
+
 - Regex patterns for valid values
 - Length/dimension validation
 - Function syntax validation
@@ -204,6 +211,7 @@ Each handler validates inputs according to CSS specifications:
 ### 2. **Fail-Safe Behavior**
 
 When validation fails:
+
 - Return `undefined` from handler
 - Keep original shorthand property
 - Report helpful issues
@@ -217,8 +225,9 @@ When validation fails:
 ### 4. **Issue Reporting**
 
 Clear, actionable error messages:
+
 ```
-"Could not expand shorthand property 'overflow' with value 'xyz auto'. 
+"Could not expand shorthand property 'overflow' with value 'xyz auto'.
 Returning original shorthand."
 ```
 
@@ -229,12 +238,14 @@ Returning original shorthand."
 ### Simple Handlers
 
 **overflow:**
+
 ```typescript
 const validValues = /^(visible|hidden|clip|scroll|auto)$/i;
 if (!validValues.test(value)) return undefined;
 ```
 
 **flex-flow:**
+
 ```typescript
 const directions = /^(row|row-reverse|column|column-reverse)$/i;
 const wraps = /^(nowrap|wrap|wrap-reverse)$/i;
@@ -244,6 +255,7 @@ const wraps = /^(nowrap|wrap|wrap-reverse)$/i;
 ### Complex Handlers
 
 **font:**
+
 ```typescript
 // Order-dependent: [style] [variant] [weight] [stretch] size[/line-height] family
 // Complex validation of order and value types
@@ -251,12 +263,14 @@ if (!isLength(size) && !isAbsoluteSizeKeyword(size)) return undefined;
 ```
 
 **grid:**
+
 ```typescript
 // Multiple forms, template areas with ASCII art
 // Extensive validation of template syntax and values
 ```
 
 **background:**
+
 ```typescript
 // Multi-layer, 8 longhands + color
 // css-tree based parsing with node type validation
@@ -296,6 +310,7 @@ The expand API implements **robust validation** at two levels:
 2. **Semantic validation** - Handlers validate values per CSS specs
 
 When validation fails, expand:
+
 - ✅ Preserves original input (fail-safe)
 - ✅ Reports clear issues
 - ✅ Continues processing (non-fatal)

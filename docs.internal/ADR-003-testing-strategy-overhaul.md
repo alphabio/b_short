@@ -1,8 +1,8 @@
 # ADR-003: Comprehensive Testing Strategy Overhaul
 
-**Status:** Proposed  
-**Date:** 2025-11-03  
-**Deciders:** Architecture Team  
+**Status:** Proposed
+**Date:** 2025-11-03
+**Deciders:** Architecture Team
 
 ---
 
@@ -11,6 +11,7 @@
 Our current testing approach has several issues:
 
 **Current State:**
+
 ```
 test/
 ├── collapse.test.ts          (28KB - monolithic!)
@@ -145,7 +146,7 @@ import fixtures from './fixtures/collapse.json';
 describe('overflow collapse', () => {
   // Auto-generate tests from fixtures
   generateCollapseTests('overflow', fixtures);
-  
+
   // Additional manual tests
   test('handles global keywords', () => {
     const result = collapse({
@@ -322,6 +323,7 @@ Start with simple handlers to validate approach:
 4. **place-content** (2 longhands)
 
 **Success Criteria:**
+
 - Tests pass
 - Coverage maintained
 - DX improved
@@ -561,7 +563,7 @@ describe('background collapse - special cases', () => {
   test('color only', () => {
     // ...
   });
-  
+
   test('omits all defaults', () => {
     // ...
   });
@@ -581,7 +583,7 @@ describe('parseBackgroundProperties', () => {
     });
     expect(result.layers).toHaveLength(2);
   });
-  
+
   // More unit tests for utility functions
 });
 ```
@@ -677,11 +679,13 @@ export default defineConfig({
 ## Coverage Goals
 
 ### Before Migration
+
 - 965 tests total
 - ~85% coverage
 - Missing edge cases
 
 ### After Migration
+
 - 1500+ tests (estimated)
 - 95% coverage target
 - Comprehensive edge cases
@@ -689,6 +693,7 @@ export default defineConfig({
 ### Coverage by Handler
 
 Each handler should have:
+
 - ✅ 5+ valid test cases
 - ✅ 3+ invalid test cases
 - ✅ 5+ edge cases
@@ -701,6 +706,7 @@ Each handler should have:
 ### Example 1: Migrating Overflow
 
 **Before:**
+
 ```typescript
 // test/collapse.test.ts (line 45-67)
 test("collapses overflow with same values", () => {
@@ -721,6 +727,7 @@ test("collapses overflow with different values", () => {
 ```
 
 **After:**
+
 ```typescript
 // src/handlers/overflow/collapse.test.ts
 import { generateCollapseTests } from '@/test/generators';
@@ -749,6 +756,7 @@ generateCollapseTests('overflow', fixtures);
 ```
 
 **Benefits:**
+
 - ✅ Co-located with handler
 - ✅ Declarative test data
 - ✅ Easy to add more cases
@@ -759,6 +767,7 @@ generateCollapseTests('overflow', fixtures);
 ## Rollout Plan
 
 ### Week 1: Infrastructure
+
 - [ ] Create test generators
 - [ ] Create fixture schemas
 - [ ] Update vitest config
@@ -766,23 +775,27 @@ generateCollapseTests('overflow', fixtures);
 - [ ] Create migration guide
 
 ### Week 2: Pilot (3 handlers)
+
 - [ ] Migrate overflow
-- [ ] Migrate gap  
+- [ ] Migrate gap
 - [ ] Migrate flex-flow
 - [ ] Validate approach
 - [ ] Gather feedback
 
 ### Week 3: Simple Handlers (10 handlers)
+
 - [ ] Migrate all 2-3 longhand handlers
 - [ ] Add edge case coverage
 - [ ] Document learnings
 
 ### Week 4: Complex Handlers (13 handlers)
+
 - [ ] Migrate multi-layer handlers
 - [ ] Migrate grid/font/border
 - [ ] Add validation tests
 
 ### Week 5: Cleanup
+
 - [ ] Remove old test files
 - [ ] Update documentation
 - [ ] Measure coverage
@@ -816,26 +829,26 @@ generateCollapseTests('overflow', fixtures);
    - Integration tests?
    - End-to-end tests?
    - Performance benchmarks?
-   
+
    **Answer:** Yes, keep integration tests in `test/integration/`
 
 2. **How to handle shared fixtures?**
    - Some test data applies to multiple handlers
    - Example: Global keywords (inherit, initial, etc.)
-   
+
    **Answer:** Create `test/fixtures/common/` for shared data
 
 3. **JSON vs TypeScript for fixtures?**
    - JSON: Simple, declarative
    - TS: Type-safe, can use functions
-   
+
    **Answer:** JSON for data, TS for complex cases
 
 4. **Test naming convention?**
    - `{handler}.test.ts`?
    - `{handler}.spec.ts`?
    - `{handler}.collapse.test.ts`?
-   
+
    **Answer:** `collapse.test.ts` and `expand.test.ts` (clear separation)
 
 ---
@@ -857,7 +870,8 @@ generateCollapseTests('overflow', fixtures);
 ---
 
 **Decision:** Approved pending pilot
-**Next Steps:** 
+**Next Steps:**
+
 1. Create test generators
 2. Migrate overflow as pilot
 3. Validate DX improvements
@@ -868,11 +882,13 @@ generateCollapseTests('overflow', fixtures);
 ## Author's Notes
 
 This is **exactly the right move**. Current test structure is:
+
 - ❌ Hard to navigate (28KB files)
 - ❌ Incomplete (missing edge cases)
 - ❌ Disconnected (far from source)
 
 New structure will be:
+
 - ✅ Easy to find (next to code)
 - ✅ Comprehensive (fixtures + edge cases)
 - ✅ Maintainable (declarative data)
@@ -880,9 +896,10 @@ New structure will be:
 
 **The fixture-driven approach is key** - it makes adding test cases trivial (just JSON), and the generator ensures consistency across all handlers.
 
-**Estimated impact:** 
+**Estimated impact:**
+
 - Development velocity: +30%
-- Bug reduction: +40% 
+- Bug reduction: +40%
 - Code review speed: +50%
 - New contributor onboarding: Much easier
 

@@ -1,8 +1,8 @@
 # ADR-002: Add Context Parameter to expand()
 
-**Status:** Proposed  
-**Date:** 2025-11-03  
-**Deciders:** Architecture Team  
+**Status:** Proposed
+**Date:** 2025-11-03
+**Deciders:** Architecture Team
 
 ---
 
@@ -15,6 +15,7 @@ Currently, `expand()` always assumes the input is a list of CSS declarations. Ho
 3. **Stylesheet** - Full CSS with selectors: `.class { margin: 10px; }`
 
 **Proposed API:**
+
 ```typescript
 expand("...", { context: "declaration" | "declarationList" | "stylesheet" })
 ```
@@ -62,6 +63,7 @@ expand("margin: 10px", { context: "declaration" })
 ```
 
 **Why?**
+
 - Validate input is exactly one property
 - Clearer intent in code
 - Better error messages if multiple properties provided
@@ -76,6 +78,7 @@ expand("margin: 10px; padding: 5px;", { context: "declarationList" })
 ```
 
 **Why?**
+
 - Current default behavior
 - Most common use case
 - No change needed
@@ -89,7 +92,7 @@ expand(`
     margin: 10px 20px;
     background: red url(bg.png);
   }
-  
+
   .input {
     padding: 1rem;
   }
@@ -108,7 +111,7 @@ expand(`
       background-color: red;
       ...
     }
-    
+
     .input {
       padding-top: 1rem;
       padding-right: 1rem;
@@ -121,6 +124,7 @@ expand(`
 ```
 
 **Why?**
+
 - **HUGE use case** - Transform entire stylesheets!
 - CSS-in-JS build tools could use this
 - PostCSS plugins could integrate
@@ -140,12 +144,14 @@ expand(input: string, options?: {
 ```
 
 **Pros:**
+
 - ✅ Explicit intent
 - ✅ Clear error messages
 - ✅ Extensible for future contexts
 - ✅ Backward compatible (default: "declarationList")
 
 **Cons:**
+
 - ⚠️ More complex API surface
 - ⚠️ Users need to understand CSS contexts
 
@@ -159,10 +165,12 @@ expand("margin: 10px")  // Auto-detects single declaration
 ```
 
 **Pros:**
+
 - ✅ Simpler API - no parameter needed
 - ✅ "Just works" for users
 
 **Cons:**
+
 - ❌ Magic behavior - less explicit
 - ❌ Ambiguous cases: `margin: 10px` (single declaration or list?)
 - ❌ Harder to optimize - must parse to detect
@@ -176,11 +184,13 @@ expandStylesheet(".class { margin: 10px; }")
 ```
 
 **Pros:**
+
 - ✅ Very explicit
 - ✅ Type-safe
 - ✅ Clear documentation
 
 **Cons:**
+
 - ❌ API proliferation
 - ❌ More functions to maintain
 - ❌ Harder to remember which function to use
@@ -193,10 +203,12 @@ expand("margin: 10px; padding: 5px;")
 ```
 
 **Pros:**
+
 - ✅ Simple API
 - ✅ No breaking changes
 
 **Cons:**
+
 - ❌ Can't handle stylesheets
 - ❌ Limited use cases
 - ❌ No growth path
@@ -248,7 +260,7 @@ expand("margin: 10px; padding: 5px;")
 function expandDeclaration(input: string, options: ExpandOptions): ExpandResult {
   // Parse as single declaration
   const parsed = parseCssDeclaration(input);
-  
+
   if (!parsed) {
     return {
       ok: false,
@@ -258,7 +270,7 @@ function expandDeclaration(input: string, options: ExpandOptions): ExpandResult 
       }]
     };
   }
-  
+
   // Validate exactly one property
   const declarations = parseInputString(input);
   if (declarations.length !== 1) {
@@ -270,7 +282,7 @@ function expandDeclaration(input: string, options: ExpandOptions): ExpandResult 
       }]
     };
   }
-  
+
   // Expand the single declaration
   return expandDeclarationList(input, options);
 }
@@ -292,14 +304,14 @@ function expandDeclarationList(input: string, options: ExpandOptions): ExpandRes
 function expandStylesheet(input: string, options: ExpandOptions): ExpandResult {
   // Parse full stylesheet with css-tree
   const ast = csstree.parse(input, { context: 'stylesheet' });
-  
+
   // Walk AST and expand declarations in each rule
   csstree.walk(ast, {
     visit: 'Declaration',
     enter: (node) => {
       const property = node.property;
       const value = csstree.generate(node.value);
-      
+
       // Check if shorthand
       const handler = shorthand[property];
       if (handler) {
@@ -311,10 +323,10 @@ function expandStylesheet(input: string, options: ExpandOptions): ExpandResult {
       }
     }
   });
-  
+
   // Generate CSS from modified AST
   const result = csstree.generate(ast);
-  
+
   return {
     ok: true,
     result,
@@ -331,17 +343,17 @@ export function expand(
   options?: Partial<ExpandOptions>
 ): ExpandResult {
   const context = options?.context ?? "declarationList";
-  
+
   switch (context) {
     case "declaration":
       return expandDeclaration(input, options);
-    
+
     case "declarationList":
       return expandDeclarationList(input, options);
-    
+
     case "stylesheet":
       return expandStylesheet(input, options);
-    
+
     default:
       return {
         ok: false,
@@ -388,7 +400,7 @@ expand(`
     margin: 10px 20px;
     padding: 5px;
   }
-  
+
   #header {
     background: blue url(bg.png) center / cover;
   }
@@ -408,7 +420,7 @@ expand(`
       padding-bottom: 5px;
       padding-left: 5px;
     }
-    
+
     #header {
       background-image: url(bg.png);
       background-position: center;
@@ -497,10 +509,12 @@ test("no shorthand properties in production CSS", () => {
 ## Performance Considerations
 
 ### Declaration List (Current)
+
 - Fast: Simple string parsing
 - ~1ms for 10 declarations
 
 ### Stylesheet (New)
+
 - Slower: Full AST parsing + traversal + generation
 - ~5-10ms for 100 rules
 - **Acceptable** for build-time tools
@@ -520,7 +534,7 @@ test("no shorthand properties in production CSS", () => {
 // Context enum
 export enum ExpandContext {
   DECLARATION = "declaration",
-  DECLARATION_LIST = "declarationList", 
+  DECLARATION_LIST = "declarationList",
   STYLESHEET = "stylesheet"
 }
 
@@ -553,27 +567,27 @@ describe("expand() with context parameter", () => {
       const result = expand("margin: 10px", { context: "declaration" });
       expect(result.ok).toBe(true);
     });
-    
+
     test("rejects multiple declarations", () => {
       const result = expand("margin: 10px; padding: 5px;", { context: "declaration" });
       expect(result.ok).toBe(false);
       expect(result.issues[0].name).toBe("context-mismatch");
     });
   });
-  
+
   describe("declarationList context", () => {
     test("expands multiple declarations", () => {
       const result = expand("margin: 10px; padding: 5px;", { context: "declarationList" });
       expect(result.ok).toBe(true);
     });
-    
+
     test("is default context", () => {
       const r1 = expand("margin: 10px;");
       const r2 = expand("margin: 10px;", { context: "declarationList" });
       expect(r1).toEqual(r2);
     });
   });
-  
+
   describe("stylesheet context", () => {
     test("expands rules with selectors", () => {
       const result = expand(".class { margin: 10px; }", { context: "stylesheet" });
@@ -581,13 +595,13 @@ describe("expand() with context parameter", () => {
       expect(result.result).toContain("margin-top");
       expect(result.result).toContain(".class");
     });
-    
+
     test("handles multiple rules", () => {
       const css = `.a { margin: 10px; } .b { padding: 5px; }`;
       const result = expand(css, { context: "stylesheet" });
       expect(result.ok).toBe(true);
     });
-    
+
     test("handles media queries", () => {
       const css = `@media (min-width: 768px) { .a { margin: 10px; } }`;
       const result = expand(css, { context: "stylesheet" });
@@ -648,16 +662,19 @@ expand.use(stylesheetPlugin);
 ## Migration Path
 
 ### Phase 1: Add Context Support (v2.6.0)
+
 - Implement declaration, declarationList, stylesheet contexts
 - Default: declarationList (no breaking changes)
 - Add tests and documentation
 
 ### Phase 2: Promote Usage (v2.7.0)
+
 - Add examples to README
 - Create guides for build tool integration
 - Benchmark and optimize stylesheet context
 
 ### Phase 3: Ecosystem (v3.0.0)
+
 - PostCSS plugin
 - Babel plugin
 - Vite plugin
@@ -701,7 +718,8 @@ expand.use(stylesheetPlugin);
 ---
 
 **Decision:** Approved pending prototype
-**Next Steps:** 
+**Next Steps:**
+
 1. Prototype stylesheet context
 2. Benchmark performance
 3. Gather feedback on API
@@ -713,6 +731,7 @@ expand.use(stylesheetPlugin);
 **Key Insight:** The `context: "stylesheet"` option is a **game-changer**. It transforms b_short from a "utility function" to a "build tool component."
 
 **Question for Review:** Should stylesheet context be in core or separate package?
+
 - **Core:** More discoverable, easier to use
 - **Separate:** Keeps core light, opt-in for advanced use cases
 

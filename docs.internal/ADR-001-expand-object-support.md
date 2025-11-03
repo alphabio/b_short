@@ -1,8 +1,8 @@
 # ADR-001: Add Object Input Support to expand()
 
-**Status:** Proposed  
-**Date:** 2025-11-03  
-**Deciders:** Architecture Team  
+**Status:** Proposed
+**Date:** 2025-11-03
+**Deciders:** Architecture Team
 
 ---
 
@@ -11,6 +11,7 @@
 Currently, `expand()` only accepts CSS string input, while `collapse()` accepts both objects and strings. This creates API asymmetry and limits developer experience in JavaScript-first workflows.
 
 **Current Behavior:**
+
 ```typescript
 // Works
 expand("margin: 10px 20px;")  // ✅
@@ -48,11 +49,13 @@ function expand(input: CSSPropertiesHyphenated, options?: ExpandOptions): Expand
 ```
 
 **Pros:**
+
 - ✅ Type-safe property names
 - ✅ Output format matches input format (object → object)
 - ✅ Clean API - no ambiguity about output type
 
 **Cons:**
+
 - ⚠️ Requires defining comprehensive type interfaces
 - ⚠️ More complex implementation
 
@@ -67,10 +70,12 @@ expand({ margin: "10px" }, { format: "css" })
 ```
 
 **Pros:**
+
 - ✅ Explicit output format control
 - ✅ Flexible for different use cases
 
 **Cons:**
+
 - ❌ Ambiguous - why would object input produce string output?
 - ❌ Breaks "input type = output type" pattern
 
@@ -86,10 +91,12 @@ collapse("...")
 ```
 
 **Pros:**
+
 - ✅ No breaking changes
 - ✅ Clear separation of concerns
 
 **Cons:**
+
 - ❌ API asymmetry confuses users
 - ❌ Requires string conversion for object workflows
 
@@ -140,7 +147,7 @@ type CSSProperties = CSSPropertiesHyphenated | CSSPropertiesCamelCase;
 ```typescript
 // String input → String output
 export function expand(
-  input: string, 
+  input: string,
   options?: Partial<ExpandOptions>
 ): ExpandResult<string>;
 
@@ -178,28 +185,28 @@ function expandObject(
 ): ExpandResult<CSSProperties> {
   const result: Record<string, string> = {};
   const issues: BStyleWarning[] = [];
-  
+
   // Detect naming convention (camelCase vs kebab-case)
   const isCamelCase = Object.keys(input).some(k => /[A-Z]/.test(k));
-  
+
   for (const [property, value] of Object.entries(input)) {
     // Normalize property name to kebab-case
-    const kebabProperty = isCamelCase 
-      ? camelToKebab(property) 
+    const kebabProperty = isCamelCase
+      ? camelToKebab(property)
       : property;
-    
+
     // Check if it's a shorthand
     const handler = shorthand[kebabProperty];
-    
+
     if (handler) {
       // Expand shorthand
       const expanded = handler(value);
-      
+
       if (expanded) {
         // Add expanded longhands
         for (const [longhand, longhandValue] of Object.entries(expanded)) {
-          const outputProperty = isCamelCase 
-            ? kebabToCamel(longhand) 
+          const outputProperty = isCamelCase
+            ? kebabToCamel(longhand)
             : longhand;
           result[outputProperty] = longhandValue;
         }
@@ -217,7 +224,7 @@ function expandObject(
       result[property] = value;
     }
   }
-  
+
   return {
     ok: true,
     result: result as CSSProperties,
@@ -269,15 +276,18 @@ type CSSProperties = CSSPropertiesHyphenated | CSSPropertiesCamelCase;
 ### Type Generation Strategy
 
 **Option A: Manual (Initial)**
+
 - Define 50-100 most common properties
 - Expand incrementally based on usage
 
 **Option B: Generated from CSS Spec**
+
 - Parse MDN/caniuse data
 - Generate comprehensive type definitions
 - ~500+ properties
 
 **Option C: Use Existing Types**
+
 - Leverage `csstype` package
 - Already has comprehensive CSS property types
 - Well-maintained by community
@@ -428,7 +438,7 @@ describe("expand() with object input", () => {
   });
 
   test("preserves non-shorthand properties", () => {
-    const result = expand({ 
+    const result = expand({
       margin: "10px",
       color: "red"  // Not a shorthand
     });
@@ -450,30 +460,35 @@ describe("expand() with object input", () => {
 ## Implementation Checklist
 
 ### Phase 1: Type System (Week 1)
+
 - [ ] Research and evaluate `csstype` package
 - [ ] Define `CSSProperties` interfaces
 - [ ] Add type tests
 - [ ] Document type usage
 
 ### Phase 2: Core Implementation (Week 2)
+
 - [ ] Add function overloads
 - [ ] Implement `expandObject()` function
 - [ ] Add naming convention detection
 - [ ] Handle camelCase ↔ kebab-case conversion
 
 ### Phase 3: Testing (Week 3)
+
 - [ ] Add unit tests for object input
 - [ ] Add integration tests with real CSS properties
 - [ ] Add type tests
 - [ ] Performance benchmarks
 
 ### Phase 4: Documentation (Week 4)
+
 - [ ] Update README with object examples
 - [ ] Add API documentation
 - [ ] Create migration guide (none needed, but explain feature)
 - [ ] Add TypeScript examples
 
 ### Phase 5: Release
+
 - [ ] Update CHANGELOG
 - [ ] Version bump (minor: 2.6.0)
 - [ ] Publish to npm
