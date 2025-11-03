@@ -72,6 +72,91 @@ describe("Collapse API", () => {
       expect(result.result).toEqual({ "flex-flow": "row-reverse" });
     });
 
+    test("collapses flex to single number", () => {
+      const result = collapse({
+        "flex-grow": "1",
+        "flex-shrink": "1",
+        "flex-basis": "0%",
+      });
+      expect(result.result).toEqual({ flex: "1" });
+    });
+
+    test("collapses flex to 'none'", () => {
+      const result = collapse({
+        "flex-grow": "0",
+        "flex-shrink": "0",
+        "flex-basis": "auto",
+      });
+      expect(result.result).toEqual({ flex: "none" });
+    });
+
+    test("collapses flex to 'auto'", () => {
+      const result = collapse({
+        "flex-grow": "1",
+        "flex-shrink": "1",
+        "flex-basis": "auto",
+      });
+      expect(result.result).toEqual({ flex: "auto" });
+    });
+
+    test("collapses flex to 'initial'", () => {
+      const result = collapse({
+        "flex-grow": "0",
+        "flex-shrink": "1",
+        "flex-basis": "auto",
+      });
+      expect(result.result).toEqual({ flex: "initial" });
+    });
+
+    test("collapses flex to two numbers", () => {
+      const result = collapse({
+        "flex-grow": "1",
+        "flex-shrink": "0",
+        "flex-basis": "0%",
+      });
+      expect(result.result).toEqual({ flex: "1 0" });
+    });
+
+    test("collapses flex with number and basis", () => {
+      const result = collapse({
+        "flex-grow": "1",
+        "flex-shrink": "1",
+        "flex-basis": "100px",
+      });
+      expect(result.result).toEqual({ flex: "1 100px" });
+    });
+
+    test("collapses flex to three values", () => {
+      const result = collapse({
+        "flex-grow": "2",
+        "flex-shrink": "2",
+        "flex-basis": "10em",
+      });
+      expect(result.result).toEqual({ flex: "2 2 10em" });
+    });
+
+    test("collapses flex with global keyword", () => {
+      const result = collapse({
+        "flex-grow": "inherit",
+        "flex-shrink": "inherit",
+        "flex-basis": "inherit",
+      });
+      expect(result.result).toEqual({ flex: "inherit" });
+    });
+
+    test("keeps flex longhands if incomplete", () => {
+      const result = collapse({
+        "flex-grow": "1",
+        "flex-shrink": "1",
+      });
+      expect(result.result).toEqual({
+        "flex-grow": "1",
+        "flex-shrink": "1",
+      });
+      expect(result.issues).toHaveLength(1);
+      expect(result.issues[0].property).toBe("flex");
+    });
+
     test("collapses place-content with same values", () => {
       const result = collapse({
         "align-content": "center",
@@ -524,6 +609,10 @@ describe("Collapse API", () => {
 
     test("has flex-flow handler", () => {
       expect(collapseRegistry.has("flex-flow")).toBe(true);
+    });
+
+    test("has flex handler", () => {
+      expect(collapseRegistry.has("flex")).toBe(true);
     });
 
     test("has place-content handler", () => {

@@ -10,6 +10,7 @@ import { borderRadiusCollapser } from "../handlers/border-radius/collapse";
 import { columnRuleCollapser } from "../handlers/column-rule/collapse";
 import { columnsCollapser } from "../handlers/columns/collapse";
 import { containIntrinsicSizeCollapser } from "../handlers/contain-intrinsic-size/collapse";
+import { flexCollapser } from "../handlers/flex/collapse";
 import { flexFlowCollapser } from "../handlers/flex-flow/collapse";
 import { fontCollapser } from "../handlers/font/collapse";
 import { gapCollapser } from "../handlers/gap/collapse";
@@ -54,6 +55,7 @@ const collapseHandlerMap = new Map<string, CollapseHandler>([
   ["column-rule", columnRuleCollapser],
   ["columns", columnsCollapser],
   ["contain-intrinsic-size", containIntrinsicSizeCollapser],
+  ["flex", flexCollapser],
   ["flex-flow", flexFlowCollapser],
   ["font", fontCollapser],
   ["gap", gapCollapser],
