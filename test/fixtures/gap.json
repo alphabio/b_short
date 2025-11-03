@@ -1,0 +1,58 @@
+{
+  "inherit": {
+    "gap: inherit": {
+      "row-gap": "inherit",
+      "column-gap": "inherit"
+    }
+  },
+  "initial": {
+    "gap: initial": {
+      "row-gap": "initial",
+      "column-gap": "initial"
+    }
+  },
+  "unset": {
+    "gap: unset": {
+      "row-gap": "unset",
+      "column-gap": "unset"
+    }
+  },
+  "revert": {
+    "gap: revert": {
+      "row-gap": "revert",
+      "column-gap": "revert"
+    }
+  },
+  "single-value": {
+    "gap: 10px": {
+      "row-gap": "10px",
+      "column-gap": "10px"
+    },
+    "gap: normal": {
+      "row-gap": "normal",
+      "column-gap": "normal"
+    },
+    "gap: 1rem": {
+      "row-gap": "1rem",
+      "column-gap": "1rem"
+    }
+  },
+  "two-values": {
+    "gap: 10px 20px": {
+      "row-gap": "10px",
+      "column-gap": "20px"
+    },
+    "gap: 1rem 2rem": {
+      "row-gap": "1rem",
+      "column-gap": "2rem"
+    },
+    "gap: normal 10px": {
+      "row-gap": "normal",
+      "column-gap": "10px"
+    },
+    "gap: 5% 10%": {
+      "row-gap": "5%",
+      "column-gap": "10%"
+    }
+  }
+}
