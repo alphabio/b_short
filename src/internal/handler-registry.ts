@@ -7,31 +7,31 @@
  */
 
 // Import all 25 PropertyHandler instances
-import { animationHandler } from "../animation";
-import { backgroundHandler } from "../background";
-import { borderHandler } from "../border";
-import { borderRadiusHandler } from "../border-radius";
-import { columnRuleHandler } from "../column-rule";
-import { columnsHandler } from "../columns";
-import { containIntrinsicSizeHandler } from "../contain-intrinsic-size";
-import { flexHandler } from "../flex";
-import { flexFlowHandler } from "../flex-flow";
-import { fontHandler } from "../font";
-import { gridHandler } from "../grid";
-import { gridAreaHandler } from "../grid-area";
-import { gridColumnHandler } from "../grid-column";
-import { gridRowHandler } from "../grid-row";
-import { listStyleHandler } from "../list-style";
-import { maskHandler } from "../mask";
-import { offsetHandler } from "../offset";
-import { outlineHandler } from "../outline";
-import { overflowHandler } from "../overflow";
-import { placeContentHandler } from "../place-content";
-import { placeItemsHandler } from "../place-items";
-import { placeSelfHandler } from "../place-self";
-import { textDecorationHandler } from "../text-decoration";
-import { textEmphasisHandler } from "../text-emphasis";
-import { transitionHandler } from "../transition";
+import { animationHandler } from "../handlers/animation";
+import { backgroundHandler } from "../handlers/background";
+import { borderHandler } from "../handlers/border";
+import { borderRadiusHandler } from "../handlers/border-radius";
+import { columnRuleHandler } from "../handlers/column-rule";
+import { columnsHandler } from "../handlers/columns";
+import { containIntrinsicSizeHandler } from "../handlers/contain-intrinsic-size";
+import { flexHandler } from "../handlers/flex";
+import { flexFlowHandler } from "../handlers/flex-flow";
+import { fontHandler } from "../handlers/font";
+import { gridHandler } from "../handlers/grid";
+import { gridAreaHandler } from "../handlers/grid-area";
+import { gridColumnHandler } from "../handlers/grid-column";
+import { gridRowHandler } from "../handlers/grid-row";
+import { listStyleHandler } from "../handlers/list-style";
+import { maskHandler } from "../handlers/mask";
+import { offsetHandler } from "../handlers/offset";
+import { outlineHandler } from "../handlers/outline";
+import { overflowHandler } from "../handlers/overflow";
+import { placeContentHandler } from "../handlers/place-content";
+import { placeItemsHandler } from "../handlers/place-items";
+import { placeSelfHandler } from "../handlers/place-self";
+import { textDecorationHandler } from "../handlers/text-decoration";
+import { textEmphasisHandler } from "../handlers/text-emphasis";
+import { transitionHandler } from "../handlers/transition";
 import type { PropertyCategory, PropertyHandler, PropertyHandlerOptions } from "./property-handler";
 
 /**
