@@ -27,6 +27,7 @@ import { placeItemsCollapser } from "../handlers/place-items/collapse";
 import { placeSelfCollapser } from "../handlers/place-self/collapse";
 import { textDecorationCollapser } from "../handlers/text-decoration/collapse";
 import { textEmphasisCollapser } from "../handlers/text-emphasis/collapse";
+import { transitionCollapser } from "../handlers/transition/collapse";
 import type { CollapseHandler } from "./collapse-handler";
 
 /**
@@ -73,6 +74,7 @@ const collapseHandlerMap = new Map<string, CollapseHandler>([
   ["place-self", placeSelfCollapser],
   ["text-decoration", textDecorationCollapser],
   ["text-emphasis", textEmphasisCollapser],
+  ["transition", transitionCollapser],
 ]);
 
 /**
