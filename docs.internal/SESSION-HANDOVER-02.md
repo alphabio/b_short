@@ -1,8 +1,8 @@
 # Session Handover: P1 Phase 4 - Collapse API
 
-**Date:** 2025-11-03  
-**Branch:** `develop`  
-**Last Commit:** `a383c57` - Co-located pattern migration  
+**Date:** 2025-11-03
+**Branch:** `develop`
+**Last Commit:** `a383c57` - Co-located pattern migration
 **Status:** Ready for Collapse API implementation
 
 ---
@@ -18,6 +18,7 @@
 ### **Phase 4.1: Foundation** (~2 hours)
 
 - [ ] Create `src/internal/collapse-handler.ts` interface
+
   ```typescript
   export interface CollapseHandler {
     readonly meta: {
@@ -34,9 +35,11 @@
   - Export `collapseRegistry`
 
 - [ ] Create `src/core/collapse.ts` main API
+
   ```typescript
   export function collapse(properties: Record<string, string>): Record<string, string>
   ```
+
   - Smart algorithm: try to collapse compatible property groups
   - Return mix of shorthands + remaining longhands
 
@@ -115,16 +118,19 @@ Register all + tests.
 ## 🏗️ Key Architecture Decisions
 
 ### **1. Separate Concerns**
+
 - Expand logic: `expand.ts` (unchanged)
 - Collapse logic: `collapse.ts` (new)
 - Co-located in same handler directory
 
 ### **2. Optional by Handler**
+
 - Not all handlers need collapse
 - Start with simple ones
 - Complex handlers can be added later
 
 ### **3. Smart Collapse Algorithm**
+
 ```typescript
 // src/core/collapse.ts pseudo-code
 function collapse(properties: Record<string, string>): Record<string, string> {
@@ -137,6 +143,7 @@ function collapse(properties: Record<string, string>): Record<string, string> {
 ```
 
 ### **4. Validation**
+
 - `canCollapse()` checks if properties are collapsible
 - `collapse()` returns `undefined` if impossible
 - Prefer shorthands when all longhands present

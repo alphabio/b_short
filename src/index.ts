@@ -77,3 +77,12 @@ export type {
   PropertyHandlerMetadata,
   PropertyHandlerOptions,
 } from "./internal/property-handler";
+
+// ============================================================================
+// COLLAPSE API - Longhand to shorthand conversion
+// ============================================================================
+
+export { collapse, getCollapsibleShorthands } from "./core/collapse";
+export type { CollapseHandler, CollapseHandlerMetadata } from "./internal/collapse-handler";
+export type { CollapseRegistry } from "./internal/collapse-registry";
+export { collapseRegistry } from "./internal/collapse-registry";

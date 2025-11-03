@@ -1,8 +1,8 @@
 # Session Handover: PropertyHandler Interface Refactoring
 
-**Session Date:** 2025-11-03  
-**Branch:** `develop`  
-**Current Commit:** `dc12c99` - "feat: wrap complex handlers in PropertyHandler interface (P1 Phase 2 - Batch 5)"  
+**Session Date:** 2025-11-03
+**Branch:** `develop`
+**Current Commit:** `dc12c99` - "feat: wrap complex handlers in PropertyHandler interface (P1 Phase 2 - Batch 5)"
 **Context Used:** ~110,000 / 1,000,000 tokens
 
 ---
@@ -18,6 +18,7 @@ Goal: Refactor all 25 CSS shorthand handlers to use the PropertyHandler interfac
 ### **P1 Phase 2: Handler Refactoring** - 22 of 25 handlers (88%) ✅
 
 **Batch 1 (Commit: 26587e4):**
+
 1. ✅ columns.ts
 2. ✅ contain-intrinsic-size.ts
 3. ✅ list-style.ts
@@ -74,6 +75,7 @@ Goal: Refactor all 25 CSS shorthand handlers to use the PropertyHandler interfac
 These require careful wrapping due to hierarchical structure or extreme complexity:
 
 **1. border.ts** (~250 lines)
+
 - **Challenge:** Hierarchical handler with sub-handlers
 - **Structure:** Has border.width(), border.style(), border.color(), border.top(), etc.
 - **Uses:** directional() helper for 4-side expansion
@@ -81,11 +83,13 @@ These require careful wrapping due to hierarchical structure or extreme complexi
 - **Strategy:** Wrap main handler, preserve sub-handler structure
 
 **2. grid.ts** (~450 lines!)
+
 - **Challenge:** Extremely complex template syntax
 - **Complexity:** Named lines, track sizes, repeat(), area names, multiple syntaxes
 - **Strategy:** Wrap existing logic, do NOT touch internal parsing
 
 **3. offset.ts** (~270 lines)
+
 - **Challenge:** Complex path syntax and coordinate systems
 - **Handles:** offset-position, offset-path, offset-distance, offset-rotate, offset-anchor
 - **Strategy:** Wrap existing logic, preserve path parsing
@@ -96,11 +100,12 @@ These require careful wrapping due to hierarchical structure or extreme complexi
 
 ### **Option A: Complete Remaining 3 Handlers (Recommended)**
 
-**Estimated Time:** 1-2 hours  
-**Risk:** Low (just wrapping, no logic changes)  
+**Estimated Time:** 1-2 hours
+**Risk:** Low (just wrapping, no logic changes)
 **Benefit:** 100% coverage, complete foundation for registry
 
 **Steps:**
+
 1. Wrap border.ts - preserve hierarchical structure
 2. Wrap grid.ts - wrap massive parser, don't touch internals
 3. Wrap offset.ts - wrap path parsing logic
@@ -237,7 +242,7 @@ code src/grid.ts
 ```
 
 - Add NOTE comment about template syntax complexity
-- Extract main logic into `parseGridValue()`  
+- Extract main logic into `parseGridValue()`
 - Wrap with `createPropertyHandler()`
 - DO NOT touch the 450 lines of parsing logic
 - Test: `pnpm test`
@@ -296,11 +301,13 @@ Progress: 25/25 handlers refactored (100%) ✅"
 ## 📈 Progress Tracking
 
 ### **Completed Phases:**
+
 - ✅ **P0** - Shared factories for multi-layer parsing (Complete)
 - ✅ **P1 Phase 1** - PropertyHandler interface + 5 handlers (Complete)
 - 🟡 **P1 Phase 2** - Refactor all handlers (22 of 25 - 88%)
 
 ### **Next Phases:**
+
 - ⏳ **P1 Phase 3** - Handler registry (Not started)
 - ⏳ **P1 Phase 4** - Collapse API (Not started)
 
@@ -309,6 +316,7 @@ Progress: 25/25 handlers refactored (100%) ✅"
 ## 🎯 Success Criteria for Next Session
 
 **Complete P1 Phase 2:**
+
 - [ ] Wrap border.ts with PropertyHandler
 - [ ] Wrap grid.ts with PropertyHandler
 - [ ] Wrap offset.ts with PropertyHandler
@@ -318,6 +326,7 @@ Progress: 25/25 handlers refactored (100%) ✅"
 - [ ] Commit: "25/25 handlers refactored (100%)"
 
 **Then Begin P1 Phase 3: Handler Registry**
+
 - [ ] Create `src/internal/handler-registry.ts`
 - [ ] Export map of all 25 handlers
 - [ ] Add helper functions for handler lookup
@@ -348,6 +357,7 @@ Progress: 25/25 handlers refactored (100%) ✅"
 **Incredible progress today!**
 
 You've successfully:
+
 - ✅ Refactored 22 of 25 handlers (88%)
 - ✅ All simple and medium handlers done
 - ✅ All complex multi-layer handlers wrapped
