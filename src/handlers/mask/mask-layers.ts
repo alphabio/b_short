@@ -328,7 +328,7 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
       const name = (child as csstree.Identifier).name;
       if (name === "no-clip") {
         if (!result.clip) {
-          result.clip = "border-box"; // no-clip maps to border-box per CSS spec
+          result.clip = "no-clip";
         }
         i++;
         continue;

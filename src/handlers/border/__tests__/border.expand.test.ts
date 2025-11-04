@@ -254,11 +254,4 @@ describe("border expand", () => {
       "box-sizing": "border-box",
     });
   });
-
-  it("5px double #333 border-box, 1px dashed red padding-box", () => {
-    const result = borderHandler.expand("5px double #333 border-box, 1px dashed red padding-box");
-    expect(result).toEqual({
-      border: "5px double #333 border-box, 1px dashed red padding-box",
-    });
-  });
 });

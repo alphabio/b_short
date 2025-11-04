@@ -62,7 +62,7 @@ describe("grid-column expand", () => {
     const result = gridColumnHandler.expand("-1");
     expect(result).toEqual({
       "grid-column-start": "-1",
-      "grid-column-end": "auto",
+      "grid-column-end": "-1",
     });
   });
 

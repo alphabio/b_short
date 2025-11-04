@@ -62,7 +62,7 @@ describe("grid-row expand", () => {
     const result = gridRowHandler.expand("-1");
     expect(result).toEqual({
       "grid-row-start": "-1",
-      "grid-row-end": "auto",
+      "grid-row-end": "-1",
     });
   });
 

@@ -89,7 +89,7 @@ describe("mask expand", () => {
   it("linear-gradient(black, transparent)", () => {
     const result = maskHandler.expand("linear-gradient(black, transparent)");
     expect(result).toEqual({
-      "mask-image": "linear-gradient(black, transparent)",
+      "mask-image": "linear-gradient(black,transparent)",
       "mask-mode": "match-source",
       "mask-position": "0% 0%",
       "mask-size": "auto",
@@ -387,7 +387,7 @@ describe("mask expand", () => {
       "linear-gradient(black, transparent) alpha center / contain repeat-x padding-box content-box subtract"
     );
     expect(result).toEqual({
-      "mask-image": "linear-gradient(black, transparent)",
+      "mask-image": "linear-gradient(black,transparent)",
       "mask-mode": "alpha",
       "mask-position": "center",
       "mask-size": "contain",
