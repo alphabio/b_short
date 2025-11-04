@@ -43,6 +43,8 @@ collapse(`
   margin-left: 20px;
 `);
 // → { ok: true, result: { margin: '10px 20px' }, issues: [] }
+collapse({ 'margin-top': '10px', 'margin-right': '10px', 'margin-bottom': '10px', 'margin-left': '10px' });
+// → { ok: true, result: { margin: '10px' }, issues: [] }
 
 // JavaScript format (camelCase for React/styled-components)
 expand('background: red url(img.png)', { format: 'js' });
