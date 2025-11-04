@@ -18,8 +18,9 @@
 - **⚡ Fast**: Optimized TypeScript with smart caching
 - **🎯 Complete**: 35+ CSS shorthands including modern features
 - **🔒 Type-Safe**: Full TypeScript support
-- **✅ Tested**: 808 tests ensuring 100% accuracy
+- **✅ Tested**: 970 tests ensuring 100% accuracy
 - **🎨 Flexible**: CSS strings or JS objects (camelCase for React)
+- **🔄 Bidirectional**: Both expand and collapse APIs
 
 ## Quick Start
 
@@ -28,11 +29,15 @@ npm install b_short css-tree
 ```
 
 ```typescript
-import { expand } from 'b_short';
+import { expand, collapse } from 'b_short';
 
-// CSS format (default)
+// Expand: shorthand → longhand
 expand('margin: 10px 20px');
 // → "margin-top: 10px;\nmargin-right: 20px;\nmargin-bottom: 10px;\nmargin-left: 20px;"
+
+// Collapse: longhand → shorthand
+collapse({ 'margin-top': '10px', 'margin-right': '10px', 'margin-bottom': '10px', 'margin-left': '10px' });
+// → { ok: true, result: { margin: '10px' }, issues: [] }
 
 // JavaScript format (camelCase for React/styled-components)
 expand('background: red url(img.png)', { format: 'js' });
@@ -47,6 +52,8 @@ expand('background: red url(img.png)', { format: 'js' });
 ## API
 
 ### `expand(css, options?)`
+
+Expand CSS shorthand properties to longhand equivalents.
 
 ```typescript
 import * as b from 'b_short';
@@ -72,6 +79,25 @@ const customOptions = {
 };
 ```
 
+### `collapse(properties, options?)`
+
+Collapse longhand properties to shorthand equivalents.
+
+```typescript
+import { collapse } from 'b_short';
+
+// Object input
+collapse({ 'overflow-x': 'hidden', 'overflow-y': 'auto' });
+// → { ok: true, result: { overflow: 'hidden auto' }, issues: [] }
+
+// CSS string input
+collapse('overflow-x: hidden;\noverflow-y: auto;', { indent: 2 });
+// → { ok: true, result: "    overflow: hidden auto;", issues: [] }
+```
+
+**Options:**
+- `indent` (number): Indentation level for CSS string output (default: 0)
+
 ### Result Format
 
 ```typescript
@@ -79,6 +105,12 @@ interface ExpandResult {
   ok: boolean;                    // true if no syntax errors
   result?: string | object;       // expanded CSS or undefined if invalid
   issues: Array<Error | Warning>; // syntax errors and warnings
+}
+
+interface CollapseResult {
+  ok: boolean;                    // true (always succeeds)
+  result: string | object;        // collapsed CSS or properties object
+  issues: Array<Warning>;         // warnings for incomplete longhands
 }
 ```
 
