@@ -1,3 +1,4 @@
+// b_path:: src/handlers/outline/__tests__/outline.expand.test.ts
 import { describe, expect, it } from "vitest";
 import { outlineHandler } from "../expand";
 

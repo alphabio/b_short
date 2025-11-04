@@ -1,3 +1,4 @@
+// b_path:: src/handlers/overflow/__tests__/overflow.collapse.test.ts
 import { describe, expect, it } from "vitest";
 import { collapse } from "@/core/collapse";
 

@@ -1,3 +1,4 @@
+// b_path:: src/handlers/column-rule/__tests__/column-rule.expand.test.ts
 import { describe, expect, it } from "vitest";
 import { columnRuleHandler } from "../expand";
 

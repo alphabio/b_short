@@ -1,3 +1,4 @@
+// b_path:: src/handlers/background/__tests__/background.collapse.test.ts
 import { describe, expect, it } from "vitest";
 import { collapse } from "@/core/collapse";
 
