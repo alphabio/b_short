@@ -47,11 +47,16 @@ function parseCollapseTests(): Map<string, TestCase[]> {
   const tests = new Map<string, TestCase[]>();
   tests.set("api", []); // For general API tests
 
+  // Only parse the collapse() describe block (lines 7-844)
+  // Skip registry tests that come after
+  const START_LINE = 7;
+  const END_LINE = 844;
+
   let inTest = false;
   let currentTest: { name: string; code: string; startLine: number } | null = null;
   let braceDepth = 0;
 
-  for (let i = 0; i < lines.length; i++) {
+  for (let i = START_LINE; i < Math.min(END_LINE, lines.length); i++) {
     const line = lines[i];
 
     // Detect test start
