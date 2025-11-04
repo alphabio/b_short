@@ -115,7 +115,7 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "dependencies": {
+  "peerDependencies": {
     "css-tree": "^3.1.0"
   },
   "devDependencies": {

@@ -24,7 +24,7 @@
 ## Quick Start
 
 ```bash
-npm install b_short
+npm install b_short css-tree
 ```
 
 ```typescript
