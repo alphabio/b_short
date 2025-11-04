@@ -58,3 +58,33 @@ export {
   GROUPING_BY_SIDE,
   PROPERTY_GROUPING_VALUES,
 } from "./core/schema";
+
+// ============================================================================
+// HANDLER REGISTRY - PropertyHandler infrastructure
+// ============================================================================
+
+export type { HandlerRegistry } from "./internal/handler-registry";
+export {
+  expandProperty,
+  isShorthandProperty,
+  registry,
+  validateProperty,
+} from "./internal/handler-registry";
+
+export type {
+  PropertyCategory,
+  PropertyHandler,
+  PropertyHandlerMetadata,
+  PropertyHandlerOptions,
+} from "./internal/property-handler";
+
+// ============================================================================
+// COLLAPSE API - Longhand to shorthand conversion
+// ============================================================================
+
+export { collapse, getCollapsibleShorthands } from "./core/collapse";
+export type { CollapseOptions, CollapseResult } from "./core/schema";
+export { DEFAULT_COLLAPSE_OPTIONS } from "./core/schema";
+export type { CollapseHandler, CollapseHandlerMetadata } from "./internal/collapse-handler";
+export type { CollapseRegistry } from "./internal/collapse-registry";
+export { collapseRegistry } from "./internal/collapse-registry";

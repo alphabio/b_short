@@ -324,3 +324,35 @@ export interface StylesheetValidation {
   /** Array of property validation warnings */
   warnings: BStyleWarning[];
 }
+
+/**
+ * Options for CSS shorthand collapse
+ */
+export interface CollapseOptions {
+  /** Indentation spaces for CSS string output (min: 0). Default: 0 */
+  indent?: number;
+}
+
+/**
+ * Default values for CollapseOptions
+ */
+export const DEFAULT_COLLAPSE_OPTIONS: Required<CollapseOptions> = {
+  indent: 0,
+};
+
+/**
+ * Result of CSS shorthand collapse operation
+ */
+export interface CollapseResult {
+  /** Whether collapse was successful (no errors) */
+  ok: boolean;
+  /**
+   * The collapsed CSS result
+   * - JavaScript object format
+   * - CSS string format
+   * - undefined when input is empty
+   */
+  result?: Record<string, string> | string;
+  /** Array of warnings about incomplete longhands that couldn't be collapsed */
+  issues: BStyleWarning[];
+}
