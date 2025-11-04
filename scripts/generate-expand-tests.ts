@@ -60,7 +60,11 @@ function generateExpandTest(
       continue;
     }
 
-    const testName = inputValue;
+    // Escape quotes and backslashes in strings for valid JavaScript
+    const escapeString = (str: string) => str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+
+    const testName = escapeString(inputValue);
+    const escapedInput = escapeString(inputValue);
 
     // Convert camelCase keys to kebab-case for handler output
     const kebabOutput: Record<string, string> = {};
@@ -71,7 +75,7 @@ function generateExpandTest(
 
     tests.push(`
 	it("${testName}", () => {
-		const result = ${handlerName}.expand("${inputValue}");
+		const result = ${handlerName}.expand("${escapedInput}");
 		expect(result).toEqual(${JSON.stringify(kebabOutput, null, "\t\t")});
 	});`);
   }
