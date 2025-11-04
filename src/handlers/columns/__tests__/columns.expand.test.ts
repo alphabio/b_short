@@ -1,3 +1,4 @@
+// b_path:: src/handlers/columns/__tests__/columns.expand.test.ts
 import { describe, expect, it } from "vitest";
 import { columnsHandler } from "../expand";
 

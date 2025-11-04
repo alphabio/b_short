@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+// b_path:: scripts/migrate-collapse-tests.ts
 // Script to migrate test/collapse.test.ts to co-located collapse tests
 
 import fs from "node:fs";

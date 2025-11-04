@@ -1,4 +1,4 @@
-// b_path:: test/fixtures/shorthand.ts
+// b_path:: TMP/fixtures/shorthand.ts
 interface TestCase {
   input: string;
   expected: Record<string, string> | undefined;

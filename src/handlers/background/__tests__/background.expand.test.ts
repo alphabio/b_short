@@ -1,3 +1,4 @@
+// b_path:: src/handlers/background/__tests__/background.expand.test.ts
 import { describe, expect, it } from "vitest";
 import { backgroundHandler } from "../expand";
 
