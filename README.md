@@ -36,8 +36,13 @@ expand('margin: 10px 20px');
 // → "margin-top: 10px;\nmargin-right: 20px;\nmargin-bottom: 10px;\nmargin-left: 20px;"
 
 // Collapse: longhand → shorthand
-collapse({ 'margin-top': '10px', 'margin-right': '10px', 'margin-bottom': '10px', 'margin-left': '10px' });
-// → { ok: true, result: { margin: '10px' }, issues: [] }
+collapse(`
+  margin-top: 10px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  margin-left: 20px;
+`);
+// → { ok: true, result: { margin: '10px 20px' }, issues: [] }
 
 // JavaScript format (camelCase for React/styled-components)
 expand('background: red url(img.png)', { format: 'js' });
@@ -96,6 +101,7 @@ collapse('overflow-x: hidden;\noverflow-y: auto;', { indent: 2 });
 ```
 
 **Options:**
+
 - `indent` (number): Indentation level for CSS string output (default: 0)
 
 ### Result Format
@@ -165,6 +171,28 @@ return <div style={result}>Content</div>;
 ```
 
 ## Advanced Features
+
+### Multiple Declarations
+
+Both `expand` and `collapse` support processing multiple CSS declarations at once.
+
+```typescript
+// Expand multiple shorthands
+expand('margin: 10px; padding: 20px; border: 1px solid red');
+
+// Collapse multiple longhands
+collapse({
+  'margin-top': '10px',
+  'margin-right': '10px',
+  'margin-bottom': '10px',
+  'margin-left': '10px',
+  'padding-top': '20px',
+  'padding-right': '20px',
+  'padding-bottom': '20px',
+  'padding-left': '20px'
+});
+// → { ok: true, result: { margin: '10px', padding: '20px' }, issues: [] }
+```
 
 ### Multi-layer Support
 
