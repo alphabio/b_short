@@ -97,7 +97,7 @@ collapse({ 'overflow-x': 'hidden', 'overflow-y': 'auto' });
 
 // CSS string input
 collapse('overflow-x: hidden;\noverflow-y: auto;', { indent: 2 });
-// → { ok: true, result: "    overflow: hidden auto;", issues: [] }
+// → { ok: true, result: "  overflow: hidden auto;", issues: [] }
 ```
 
 **Options:**
