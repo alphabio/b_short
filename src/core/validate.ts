@@ -66,7 +66,7 @@ interface FormattedLine {
 
 /**
  * Checks if a CSS value node contains var() function.
- * CSS variables cannot be validated by css-tree as they are runtime values.
+ * CSS variables cannot be validated by @eslint/css-tree as they are runtime values.
  */
 function containsVar(node: csstree.CssNode): boolean {
   if (!node) return false;
