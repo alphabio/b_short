@@ -3,6 +3,7 @@
 import * as csstree from "css-tree";
 import type { BackgroundLayer, BackgroundResult } from "@/core/schema";
 import isColor from "@/internal/is-color";
+import { isPositionValueNode, isSizeValueNode } from "@/internal/is-value-node";
 import { hasTopLevelCommas, splitLayers } from "@/internal/layer-parser-utils";
 
 // CSS default values for background properties
@@ -189,13 +190,7 @@ function processCssChildren(
     if (
       !hasPositionSize &&
       ((child.type === "Operator" && (child as csstree.Operator).value === "/") ||
-        (child.type === "Identifier" &&
-          ["left", "center", "right", "top", "bottom"].includes(
-            (child as csstree.Identifier).name
-          )) ||
-        child.type === "Dimension" ||
-        child.type === "Percentage" ||
-        child.type === "Number")
+        isPositionValueNode(child, ["left", "center", "right", "top", "bottom"]))
     ) {
       const positionParts: string[] = [];
       const sizeParts: string[] = [];
@@ -213,13 +208,7 @@ function processCssChildren(
             i++;
             continue;
           }
-          if (
-            currentChild.type === "Dimension" ||
-            currentChild.type === "Percentage" ||
-            currentChild.type === "Number" ||
-            (currentChild.type === "Identifier" &&
-              ["auto", "cover", "contain"].includes((currentChild as csstree.Identifier).name))
-          ) {
+          if (isSizeValueNode(currentChild, ["auto", "cover", "contain"])) {
             sizeParts.push(csstree.generate(currentChild));
             i++;
           } else {
@@ -249,13 +238,7 @@ function processCssChildren(
                 i++;
                 continue;
               }
-              if (
-                sizeChild.type === "Dimension" ||
-                sizeChild.type === "Percentage" ||
-                sizeChild.type === "Number" ||
-                (sizeChild.type === "Identifier" &&
-                  ["auto", "cover", "contain"].includes((sizeChild as csstree.Identifier).name))
-              ) {
+              if (isSizeValueNode(sizeChild, ["auto", "cover", "contain"])) {
                 sizeParts.push(csstree.generate(sizeChild));
                 i++;
               } else {
@@ -264,13 +247,7 @@ function processCssChildren(
             }
             break;
           } else if (
-            (currentChild.type === "Identifier" &&
-              ["left", "center", "right", "top", "bottom"].includes(
-                (currentChild as csstree.Identifier).name
-              )) ||
-            currentChild.type === "Dimension" ||
-            currentChild.type === "Percentage" ||
-            currentChild.type === "Number"
+            isPositionValueNode(currentChild, ["left", "center", "right", "top", "bottom"])
           ) {
             positionParts.push(csstree.generate(currentChild));
             i++;

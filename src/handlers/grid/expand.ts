@@ -6,6 +6,7 @@
 // (template form, explicit-rows, explicit-columns). The parsing logic is preserved as-is.
 
 import * as csstree from "css-tree";
+import { matchesType } from "@/internal/is-value-node";
 import { createPropertyHandler, type PropertyHandler } from "@/internal/property-handler";
 
 // CSS default values for grid properties
@@ -165,16 +166,12 @@ function parseTrackList(segmentNodes: csstree.CssNode[]): string | undefined {
       ["auto", "min-content", "max-content"].includes((node as csstree.Identifier).name)
     ) {
       validNodes.push(node);
-    } else if (node.type === "Dimension") {
-      validNodes.push(node);
-    } else if (node.type === "Percentage") {
+    } else if (matchesType(node, ["Dimension", "Percentage", "Number"])) {
       validNodes.push(node);
     } else if (
       node.type === "Function" &&
       ["repeat", "minmax", "fit-content"].includes((node as csstree.FunctionNode).name)
     ) {
-      validNodes.push(node);
-    } else if (node.type === "Number" && (node as csstree.NumberNode).value === "0") {
       validNodes.push(node);
     } else if (node.type === "Parentheses") {
       // Named grid lines like [line1]

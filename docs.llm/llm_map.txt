@@ -148,6 +148,7 @@ src/internal/is-color.ts
 src/internal/is-length.ts
 src/internal/is-time.ts
 src/internal/is-timing-function.ts
+src/internal/is-value-node.ts
 src/internal/layer-parser-utils.ts
 src/internal/normalize-color.ts
 src/internal/parsers.ts
