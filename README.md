@@ -14,18 +14,18 @@
 
 ## Why b_short?
 
-- **📦 Tiny**: ~16KB compressed
+- **📦 Tiny**: ~68KB minified + brotli (ESM), ~73KB (CJS) with all dependencies
 - **⚡ Fast**: Optimized TypeScript with smart caching
 - **🎯 Complete**: 35+ CSS shorthands including modern features
 - **🔒 Type-Safe**: Full TypeScript support
-- **✅ Tested**: 970 tests ensuring 100% accuracy
+- **✅ Tested**: 973 tests ensuring 100% accuracy
 - **🎨 Flexible**: CSS strings or JS objects (camelCase for React)
 - **🔄 Bidirectional**: Both expand and collapse APIs
 
 ## Quick Start
 
 ```bash
-npm install b_short css-tree
+npm install b_short
 ```
 
 ```typescript
@@ -240,8 +240,8 @@ if (!result.ok) {
 ## Performance
 
 - **Fast**: Optimized for performance with LRU caching
-- **Small**: ~16KB compressed (brotli)
-- **Efficient**: Handles 808 test cases in <1 second
+- **Small**: 89KB unminified, ~68KB minified + brotli (ESM)
+- **Efficient**: Handles 973 test cases in <2 seconds
 
 ## TypeScript Support
 
@@ -276,7 +276,7 @@ MIT © [alphabio](https://github.com/alphabio)
 ## Acknowledgments
 
 - [TypeScript](https://www.typescriptlang.org/)
-- [css-tree](https://github.com/csstree/csstree) - CSS parsing
+- [@eslint/css-tree](https://github.com/eslint/css-tree) - CSS parsing and validation
 - [Vitest](https://vitest.dev/) - Testing
 - [Biome](https://biomejs.dev/) - Code quality
 
