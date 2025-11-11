@@ -1,4 +1,4 @@
-// b_path:: test/fixtures/layers.ts
+// b_path:: TMP/fixtures/layers.ts
 interface TestCase {
   input: string;
   expected: Record<string, string> | undefined;

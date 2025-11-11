@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+// b_path:: scripts/generate-expand-tests.ts
 /**
  * Generate expand test files from fixtures
  * DRY RUN - just prints what would be generated

@@ -1,3 +1,4 @@
+// b_path:: src/handlers/text-emphasis/__tests__/text-emphasis.expand.test.ts
 import { describe, expect, it } from "vitest";
 import { textEmphasisHandler } from "../expand";
 

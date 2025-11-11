@@ -1,3 +1,4 @@
+// b_path:: src/handlers/grid/__tests__/grid.collapse.test.ts
 import { describe, expect, it } from "vitest";
 import { collapse } from "@/core/collapse";
 

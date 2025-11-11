@@ -1,3 +1,4 @@
+// b_path:: src/handlers/place-content/__tests__/place-content.collapse.test.ts
 import { describe, expect, it } from "vitest";
 import { collapse } from "@/core/collapse";
 

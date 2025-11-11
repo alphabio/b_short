@@ -1,3 +1,4 @@
+// b_path:: src/handlers/place-self/__tests__/place-self.expand.test.ts
 import { describe, expect, it } from "vitest";
 import { placeSelfHandler } from "../expand";
 

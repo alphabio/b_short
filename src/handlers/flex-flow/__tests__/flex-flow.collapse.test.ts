@@ -1,3 +1,4 @@
+// b_path:: src/handlers/flex-flow/__tests__/flex-flow.collapse.test.ts
 import { describe, expect, it } from "vitest";
 import { collapse } from "@/core/collapse";
 
