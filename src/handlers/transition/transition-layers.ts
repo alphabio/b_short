@@ -1,6 +1,6 @@
 // b_path:: src/handlers/transition/transition-layers.ts
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import type { TransitionLayer, TransitionResult } from "@/core/schema";
 import isTime from "@/internal/is-time";
 import isTimingFunction from "@/internal/is-timing-function";
@@ -42,8 +42,8 @@ function parseSingleLayer(layerValue: string): TransitionLayer | undefined {
   const children: csstree.CssNode[] = [];
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: csstree.Value) => {
-      if (node.children) {
+    enter: (node: csstree.CssNode) => {
+      if (node.type === "Value" && node.children) {
         node.children.forEach((child) => {
           children.push(child);
         });

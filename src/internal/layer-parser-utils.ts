@@ -1,5 +1,5 @@
 // b_path:: src/internal/layer-parser-utils.ts
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 
 /**
  * Shared utilities for parsing multi-layer CSS properties (background, mask, animation, transition).
@@ -155,8 +155,8 @@ export function collectCssTreeChildren(ast: csstree.CssNode): csstree.CssNode[] 
   // Walk the AST and collect children from Value nodes
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: { children?: Iterable<csstree.CssNode> }) => {
-      if (node.children) {
+    enter: (node: csstree.CssNode) => {
+      if (node.type === "Value" && node.children) {
         for (const child of node.children) {
           children.push(child);
         }
