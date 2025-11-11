@@ -2,6 +2,7 @@
 
 import * as csstree from "css-tree";
 import type { MaskLayer, MaskResult } from "@/core/schema";
+import { isPositionValueNode, isSizeValueNode } from "@/internal/is-value-node";
 import { hasTopLevelCommas, parseLayersGeneric } from "@/internal/layer-parser-utils";
 
 // CSS default values for mask properties
@@ -138,13 +139,7 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
     if (
       !hasPositionSize &&
       ((child.type === "Operator" && (child as csstree.Operator).value === "/") ||
-        (child.type === "Identifier" &&
-          ["left", "center", "right", "top", "bottom"].includes(
-            (child as csstree.Identifier).name
-          )) ||
-        child.type === "Dimension" ||
-        child.type === "Percentage" ||
-        child.type === "Number")
+        isPositionValueNode(child, ["left", "center", "right", "top", "bottom"]))
     ) {
       const positionParts: string[] = [];
       const sizeParts: string[] = [];
@@ -162,17 +157,7 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
             i++;
             continue;
           }
-          if (
-            currentChild.type === "Dimension" ||
-            currentChild.type === "Percentage" ||
-            currentChild.type === "Number" ||
-            (currentChild.type === "Identifier" &&
-              ["auto", "cover", "contain"].includes((currentChild as csstree.Identifier).name)) ||
-            (currentChild.type === "Function" &&
-              ["calc", "min", "max", "clamp", "var"].includes(
-                (currentChild as csstree.FunctionNode).name
-              ))
-          ) {
+          if (isSizeValueNode(currentChild, ["auto", "cover", "contain"])) {
             sizeParts.push(csstree.generate(currentChild));
             i++;
           } else {
@@ -202,17 +187,7 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
                 i++;
                 continue;
               }
-              if (
-                sizeChild.type === "Dimension" ||
-                sizeChild.type === "Percentage" ||
-                sizeChild.type === "Number" ||
-                (sizeChild.type === "Identifier" &&
-                  ["auto", "cover", "contain"].includes((sizeChild as csstree.Identifier).name)) ||
-                (sizeChild.type === "Function" &&
-                  ["calc", "min", "max", "clamp", "var"].includes(
-                    (sizeChild as csstree.FunctionNode).name
-                  ))
-              ) {
+              if (isSizeValueNode(sizeChild, ["auto", "cover", "contain"])) {
                 sizeParts.push(csstree.generate(sizeChild));
                 i++;
               } else {
@@ -221,17 +196,7 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
             }
             break;
           } else if (
-            (currentChild.type === "Identifier" &&
-              ["left", "center", "right", "top", "bottom"].includes(
-                (currentChild as csstree.Identifier).name
-              )) ||
-            currentChild.type === "Dimension" ||
-            currentChild.type === "Percentage" ||
-            currentChild.type === "Number" ||
-            (currentChild.type === "Function" &&
-              ["calc", "min", "max", "clamp", "var"].includes(
-                (currentChild as csstree.FunctionNode).name
-              ))
+            isPositionValueNode(currentChild, ["left", "center", "right", "top", "bottom"])
           ) {
             positionParts.push(csstree.generate(currentChild));
             i++;

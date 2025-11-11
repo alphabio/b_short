@@ -4,6 +4,7 @@ import * as csstree from "css-tree";
 import type { AnimationLayer, AnimationResult } from "@/core/schema";
 import isTime from "@/internal/is-time";
 import isTimingFunction from "@/internal/is-timing-function";
+import { matchesType } from "@/internal/is-value-node";
 import { hasTopLevelCommas, parseLayersGeneric } from "@/internal/layer-parser-utils";
 
 // CSS default values for animation properties
@@ -117,43 +118,8 @@ function processCssChildren(children: csstree.CssNode[], result: AnimationLayer)
       if (matched) continue;
     }
 
-    // Handle time values (duration and delay)
-    if (child.type === "Dimension") {
-      const timeValue = csstree.generate(child);
-      if (isTime(timeValue)) {
-        if (timeCount >= 2) {
-          // More than 2 time values is invalid
-          return false;
-        }
-        if (timeCount === 0) {
-          result.duration = timeValue;
-        } else {
-          result.delay = timeValue;
-        }
-        timeCount++;
-        matched = true;
-      }
-    }
-
-    // Handle var() functions as time values
-    if (child.type === "Function") {
-      const funcValue = csstree.generate(child);
-      if (funcValue.startsWith("var(")) {
-        if (timeCount >= 2) {
-          // More than 2 time values is invalid
-          return false;
-        }
-        if (timeCount === 0) {
-          result.duration = funcValue;
-        } else {
-          result.delay = funcValue;
-        }
-        timeCount++;
-        matched = true;
-      }
-    }
-
-    // Handle timing functions (keywords and functions)
+    // Handle timing functions FIRST (keywords and functions)
+    // Must check before time values to avoid cubic-bezier() being treated as time
     if (!result.timingFunction) {
       if (child.type === "Identifier") {
         const timingValue = csstree.generate(child);
@@ -187,9 +153,32 @@ function processCssChildren(children: csstree.CssNode[], result: AnimationLayer)
       }
     }
 
+    // Handle time values (duration and delay)
+    // Accept: Dimensions with time units (1s, 500ms), or any Function (calc, var, etc.)
+    if (!matched && matchesType(child, ["Dimension", "Function"])) {
+      const timeValue = csstree.generate(child);
+
+      // For Dimensions, validate they have time units
+      // For Functions (var, calc), accept unconditionally (carry over as-is)
+      if (child.type === "Function" || isTime(timeValue)) {
+        if (timeCount >= 2) {
+          // More than 2 time values is invalid
+          return false;
+        }
+        if (timeCount === 0) {
+          result.duration = timeValue;
+        } else {
+          result.delay = timeValue;
+        }
+        timeCount++;
+        matched = true;
+      }
+    }
+
     // Handle iteration count
-    if (!result.iterationCount) {
-      if (child.type === "Number") {
+    // Accept: Number, "infinite" keyword, or any Function (calc, var, etc.)
+    if (!matched && !result.iterationCount) {
+      if (matchesType(child, ["Number", "Function"])) {
         const numValue = csstree.generate(child);
         result.iterationCount = numValue;
         matched = true;
@@ -201,9 +190,9 @@ function processCssChildren(children: csstree.CssNode[], result: AnimationLayer)
           matched = true;
         }
       }
-    } else {
+    } else if (!matched) {
       // Check for duplicates
-      if (child.type === "Number") {
+      if (matchesType(child, ["Number", "Function"])) {
         return false; // Duplicate iteration count
       }
       if (child.type === "Identifier") {

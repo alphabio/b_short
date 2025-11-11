@@ -1315,6 +1315,7 @@ import * as csstree from "css-tree";
 import type { AnimationLayer, AnimationResult } from "@/core/schema";
 import isTime from "@/internal/is-time";
 import isTimingFunction from "@/internal/is-timing-function";
+import { matchesType } from "@/internal/is-value-node";
 import { hasTopLevelCommas, parseLayersGeneric } from "@/internal/layer-parser-utils";
 
 // CSS default values for animation properties
@@ -1428,43 +1429,8 @@ function processCssChildren(children: csstree.CssNode[], result: AnimationLayer)
       if (matched) continue;
     }
 
-    // Handle time values (duration and delay)
-    if (child.type === "Dimension") {
-      const timeValue = csstree.generate(child);
-      if (isTime(timeValue)) {
-        if (timeCount >= 2) {
-          // More than 2 time values is invalid
-          return false;
-        }
-        if (timeCount === 0) {
-          result.duration = timeValue;
-        } else {
-          result.delay = timeValue;
-        }
-        timeCount++;
-        matched = true;
-      }
-    }
-
-    // Handle var() functions as time values
-    if (child.type === "Function") {
-      const funcValue = csstree.generate(child);
-      if (funcValue.startsWith("var(")) {
-        if (timeCount >= 2) {
-          // More than 2 time values is invalid
-          return false;
-        }
-        if (timeCount === 0) {
-          result.duration = funcValue;
-        } else {
-          result.delay = funcValue;
-        }
-        timeCount++;
-        matched = true;
-      }
-    }
-
-    // Handle timing functions (keywords and functions)
+    // Handle timing functions FIRST (keywords and functions)
+    // Must check before time values to avoid cubic-bezier() being treated as time
     if (!result.timingFunction) {
       if (child.type === "Identifier") {
         const timingValue = csstree.generate(child);
@@ -1498,9 +1464,32 @@ function processCssChildren(children: csstree.CssNode[], result: AnimationLayer)
       }
     }
 
+    // Handle time values (duration and delay)
+    // Accept: Dimensions with time units (1s, 500ms), or any Function (calc, var, etc.)
+    if (!matched && matchesType(child, ["Dimension", "Function"])) {
+      const timeValue = csstree.generate(child);
+
+      // For Dimensions, validate they have time units
+      // For Functions (var, calc), accept unconditionally (carry over as-is)
+      if (child.type === "Function" || isTime(timeValue)) {
+        if (timeCount >= 2) {
+          // More than 2 time values is invalid
+          return false;
+        }
+        if (timeCount === 0) {
+          result.duration = timeValue;
+        } else {
+          result.delay = timeValue;
+        }
+        timeCount++;
+        matched = true;
+      }
+    }
+
     // Handle iteration count
-    if (!result.iterationCount) {
-      if (child.type === "Number") {
+    // Accept: Number, "infinite" keyword, or any Function (calc, var, etc.)
+    if (!matched && !result.iterationCount) {
+      if (matchesType(child, ["Number", "Function"])) {
         const numValue = csstree.generate(child);
         result.iterationCount = numValue;
         matched = true;
@@ -1512,9 +1501,9 @@ function processCssChildren(children: csstree.CssNode[], result: AnimationLayer)
           matched = true;
         }
       }
-    } else {
+    } else if (!matched) {
       // Check for duplicates
-      if (child.type === "Number") {
+      if (matchesType(child, ["Number", "Function"])) {
         return false; // Duplicate iteration count
       }
       if (child.type === "Identifier") {
@@ -2162,6 +2151,7 @@ export { default } from "./expand";
 import * as csstree from "css-tree";
 import type { BackgroundLayer, BackgroundResult } from "@/core/schema";
 import isColor from "@/internal/is-color";
+import { isPositionValueNode, isSizeValueNode } from "@/internal/is-value-node";
 import { hasTopLevelCommas, splitLayers } from "@/internal/layer-parser-utils";
 
 // CSS default values for background properties
@@ -2348,13 +2338,7 @@ function processCssChildren(
     if (
       !hasPositionSize &&
       ((child.type === "Operator" && (child as csstree.Operator).value === "/") ||
-        (child.type === "Identifier" &&
-          ["left", "center", "right", "top", "bottom"].includes(
-            (child as csstree.Identifier).name
-          )) ||
-        child.type === "Dimension" ||
-        child.type === "Percentage" ||
-        child.type === "Number")
+        isPositionValueNode(child, ["left", "center", "right", "top", "bottom"]))
     ) {
       const positionParts: string[] = [];
       const sizeParts: string[] = [];
@@ -2372,13 +2356,7 @@ function processCssChildren(
             i++;
             continue;
           }
-          if (
-            currentChild.type === "Dimension" ||
-            currentChild.type === "Percentage" ||
-            currentChild.type === "Number" ||
-            (currentChild.type === "Identifier" &&
-              ["auto", "cover", "contain"].includes((currentChild as csstree.Identifier).name))
-          ) {
+          if (isSizeValueNode(currentChild, ["auto", "cover", "contain"])) {
             sizeParts.push(csstree.generate(currentChild));
             i++;
           } else {
@@ -2408,13 +2386,7 @@ function processCssChildren(
                 i++;
                 continue;
               }
-              if (
-                sizeChild.type === "Dimension" ||
-                sizeChild.type === "Percentage" ||
-                sizeChild.type === "Number" ||
-                (sizeChild.type === "Identifier" &&
-                  ["auto", "cover", "contain"].includes((sizeChild as csstree.Identifier).name))
-              ) {
+              if (isSizeValueNode(sizeChild, ["auto", "cover", "contain"])) {
                 sizeParts.push(csstree.generate(sizeChild));
                 i++;
               } else {
@@ -2423,13 +2395,7 @@ function processCssChildren(
             }
             break;
           } else if (
-            (currentChild.type === "Identifier" &&
-              ["left", "center", "right", "top", "bottom"].includes(
-                (currentChild as csstree.Identifier).name
-              )) ||
-            currentChild.type === "Dimension" ||
-            currentChild.type === "Percentage" ||
-            currentChild.type === "Number"
+            isPositionValueNode(currentChild, ["left", "center", "right", "top", "bottom"])
           ) {
             positionParts.push(csstree.generate(currentChild));
             i++;
@@ -5680,6 +5646,7 @@ export const gridCollapser: CollapseHandler = createCollapseHandler({
 // (template form, explicit-rows, explicit-columns). The parsing logic is preserved as-is.
 
 import * as csstree from "css-tree";
+import { matchesType } from "@/internal/is-value-node";
 import { createPropertyHandler, type PropertyHandler } from "@/internal/property-handler";
 
 // CSS default values for grid properties
@@ -5839,16 +5806,12 @@ function parseTrackList(segmentNodes: csstree.CssNode[]): string | undefined {
       ["auto", "min-content", "max-content"].includes((node as csstree.Identifier).name)
     ) {
       validNodes.push(node);
-    } else if (node.type === "Dimension") {
-      validNodes.push(node);
-    } else if (node.type === "Percentage") {
+    } else if (matchesType(node, ["Dimension", "Percentage", "Number"])) {
       validNodes.push(node);
     } else if (
       node.type === "Function" &&
       ["repeat", "minmax", "fit-content"].includes((node as csstree.FunctionNode).name)
     ) {
-      validNodes.push(node);
-    } else if (node.type === "Number" && (node as csstree.NumberNode).value === "0") {
       validNodes.push(node);
     } else if (node.type === "Parentheses") {
       // Named grid lines like [line1]
@@ -6754,6 +6717,7 @@ export { default } from "./expand";
 
 import * as csstree from "css-tree";
 import type { MaskLayer, MaskResult } from "@/core/schema";
+import { isPositionValueNode, isSizeValueNode } from "@/internal/is-value-node";
 import { hasTopLevelCommas, parseLayersGeneric } from "@/internal/layer-parser-utils";
 
 // CSS default values for mask properties
@@ -6890,13 +6854,7 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
     if (
       !hasPositionSize &&
       ((child.type === "Operator" && (child as csstree.Operator).value === "/") ||
-        (child.type === "Identifier" &&
-          ["left", "center", "right", "top", "bottom"].includes(
-            (child as csstree.Identifier).name
-          )) ||
-        child.type === "Dimension" ||
-        child.type === "Percentage" ||
-        child.type === "Number")
+        isPositionValueNode(child, ["left", "center", "right", "top", "bottom"]))
     ) {
       const positionParts: string[] = [];
       const sizeParts: string[] = [];
@@ -6914,17 +6872,7 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
             i++;
             continue;
           }
-          if (
-            currentChild.type === "Dimension" ||
-            currentChild.type === "Percentage" ||
-            currentChild.type === "Number" ||
-            (currentChild.type === "Identifier" &&
-              ["auto", "cover", "contain"].includes((currentChild as csstree.Identifier).name)) ||
-            (currentChild.type === "Function" &&
-              ["calc", "min", "max", "clamp", "var"].includes(
-                (currentChild as csstree.FunctionNode).name
-              ))
-          ) {
+          if (isSizeValueNode(currentChild, ["auto", "cover", "contain"])) {
             sizeParts.push(csstree.generate(currentChild));
             i++;
           } else {
@@ -6954,17 +6902,7 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
                 i++;
                 continue;
               }
-              if (
-                sizeChild.type === "Dimension" ||
-                sizeChild.type === "Percentage" ||
-                sizeChild.type === "Number" ||
-                (sizeChild.type === "Identifier" &&
-                  ["auto", "cover", "contain"].includes((sizeChild as csstree.Identifier).name)) ||
-                (sizeChild.type === "Function" &&
-                  ["calc", "min", "max", "clamp", "var"].includes(
-                    (sizeChild as csstree.FunctionNode).name
-                  ))
-              ) {
+              if (isSizeValueNode(sizeChild, ["auto", "cover", "contain"])) {
                 sizeParts.push(csstree.generate(sizeChild));
                 i++;
               } else {
@@ -6973,17 +6911,7 @@ function processCssChildren(children: csstree.CssNode[], result: MaskLayer): boo
             }
             break;
           } else if (
-            (currentChild.type === "Identifier" &&
-              ["left", "center", "right", "top", "bottom"].includes(
-                (currentChild as csstree.Identifier).name
-              )) ||
-            currentChild.type === "Dimension" ||
-            currentChild.type === "Percentage" ||
-            currentChild.type === "Number" ||
-            (currentChild.type === "Function" &&
-              ["calc", "min", "max", "clamp", "var"].includes(
-                (currentChild as csstree.FunctionNode).name
-              ))
+            isPositionValueNode(currentChild, ["left", "center", "right", "top", "bottom"])
           ) {
             positionParts.push(csstree.generate(currentChild));
             i++;
@@ -9020,6 +8948,7 @@ import * as csstree from "css-tree";
 import type { TransitionLayer, TransitionResult } from "@/core/schema";
 import isTime from "@/internal/is-time";
 import isTimingFunction from "@/internal/is-timing-function";
+import { matchesType } from "@/internal/is-value-node";
 import { hasTopLevelCommas, parseLayersGeneric } from "@/internal/layer-parser-utils";
 
 // CSS default values for transition properties
@@ -9092,43 +9021,8 @@ function processCssChildren(children: csstree.CssNode[], result: TransitionLayer
       continue;
     }
 
-    // Handle time values first (duration and delay)
-    if (child.type === "Dimension") {
-      const timeValue = csstree.generate(child);
-      if (isTime(timeValue)) {
-        if (timeCount >= 2) {
-          // More than 2 time values is invalid
-          return false;
-        }
-        if (timeCount === 0) {
-          result.duration = timeValue;
-        } else {
-          result.delay = timeValue;
-        }
-        timeCount++;
-        continue;
-      }
-    }
-
-    // Handle var() functions as time values
-    if (child.type === "Function") {
-      const funcValue = csstree.generate(child);
-      if (funcValue.startsWith("var(")) {
-        if (timeCount >= 2) {
-          // More than 2 time values is invalid
-          return false;
-        }
-        if (timeCount === 0) {
-          result.duration = funcValue;
-        } else {
-          result.delay = funcValue;
-        }
-        timeCount++;
-        continue;
-      }
-    }
-
-    // Handle timing functions (keywords and functions)
+    // Handle timing functions FIRST (keywords and functions)
+    // Must check before time values to avoid cubic-bezier() being treated as time
     if (!result.timingFunction) {
       if (child.type === "Identifier") {
         const timingValue = csstree.generate(child);
@@ -9145,6 +9039,28 @@ function processCssChildren(children: csstree.CssNode[], result: TransitionLayer
           result.timingFunction = funcValue.replace(/,([^\s])/g, ", $1");
           continue;
         }
+      }
+    }
+
+    // Handle time values (duration and delay)
+    // Accept: Dimensions with time units (1s, 500ms), or any Function (calc, var, etc.)
+    if (matchesType(child, ["Dimension", "Function"])) {
+      const timeValue = csstree.generate(child);
+
+      // For Dimensions, validate they have time units
+      // For Functions (var, calc), accept unconditionally (carry over as-is)
+      if (child.type === "Function" || isTime(timeValue)) {
+        if (timeCount >= 2) {
+          // More than 2 time values is invalid
+          return false;
+        }
+        if (timeCount === 0) {
+          result.duration = timeValue;
+        } else {
+          result.delay = timeValue;
+        }
+        timeCount++;
+        continue;
       }
     }
 
@@ -10481,6 +10397,136 @@ export default function isTimingFunction(value: string): boolean {
   }
 
   return false;
+}
+
+
+=== File: src/internal/is-value-node.ts ===
+// b_path:: src/internal/is-value-node.ts
+import type * as csstree from "css-tree";
+
+/**
+ * CSS functions that represent colors, not numeric values.
+ * These should NOT be accepted as position/size values.
+ */
+const COLOR_FUNCTIONS = new Set([
+  "rgb",
+  "rgba",
+  "hsl",
+  "hsla",
+  "hwb",
+  "lab",
+  "lch",
+  "oklab",
+  "oklch",
+  "color",
+  "color-mix",
+  "light-dark",
+]);
+
+/**
+ * CSS functions that represent images, not numeric values.
+ * These should NOT be accepted as position/size values.
+ */
+const IMAGE_FUNCTIONS = new Set([
+  "url",
+  "image",
+  "image-set",
+  "element",
+  "linear-gradient",
+  "radial-gradient",
+  "conic-gradient",
+  "repeating-linear-gradient",
+  "repeating-radial-gradient",
+  "repeating-conic-gradient",
+  "cross-fade",
+  "paint",
+]);
+
+/**
+ * Universal type checker that handles CSS functions intelligently.
+ *
+ * Use this instead of direct `node.type === "Dimension"` checks.
+ * Automatically accepts calc(), var(), min(), max(), and all math functions.
+ *
+ * @example
+ * // OLD: if (child.type === "Dimension" || child.type === "Percentage")
+ * // NEW: if (matchesType(child, ["Dimension", "Percentage"]))
+ *
+ * @internal
+ */
+export function matchesType(node: csstree.CssNode | undefined, types: string | string[]): boolean {
+  if (!node) return false;
+
+  const typeArray = Array.isArray(types) ? types : [types];
+  const nodeType = node.type;
+
+  // Direct type match
+  if (typeArray.includes(nodeType)) {
+    return true;
+  }
+
+  // Function node: treat as numeric value unless it's a color/image function
+  if (
+    nodeType === "Function" &&
+    (typeArray.includes("Dimension") ||
+      typeArray.includes("Percentage") ||
+      typeArray.includes("Number"))
+  ) {
+    const funcName = (node as csstree.FunctionNode).name.toLowerCase();
+    return !COLOR_FUNCTIONS.has(funcName) && !IMAGE_FUNCTIONS.has(funcName);
+  }
+
+  return false;
+}
+
+/**
+ * Checks if a css-tree node is a valid numeric/dimensional value type.
+ * Accepts: Dimension, Percentage, Number, Function (calc, var, etc.)
+ * Rejects: Color functions (rgb, hsl), Image functions (url, gradient)
+ *
+ * Use this for properties that accept length, percentage, or calculated values.
+ *
+ * @internal
+ */
+export function isNumericValueNode(node: csstree.CssNode): boolean {
+  return matchesType(node, ["Dimension", "Percentage", "Number"]);
+}
+
+/**
+ * Checks if a css-tree node is a valid position value type.
+ * Accepts: Identifier (keywords), Dimension, Percentage, Number, Function
+ *
+ * Use this for properties like background-position, mask-position, etc.
+ *
+ * @param node - css-tree node to check
+ * @param keywords - Optional array of valid identifier keywords (e.g., ['left', 'center', 'right'])
+ * @internal
+ */
+export function isPositionValueNode(node: csstree.CssNode, keywords?: string[]): boolean {
+  if (isNumericValueNode(node)) {
+    return true;
+  }
+
+  if (node.type === "Identifier") {
+    if (!keywords) return true;
+    return keywords.includes((node as csstree.Identifier).name);
+  }
+
+  return false;
+}
+
+/**
+ * Checks if a css-tree node is a valid size value type.
+ * Accepts: Identifier (keywords), Dimension, Percentage, Number, Function
+ *
+ * Use this for properties like background-size, mask-size, width, height, etc.
+ *
+ * @param node - css-tree node to check
+ * @param keywords - Optional array of valid identifier keywords (e.g., ['auto', 'cover', 'contain'])
+ * @internal
+ */
+export function isSizeValueNode(node: csstree.CssNode, keywords?: string[]): boolean {
+  return isPositionValueNode(node, keywords);
 }
 
 

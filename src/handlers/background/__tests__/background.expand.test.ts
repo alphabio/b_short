@@ -198,4 +198,47 @@ describe("background expand", () => {
       "background-color": "transparent",
     });
   });
+
+  // CSS Functions support
+  it("url(img.png) calc(100% - 20px) center", () => {
+    const result = backgroundHandler.expand("url(img.png) calc(100% - 20px) center");
+    expect(result).toEqual({
+      "background-image": "url(img.png)",
+      "background-position": "calc(100% - 20px) center",
+      "background-size": "auto auto",
+      "background-repeat": "repeat",
+      "background-attachment": "scroll",
+      "background-origin": "padding-box",
+      "background-clip": "border-box",
+      "background-color": "transparent",
+    });
+  });
+
+  it("url(a.png) center, url(b.png) var(--pos)", () => {
+    const result = backgroundHandler.expand("url(a.png) center, url(b.png) var(--pos)");
+    expect(result).toEqual({
+      "background-image": "url(a.png), url(b.png)",
+      "background-position": "center, var(--pos)",
+      "background-size": "auto auto, auto auto",
+      "background-repeat": "repeat, repeat",
+      "background-attachment": "scroll, scroll",
+      "background-origin": "padding-box, padding-box",
+      "background-clip": "border-box, border-box",
+      "background-color": "transparent",
+    });
+  });
+
+  it("calc(100% - 10px) / min(50%, 200px)", () => {
+    const result = backgroundHandler.expand("calc(100% - 10px) / min(50%, 200px)");
+    expect(result).toEqual({
+      "background-image": "none",
+      "background-position": "calc(100% - 10px)",
+      "background-size": "min(50%,200px)",
+      "background-repeat": "repeat",
+      "background-attachment": "scroll",
+      "background-origin": "padding-box",
+      "background-clip": "border-box",
+      "background-color": "transparent",
+    });
+  });
 });

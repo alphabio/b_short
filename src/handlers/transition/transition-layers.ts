@@ -4,6 +4,7 @@ import * as csstree from "css-tree";
 import type { TransitionLayer, TransitionResult } from "@/core/schema";
 import isTime from "@/internal/is-time";
 import isTimingFunction from "@/internal/is-timing-function";
+import { matchesType } from "@/internal/is-value-node";
 import { hasTopLevelCommas, parseLayersGeneric } from "@/internal/layer-parser-utils";
 
 // CSS default values for transition properties
@@ -76,43 +77,8 @@ function processCssChildren(children: csstree.CssNode[], result: TransitionLayer
       continue;
     }
 
-    // Handle time values first (duration and delay)
-    if (child.type === "Dimension") {
-      const timeValue = csstree.generate(child);
-      if (isTime(timeValue)) {
-        if (timeCount >= 2) {
-          // More than 2 time values is invalid
-          return false;
-        }
-        if (timeCount === 0) {
-          result.duration = timeValue;
-        } else {
-          result.delay = timeValue;
-        }
-        timeCount++;
-        continue;
-      }
-    }
-
-    // Handle var() functions as time values
-    if (child.type === "Function") {
-      const funcValue = csstree.generate(child);
-      if (funcValue.startsWith("var(")) {
-        if (timeCount >= 2) {
-          // More than 2 time values is invalid
-          return false;
-        }
-        if (timeCount === 0) {
-          result.duration = funcValue;
-        } else {
-          result.delay = funcValue;
-        }
-        timeCount++;
-        continue;
-      }
-    }
-
-    // Handle timing functions (keywords and functions)
+    // Handle timing functions FIRST (keywords and functions)
+    // Must check before time values to avoid cubic-bezier() being treated as time
     if (!result.timingFunction) {
       if (child.type === "Identifier") {
         const timingValue = csstree.generate(child);
@@ -129,6 +95,28 @@ function processCssChildren(children: csstree.CssNode[], result: TransitionLayer
           result.timingFunction = funcValue.replace(/,([^\s])/g, ", $1");
           continue;
         }
+      }
+    }
+
+    // Handle time values (duration and delay)
+    // Accept: Dimensions with time units (1s, 500ms), or any Function (calc, var, etc.)
+    if (matchesType(child, ["Dimension", "Function"])) {
+      const timeValue = csstree.generate(child);
+
+      // For Dimensions, validate they have time units
+      // For Functions (var, calc), accept unconditionally (carry over as-is)
+      if (child.type === "Function" || isTime(timeValue)) {
+        if (timeCount >= 2) {
+          // More than 2 time values is invalid
+          return false;
+        }
+        if (timeCount === 0) {
+          result.duration = timeValue;
+        } else {
+          result.delay = timeValue;
+        }
+        timeCount++;
+        continue;
       }
     }
 
