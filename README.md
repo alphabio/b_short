@@ -276,7 +276,7 @@ MIT © [alphabio](https://github.com/alphabio)
 ## Acknowledgments
 
 - [TypeScript](https://www.typescriptlang.org/)
-- [@eslint/css-tree](https://github.com/eslint/css-tree) - CSS parsing and validation
+- [@eslint/css-tree](https://github.com/alphabio/b_values) - CSS parsing and validation
 - [Vitest](https://vitest.dev/) - Testing
 - [Biome](https://biomejs.dev/) - Code quality
 
