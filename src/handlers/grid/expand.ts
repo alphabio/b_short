@@ -5,7 +5,7 @@
 // named grid lines, track sizes, repeat() notation, area names, and multiple syntaxes
 // (template form, explicit-rows, explicit-columns). The parsing logic is preserved as-is.
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import { matchesType } from "@/internal/is-value-node";
 import { createPropertyHandler, type PropertyHandler } from "@/internal/property-handler";
 
@@ -34,8 +34,8 @@ function parseValueAndGetSegments(
 
     csstree.walk(ast, {
       visit: "Value",
-      enter: (node: csstree.Value) => {
-        if (node.children) {
+      enter: (node: csstree.CssNode) => {
+        if (node.type === "Value" && node.children) {
           let index = 0;
           node.children.forEach((child) => {
             if (child.type === "Operator" && (child as csstree.Operator).value === "/") {

@@ -25,7 +25,7 @@
  * @since 1.0.0
  */
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import type { BStyleWarning, StylesheetValidation } from "./schema";
 
 // Constants
@@ -62,6 +62,21 @@ interface TruncationBounds {
 interface FormattedLine {
   content: string;
   adjustedColumn: number;
+}
+
+/**
+ * Checks if a CSS value node contains var() function.
+ * CSS variables cannot be validated by @eslint/css-tree as they are runtime values.
+ */
+function containsVar(node: csstree.CssNode): boolean {
+  if (!node) return false;
+  if (node.type === "Function" && node.name === "var") return true;
+  if ("children" in node && node.children) {
+    for (const child of node.children) {
+      if (containsVar(child)) return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -133,6 +148,12 @@ export function validate(css: string): StylesheetValidation {
     }
 
     for (const decl of declarations) {
+      // Skip validation for declarations containing CSS variables (var())
+      // as they cannot be validated at parse time
+      if (containsVar(decl.value)) {
+        continue;
+      }
+
       const match = syntax.matchProperty(decl.property, decl.value);
       const error = match.error as csstree.SyntaxMatchError;
 

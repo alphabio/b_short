@@ -1,6 +1,6 @@
 // b_path:: src/handlers/mask/mask-layers.ts
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import type { MaskLayer, MaskResult } from "@/core/schema";
 import { isPositionValueNode, isSizeValueNode } from "@/internal/is-value-node";
 import { hasTopLevelCommas, parseLayersGeneric } from "@/internal/layer-parser-utils";
@@ -51,8 +51,8 @@ function parseSingleLayerWithCssTree(layerValue: string): MaskLayer | undefined 
   const children: csstree.CssNode[] = [];
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: csstree.Value) => {
-      if (node.children) {
+    enter: (node: csstree.CssNode) => {
+      if (node.type === "Value" && node.children) {
         node.children.forEach((child) => {
           children.push(child);
         });

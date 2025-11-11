@@ -1,6 +1,6 @@
 // b_path:: src/handlers/animation/animation-layers.ts
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import type { AnimationLayer, AnimationResult } from "@/core/schema";
 import isTime from "@/internal/is-time";
 import isTimingFunction from "@/internal/is-timing-function";
@@ -46,8 +46,8 @@ function parseSingleLayer(layerValue: string): AnimationLayer | undefined {
   const children: csstree.CssNode[] = [];
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: csstree.Value) => {
-      if (node.children) {
+    enter: (node: csstree.CssNode) => {
+      if (node.type === "Value" && node.children) {
         node.children.forEach((child) => {
           children.push(child);
         });

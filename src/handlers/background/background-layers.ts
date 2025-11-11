@@ -1,6 +1,6 @@
 // b_path:: src/handlers/background/background-layers.ts
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import type { BackgroundLayer, BackgroundResult } from "@/core/schema";
 import isColor from "@/internal/is-color";
 import { isPositionValueNode, isSizeValueNode } from "@/internal/is-value-node";
@@ -104,8 +104,8 @@ function parseSingleLayerWithCssTree(layerValue: string): BackgroundLayer & { co
   const children: csstree.CssNode[] = [];
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: csstree.Value) => {
-      if (node.children) {
+    enter: (node: csstree.CssNode) => {
+      if (node.type === "Value" && node.children) {
         node.children.forEach((child) => {
           children.push(child);
         });

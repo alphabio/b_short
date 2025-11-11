@@ -924,7 +924,7 @@ export interface CollapseResult {
  * @since 1.0.0
  */
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import type { BStyleWarning, StylesheetValidation } from "./schema";
 
 // Constants
@@ -961,6 +961,21 @@ interface TruncationBounds {
 interface FormattedLine {
   content: string;
   adjustedColumn: number;
+}
+
+/**
+ * Checks if a CSS value node contains var() function.
+ * CSS variables cannot be validated by @eslint/css-tree as they are runtime values.
+ */
+function containsVar(node: csstree.CssNode): boolean {
+  if (!node) return false;
+  if (node.type === "Function" && node.name === "var") return true;
+  if ("children" in node && node.children) {
+    for (const child of node.children) {
+      if (containsVar(child)) return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -1032,6 +1047,12 @@ export function validate(css: string): StylesheetValidation {
     }
 
     for (const decl of declarations) {
+      // Skip validation for declarations containing CSS variables (var())
+      // as they cannot be validated at parse time
+      if (containsVar(decl.value)) {
+        continue;
+      }
+
       const match = syntax.matchProperty(decl.property, decl.value);
       const error = match.error as csstree.SyntaxMatchError;
 
@@ -1311,7 +1332,7 @@ function formatErrorDisplay(
 === File: src/handlers/animation/animation-layers.ts ===
 // b_path:: src/handlers/animation/animation-layers.ts
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import type { AnimationLayer, AnimationResult } from "@/core/schema";
 import isTime from "@/internal/is-time";
 import isTimingFunction from "@/internal/is-timing-function";
@@ -1357,8 +1378,8 @@ function parseSingleLayer(layerValue: string): AnimationLayer | undefined {
   const children: csstree.CssNode[] = [];
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: csstree.Value) => {
-      if (node.children) {
+    enter: (node: csstree.CssNode) => {
+      if (node.type === "Value" && node.children) {
         node.children.forEach((child) => {
           children.push(child);
         });
@@ -2148,7 +2169,7 @@ export { default } from "./expand";
 === File: src/handlers/background/background-layers.ts ===
 // b_path:: src/handlers/background/background-layers.ts
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import type { BackgroundLayer, BackgroundResult } from "@/core/schema";
 import isColor from "@/internal/is-color";
 import { isPositionValueNode, isSizeValueNode } from "@/internal/is-value-node";
@@ -2252,8 +2273,8 @@ function parseSingleLayerWithCssTree(layerValue: string): BackgroundLayer & { co
   const children: csstree.CssNode[] = [];
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: csstree.Value) => {
-      if (node.children) {
+    enter: (node: csstree.CssNode) => {
+      if (node.type === "Value" && node.children) {
         node.children.forEach((child) => {
           children.push(child);
         });
@@ -5645,7 +5666,7 @@ export const gridCollapser: CollapseHandler = createCollapseHandler({
 // named grid lines, track sizes, repeat() notation, area names, and multiple syntaxes
 // (template form, explicit-rows, explicit-columns). The parsing logic is preserved as-is.
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import { matchesType } from "@/internal/is-value-node";
 import { createPropertyHandler, type PropertyHandler } from "@/internal/property-handler";
 
@@ -5674,8 +5695,8 @@ function parseValueAndGetSegments(
 
     csstree.walk(ast, {
       visit: "Value",
-      enter: (node: csstree.Value) => {
-        if (node.children) {
+      enter: (node: csstree.CssNode) => {
+        if (node.type === "Value" && node.children) {
           let index = 0;
           node.children.forEach((child) => {
             if (child.type === "Operator" && (child as csstree.Operator).value === "/") {
@@ -6715,7 +6736,7 @@ export { default } from "./expand";
 === File: src/handlers/mask/mask-layers.ts ===
 // b_path:: src/handlers/mask/mask-layers.ts
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import type { MaskLayer, MaskResult } from "@/core/schema";
 import { isPositionValueNode, isSizeValueNode } from "@/internal/is-value-node";
 import { hasTopLevelCommas, parseLayersGeneric } from "@/internal/layer-parser-utils";
@@ -6766,8 +6787,8 @@ function parseSingleLayerWithCssTree(layerValue: string): MaskLayer | undefined 
   const children: csstree.CssNode[] = [];
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: csstree.Value) => {
-      if (node.children) {
+    enter: (node: csstree.CssNode) => {
+      if (node.type === "Value" && node.children) {
         node.children.forEach((child) => {
           children.push(child);
         });
@@ -8944,7 +8965,7 @@ export { default } from "./expand";
 === File: src/handlers/transition/transition-layers.ts ===
 // b_path:: src/handlers/transition/transition-layers.ts
 
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 import type { TransitionLayer, TransitionResult } from "@/core/schema";
 import isTime from "@/internal/is-time";
 import isTimingFunction from "@/internal/is-timing-function";
@@ -8986,8 +9007,8 @@ function parseSingleLayer(layerValue: string): TransitionLayer | undefined {
   const children: csstree.CssNode[] = [];
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: csstree.Value) => {
-      if (node.children) {
+    enter: (node: csstree.CssNode) => {
+      if (node.type === "Value" && node.children) {
         node.children.forEach((child) => {
           children.push(child);
         });
@@ -10402,7 +10423,7 @@ export default function isTimingFunction(value: string): boolean {
 
 === File: src/internal/is-value-node.ts ===
 // b_path:: src/internal/is-value-node.ts
-import type * as csstree from "css-tree";
+import type * as csstree from "@eslint/css-tree";
 
 /**
  * CSS functions that represent colors, not numeric values.
@@ -10532,7 +10553,7 @@ export function isSizeValueNode(node: csstree.CssNode, keywords?: string[]): boo
 
 === File: src/internal/layer-parser-utils.ts ===
 // b_path:: src/internal/layer-parser-utils.ts
-import * as csstree from "css-tree";
+import * as csstree from "@eslint/css-tree";
 
 /**
  * Shared utilities for parsing multi-layer CSS properties (background, mask, animation, transition).
@@ -10688,8 +10709,8 @@ export function collectCssTreeChildren(ast: csstree.CssNode): csstree.CssNode[] 
   // Walk the AST and collect children from Value nodes
   csstree.walk(ast, {
     visit: "Value",
-    enter: (node: { children?: Iterable<csstree.CssNode> }) => {
-      if (node.children) {
+    enter: (node: csstree.CssNode) => {
+      if (node.type === "Value" && node.children) {
         for (const child of node.children) {
           children.push(child);
         }

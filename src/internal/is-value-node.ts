@@ -1,5 +1,5 @@
 // b_path:: src/internal/is-value-node.ts
-import type * as csstree from "css-tree";
+import type * as csstree from "@eslint/css-tree";
 
 /**
  * CSS functions that represent colors, not numeric values.
