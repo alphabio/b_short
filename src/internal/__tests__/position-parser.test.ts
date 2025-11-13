@@ -72,10 +72,16 @@ describe("position-parser", () => {
   });
 
   describe("4-value syntax (full edge-offset)", () => {
-    it("parses both edge-offsets", () => {
+    it("parses both edge-offsets - horizontal first", () => {
       expect(parsePosition("left 10px top 20px")).toEqual({ x: "left 10px", y: "top 20px" });
       expect(parsePosition("right 5% bottom 10%")).toEqual({ x: "right 5%", y: "bottom 10%" });
       expect(parsePosition("left 0 top 0")).toEqual({ x: "left 0", y: "top 0" });
+    });
+
+    it("parses both edge-offsets - vertical first", () => {
+      expect(parsePosition("top 20px left 15%")).toEqual({ x: "left 15%", y: "top 20px" });
+      expect(parsePosition("bottom 10% right 5%")).toEqual({ x: "right 5%", y: "bottom 10%" });
+      expect(parsePosition("top 0 left 0")).toEqual({ x: "left 0", y: "top 0" });
     });
   });
 
