@@ -111,7 +111,14 @@ export function parsePosition(value: string): PositionResult {
   // 4-value syntax: side offset side offset
   if (parts.length === 4) {
     const [first, second, third, fourth] = parts;
-    return { x: `${first} ${second}`, y: `${third} ${fourth}` };
+
+    // Determine which pair is horizontal vs vertical based on first keyword
+    if (HORIZONTAL_KEYWORDS.has(first)) {
+      // first+second is horizontal, third+fourth is vertical
+      return { x: `${first} ${second}`, y: `${third} ${fourth}` };
+    }
+    // first+second is vertical, third+fourth is horizontal
+    return { x: `${third} ${fourth}`, y: `${first} ${second}` };
   }
 
   // Fallback for complex cases
