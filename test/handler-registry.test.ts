@@ -5,9 +5,9 @@ import { expandProperty, isShorthandProperty, registry, validateProperty } from 
 
 describe("Handler Registry", () => {
   describe("registry.getAllShorthands()", () => {
-    test("returns all 25 handlers", () => {
+    test("returns all 52 handlers", () => {
       const shorthands = registry.getAllShorthands();
-      expect(shorthands).toHaveLength(26);
+      expect(shorthands).toHaveLength(52);
     });
 
     test("includes expected shorthands", () => {
@@ -232,7 +232,7 @@ describe("Handler Registry", () => {
   describe("registry.handlers", () => {
     test("is read-only map", () => {
       expect(registry.handlers).toBeInstanceOf(Map);
-      expect(registry.handlers.size).toBe(26);
+      expect(registry.handlers.size).toBe(52);
     });
 
     test("contains all handlers", () => {

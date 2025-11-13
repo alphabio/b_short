@@ -27,6 +27,10 @@ export const PROPERTY_CATEGORIES = [
   "layout",
   "animation",
   "typography",
+  "border",
+  "grid",
+  "position",
+  "positioning",
   "other",
 ] as const;
 

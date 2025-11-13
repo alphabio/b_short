@@ -47,6 +47,18 @@ export const CSS_DEFAULTS: Record<string, string> = {
   bottom: "auto",
   left: "auto",
 
+  // Background position
+  "background-position-x": "0%",
+  "background-position-y": "0%",
+
+  // Mask position
+  "mask-position-x": "0%",
+  "mask-position-y": "0%",
+
+  // Object position
+  "object-position-x": "50%",
+  "object-position-y": "50%",
+
   // Scroll margin
   "scroll-margin-top": "0",
   "scroll-margin-right": "0",

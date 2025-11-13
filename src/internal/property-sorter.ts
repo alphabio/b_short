@@ -43,15 +43,17 @@ export const PROPERTY_ORDER_MAP: Record<string, number> = {
   "transition-timing-function": 32,
   "transition-delay": 33,
 
-  // Background properties (indices 40-47)
+  // Background properties (indices 40-49)
   "background-image": 40,
   "background-position": 41,
-  "background-size": 42,
-  "background-repeat": 43,
-  "background-attachment": 44,
-  "background-origin": 45,
-  "background-clip": 46,
-  "background-color": 47,
+  "background-position-x": 42,
+  "background-position-y": 43,
+  "background-size": 44,
+  "background-repeat": 45,
+  "background-attachment": 46,
+  "background-origin": 47,
+  "background-clip": 48,
+  "background-color": 49,
 
   // Font properties (indices 50-56)
   "font-style": 50,
@@ -147,15 +149,21 @@ export const PROPERTY_ORDER_MAP: Record<string, number> = {
   bottom: 222,
   left: 223,
 
-  // Mask properties (indices 230-237)
+  // Mask properties (indices 230-239)
   "mask-image": 230,
   "mask-mode": 231,
   "mask-position": 232,
-  "mask-size": 233,
-  "mask-repeat": 234,
-  "mask-origin": 235,
-  "mask-clip": 236,
-  "mask-composite": 237,
+  "mask-position-x": 233,
+  "mask-position-y": 234,
+  "mask-size": 235,
+  "mask-repeat": 236,
+  "mask-origin": 237,
+  "mask-clip": 238,
+  "mask-composite": 239,
+
+  // Object properties (indices 245-246)
+  "object-position-x": 245,
+  "object-position-y": 246,
 
   // Offset properties (indices 240-244)
   "offset-position": 240,

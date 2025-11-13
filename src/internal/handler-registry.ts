@@ -6,14 +6,30 @@
  * @module handler-registry
  */
 
-// Import all 25 PropertyHandler instances
+// Import all handlers
 import { animationHandler } from "../handlers/animation";
 import { backgroundHandler } from "../handlers/background";
+import { backgroundPositionHandler } from "../handlers/background-position";
 import { borderHandler } from "../handlers/border";
+import { borderBlockHandler } from "../handlers/border-block";
+import { borderBlockEndHandler } from "../handlers/border-block-end";
+import { borderBlockStartHandler } from "../handlers/border-block-start";
+import { borderBottomHandler } from "../handlers/border-bottom";
+import { borderColorHandler } from "../handlers/border-color";
+import { borderImageHandler } from "../handlers/border-image";
+import { borderInlineHandler } from "../handlers/border-inline";
+import { borderInlineEndHandler } from "../handlers/border-inline-end";
+import { borderInlineStartHandler } from "../handlers/border-inline-start";
+import { borderLeftHandler } from "../handlers/border-left";
 import { borderRadiusHandler } from "../handlers/border-radius";
+import { borderRightHandler } from "../handlers/border-right";
+import { borderStyleHandler } from "../handlers/border-style";
+import { borderTopHandler } from "../handlers/border-top";
+import { borderWidthHandler } from "../handlers/border-width";
 import { columnRuleHandler } from "../handlers/column-rule";
 import { columnsHandler } from "../handlers/columns";
 import { containIntrinsicSizeHandler } from "../handlers/contain-intrinsic-size";
+import { containerHandler } from "../handlers/container";
 import { flexHandler } from "../handlers/flex";
 import { flexFlowHandler } from "../handlers/flex-flow";
 import { fontHandler } from "../handlers/font";
@@ -22,14 +38,24 @@ import { gridHandler } from "../handlers/grid";
 import { gridAreaHandler } from "../handlers/grid-area";
 import { gridColumnHandler } from "../handlers/grid-column";
 import { gridRowHandler } from "../handlers/grid-row";
+import { gridTemplateHandler } from "../handlers/grid-template";
+import { insetHandler } from "../handlers/inset";
+import { insetBlockHandler } from "../handlers/inset-block";
+import { insetInlineHandler } from "../handlers/inset-inline";
 import { listStyleHandler } from "../handlers/list-style";
+import { marginHandler } from "../handlers/margin";
 import { maskHandler } from "../handlers/mask";
+import { maskPositionHandler } from "../handlers/mask-position";
+import { objectPositionHandler } from "../handlers/object-position";
 import { offsetHandler } from "../handlers/offset";
 import { outlineHandler } from "../handlers/outline";
 import { overflowHandler } from "../handlers/overflow";
+import { paddingHandler } from "../handlers/padding";
 import { placeContentHandler } from "../handlers/place-content";
 import { placeItemsHandler } from "../handlers/place-items";
 import { placeSelfHandler } from "../handlers/place-self";
+import { scrollMarginHandler } from "../handlers/scroll-margin";
+import { scrollPaddingHandler } from "../handlers/scroll-padding";
 import { textDecorationHandler } from "../handlers/text-decoration";
 import { textEmphasisHandler } from "../handlers/text-emphasis";
 import { transitionHandler } from "../handlers/transition";
@@ -68,11 +94,27 @@ export interface HandlerRegistry {
 const handlerMap = new Map<string, PropertyHandler>([
   ["animation", animationHandler],
   ["background", backgroundHandler],
+  ["background-position", backgroundPositionHandler],
   ["border", borderHandler],
+  ["border-block", borderBlockHandler],
+  ["border-block-end", borderBlockEndHandler],
+  ["border-block-start", borderBlockStartHandler],
+  ["border-bottom", borderBottomHandler],
+  ["border-color", borderColorHandler],
+  ["border-image", borderImageHandler],
+  ["border-inline", borderInlineHandler],
+  ["border-inline-end", borderInlineEndHandler],
+  ["border-inline-start", borderInlineStartHandler],
+  ["border-left", borderLeftHandler],
   ["border-radius", borderRadiusHandler],
+  ["border-right", borderRightHandler],
+  ["border-style", borderStyleHandler],
+  ["border-top", borderTopHandler],
+  ["border-width", borderWidthHandler],
   ["column-rule", columnRuleHandler],
   ["columns", columnsHandler],
   ["contain-intrinsic-size", containIntrinsicSizeHandler],
+  ["container", containerHandler],
   ["flex", flexHandler],
   ["flex-flow", flexFlowHandler],
   ["font", fontHandler],
@@ -81,14 +123,24 @@ const handlerMap = new Map<string, PropertyHandler>([
   ["grid-area", gridAreaHandler],
   ["grid-column", gridColumnHandler],
   ["grid-row", gridRowHandler],
+  ["grid-template", gridTemplateHandler],
+  ["inset", insetHandler],
+  ["inset-block", insetBlockHandler],
+  ["inset-inline", insetInlineHandler],
   ["list-style", listStyleHandler],
+  ["margin", marginHandler],
   ["mask", maskHandler],
+  ["mask-position", maskPositionHandler],
+  ["object-position", objectPositionHandler],
   ["offset", offsetHandler],
   ["outline", outlineHandler],
   ["overflow", overflowHandler],
+  ["padding", paddingHandler],
   ["place-content", placeContentHandler],
   ["place-items", placeItemsHandler],
   ["place-self", placeSelfHandler],
+  ["scroll-margin", scrollMarginHandler],
+  ["scroll-padding", scrollPaddingHandler],
   ["text-decoration", textDecorationHandler],
   ["text-emphasis", textEmphasisHandler],
   ["transition", transitionHandler],
