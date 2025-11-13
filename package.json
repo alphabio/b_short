@@ -1,6 +1,6 @@
 {
   "name": "b_short",
-  "version": "2.7.2",
+  "version": "3.0.0",
   "type": "module",
   "description": "Lightning-fast CSS shorthand property expansion to longhand equivalents. Supports 35+ shorthands including flex, grid, animation, transition, mask, and more. TypeScript-first, minimal dependencies, perfect for CSS-in-JS and build tools.",
   "main": "./dist/index.cjs",
