@@ -48,12 +48,6 @@ export interface ExpandOptions {
    * - 'by-side': Groups by directional side (e.g., all top properties, then all right properties)
    */
   propertyGrouping?: PropertyGrouping;
-
-  /**
-   * Expand partial directional longhand properties (e.g., margin-top) by filling in missing sides with CSS default values.
-   * Default: false
-   */
-  expandPartialLonghand?: boolean;
 }
 
 /**
@@ -120,16 +114,6 @@ export namespace ExpandOptions {
     /** Tab character (8 spaces equivalent) */
     TAB = 8,
   }
-
-  /**
-   * Boolean option values for expandPartialLonghand
-   */
-  export const ExpandPartialLonghand = {
-    /** Don't expand partial longhand properties (default) */
-    DISABLED: false,
-    /** Expand partial longhand properties with CSS defaults */
-    ENABLED: true,
-  } as const;
 }
 
 /**
@@ -154,7 +138,6 @@ export const DEFAULT_EXPAND_OPTIONS: Required<ExpandOptions> = {
   indent: 0,
   separator: "\n",
   propertyGrouping: "by-property",
-  expandPartialLonghand: false,
 };
 
 /**
@@ -325,34 +308,6 @@ export interface StylesheetValidation {
   warnings: BStyleWarning[];
 }
 
-/**
- * Options for CSS shorthand collapse
- */
-export interface CollapseOptions {
-  /** Indentation spaces for CSS string output (min: 0). Default: 0 */
-  indent?: number;
-}
-
-/**
- * Default values for CollapseOptions
- */
-export const DEFAULT_COLLAPSE_OPTIONS: Required<CollapseOptions> = {
-  indent: 0,
-};
-
-/**
- * Result of CSS shorthand collapse operation
- */
-export interface CollapseResult {
-  /** Whether collapse was successful (no errors) */
-  ok: boolean;
-  /**
-   * The collapsed CSS result
-   * - JavaScript object format
-   * - CSS string format
-   * - undefined when input is empty
-   */
-  result?: Record<string, string> | string;
-  /** Array of warnings about incomplete longhands that couldn't be collapsed */
-  issues: BStyleWarning[];
-}
+// ============================================================================
+// v2.0.0: Collapse types removed - Expansion only
+// ============================================================================

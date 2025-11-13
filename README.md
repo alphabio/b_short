@@ -18,7 +18,7 @@
 - **⚡ Fast**: Optimized TypeScript with smart caching
 - **🎯 Complete**: 35+ CSS shorthands including modern features
 - **🔒 Type-Safe**: Full TypeScript support
-- **✅ Tested**: 973 tests ensuring 100% accuracy
+- **✅ Tested**: 922 tests ensuring 100% accuracy
 - **🎨 Flexible**: CSS strings or JS objects (camelCase for React)
 - **🔄 Bidirectional**: Both expand and collapse APIs
 
@@ -70,8 +70,7 @@ const result = b.expand('background: red', {
   format: b.ExpandOptions.Format.CSS,              // 'css' | 'js'
   indent: b.ExpandOptions.Indent.TWO_SPACES,       // 0 | 2 | 4 | 8
   separator: b.ExpandOptions.Separator.NEWLINE,    // '\n' | ' ' | '; ' | ''
-  propertyGrouping: b.ExpandOptions.PropertyGrouping.BY_PROPERTY,  // 'by-property' | 'by-side'
-  expandPartialLonghand: false                     // expand partial shorthands
+  propertyGrouping: b.ExpandOptions.PropertyGrouping.BY_PROPERTY  // 'by-property' | 'by-side'
 });
 ```
 
@@ -218,16 +217,6 @@ expand('border: 1px solid red; margin: 10px', {
 });
 ```
 
-### Partial Longhand Expansion
-
-```typescript
-// Expand margin-top to all 4 sides with CSS defaults
-expand('margin-top: 10px', {
-  expandPartialLonghand: true
-});
-// → margin-top: 10px; margin-right: 0; margin-bottom: 0; margin-left: 0;
-```
-
 ### Error Handling
 
 ```typescript
@@ -241,7 +230,7 @@ if (!result.ok) {
 
 - **Fast**: Optimized for performance with LRU caching
 - **Small**: 89KB unminified, ~68KB minified + brotli (ESM)
-- **Efficient**: Handles 973 test cases in <2 seconds
+- **Efficient**: Handles 922 test cases in <2 seconds
 
 ## TypeScript Support
 

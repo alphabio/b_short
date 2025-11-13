@@ -79,12 +79,7 @@ export type {
 } from "./internal/property-handler";
 
 // ============================================================================
-// COLLAPSE API - Longhand to shorthand conversion
+// v2.0.0: Collapse API removed - Expansion only
 // ============================================================================
-
-export { collapse, getCollapsibleShorthands } from "./core/collapse";
-export type { CollapseOptions, CollapseResult } from "./core/schema";
-export { DEFAULT_COLLAPSE_OPTIONS } from "./core/schema";
-export type { CollapseHandler, CollapseHandlerMetadata } from "./internal/collapse-handler";
-export type { CollapseRegistry } from "./internal/collapse-registry";
-export { collapseRegistry } from "./internal/collapse-registry";
+// Collapse functionality has been removed in v2.0.0.
+// This version focuses exclusively on shorthand expansion.
