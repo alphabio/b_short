@@ -33,7 +33,8 @@ describe("property override behavior", () => {
     assertNoDuplicateProperties(result, "background size override test");
     expect(result).toEqual({
       backgroundImage: "url(a.png)",
-      backgroundPosition: "0% 0%",
+      backgroundPositionX: "0%",
+      backgroundPositionY: "0%",
       backgroundSize: "cover",
       backgroundRepeat: "repeat",
       backgroundAttachment: "scroll",
@@ -77,7 +78,8 @@ describe("property override behavior", () => {
     assertNoDuplicateProperties(result, "complex background multiple overrides test");
     expect(result).toEqual({
       backgroundImage: "url(a.png)",
-      backgroundPosition: "center",
+      backgroundPositionX: "center",
+      backgroundPositionY: "center",
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
       backgroundAttachment: "scroll",
