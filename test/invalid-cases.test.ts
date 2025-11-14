@@ -359,7 +359,8 @@ describe("background (invalid cases)", () => {
     expect(result).toEqual({
       backgroundImage: "url(image.png)",
       backgroundColor: "red",
-      backgroundPosition: "0% 0%",
+      backgroundPositionX: "0%",
+      backgroundPositionY: "0%",
       backgroundSize: "auto auto",
       backgroundRepeat: "repeat",
       backgroundAttachment: "scroll",
@@ -402,7 +403,8 @@ describe("background (invalid cases)", () => {
     assertNoDuplicateProperties(result, "should parse bracketed identifier as color");
     expect(result).toEqual({
       backgroundImage: "none",
-      backgroundPosition: "0% 0%",
+      backgroundPositionX: "0%",
+      backgroundPositionY: "0%",
       backgroundSize: "auto auto",
       backgroundRepeat: "repeat",
       backgroundAttachment: "scroll",

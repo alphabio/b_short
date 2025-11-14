@@ -2,6 +2,7 @@
 
 import animation from "../handlers/animation";
 import background from "../handlers/background";
+import { backgroundPositionHandler } from "../handlers/background-position";
 import border from "../handlers/border";
 import borderRadius from "../handlers/border-radius";
 import columnRule from "../handlers/column-rule";
@@ -53,6 +54,7 @@ const prefix =
 export const shorthand: Record<string, (value: string) => Record<string, string> | undefined> = {
   animation: animation,
   background: background,
+  "background-position": (value: string) => backgroundPositionHandler.expand(value),
   border: border,
   "border-bottom": border.bottom,
   "border-color": border.color,
