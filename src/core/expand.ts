@@ -1,6 +1,5 @@
 // b_path:: src/core/expand.ts
 
-import { hasTopLevelCommas } from "../internal/layer-parser-utils";
 import { parseCssDeclaration, parseInputString, stripComments } from "../internal/parsers";
 import { kebabToCamelCase, objectToCss, sortProperties } from "../internal/property-sorter";
 import { shorthand } from "../internal/shorthand-registry";
@@ -77,9 +76,8 @@ export function expand(input: string, options: Partial<ExpandOptions> = {}): Exp
       // as they need layer-aware splitting first
       for (const [prop, val] of Object.entries(longhand)) {
         const nestedParse = shorthand[prop];
-        const isMultiLayer = hasTopLevelCommas(val);
 
-        if (nestedParse && !isMultiLayer) {
+        if (nestedParse) {
           const nestedLonghand = nestedParse(val);
           if (nestedLonghand) {
             Object.assign(finalProperties, nestedLonghand);

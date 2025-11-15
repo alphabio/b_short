@@ -376,7 +376,8 @@ describe("background (invalid cases)", () => {
     assertNoDuplicateProperties(result, "should parse multi-layer background with extra token");
     expect(result).toEqual({
       backgroundImage: "url(image1.png), url(image2.png)",
-      backgroundPosition: "0% 0%, 0% 0%",
+      backgroundPositionX: "0%, 0%",
+      backgroundPositionY: "0%, 0%",
       backgroundSize: "auto auto, auto auto",
       backgroundRepeat: "repeat, repeat",
       backgroundAttachment: "scroll, scroll",
