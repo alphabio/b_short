@@ -27,12 +27,11 @@ describe("Recursive shorthand expansion", () => {
     const result = expand(css, { format: "css" });
 
     expect(result.ok).toBe(true);
-    // Multi-layer background-position values are NOT recursively expanded
-    // They stay as background-position (composite longhand) because layer-aware
-    // splitting is needed first before per-layer expansion
-    expect(result.result).toContain("background-position:");
-    expect(result.result).not.toContain("background-position-x");
-    expect(result.result).not.toContain("background-position-y");
+    // Multi-layer background-position values ARE now recursively expanded
+    // Each layer's position is split into -x and -y, then rejoined with commas
+    expect(result.result).not.toContain("background-position:");
+    expect(result.result).toContain("background-position-x");
+    expect(result.result).toContain("background-position-y");
   });
 
   it("should expand background-position when used directly", () => {
