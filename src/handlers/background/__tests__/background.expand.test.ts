@@ -173,7 +173,8 @@ describe("background expand", () => {
       "background-position": "0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%",
       "background-size":
         "auto auto, auto auto, auto auto, auto auto, auto auto, auto auto, auto auto",
-      "background-repeat": "repeat, repeat, repeat, repeat, repeat, repeat, repeat",
+      "background-repeat":
+        "no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat",
       "background-attachment": "scroll, scroll, scroll, scroll, scroll, scroll, scroll",
       "background-origin":
         "padding-box, padding-box, padding-box, padding-box, padding-box, padding-box, padding-box",
@@ -239,6 +240,103 @@ describe("background expand", () => {
       "background-origin": "padding-box",
       "background-clip": "border-box",
       "background-color": "transparent",
+    });
+  });
+
+  // Gradient default repeat behavior tests
+  describe("gradient repeat defaults", () => {
+    it("linear-gradient defaults to no-repeat", () => {
+      const result = backgroundHandler.expand(
+        "linear-gradient(45deg, rgba(255,0,0,0.7), rgba(0,0,255,0.7))"
+      );
+      expect(result).toEqual({
+        "background-image": "linear-gradient(45deg,rgba(255,0,0,0.7),rgba(0,0,255,0.7))",
+        "background-position": "0% 0%",
+        "background-size": "auto auto",
+        "background-repeat": "no-repeat",
+        "background-attachment": "scroll",
+        "background-origin": "padding-box",
+        "background-clip": "border-box",
+        "background-color": "transparent",
+      });
+    });
+
+    it("radial-gradient defaults to no-repeat", () => {
+      const result = backgroundHandler.expand("radial-gradient(circle, red, blue)");
+      expect(result).toEqual({
+        "background-image": "radial-gradient(circle,red,blue)",
+        "background-position": "0% 0%",
+        "background-size": "auto auto",
+        "background-repeat": "no-repeat",
+        "background-attachment": "scroll",
+        "background-origin": "padding-box",
+        "background-clip": "border-box",
+        "background-color": "transparent",
+      });
+    });
+
+    it("repeating-linear-gradient defaults to no-repeat", () => {
+      const result = backgroundHandler.expand(
+        "repeating-linear-gradient(45deg, red 0, red 10px, blue 10px, blue 20px)"
+      );
+      expect(result).toEqual({
+        "background-image": "repeating-linear-gradient(45deg,red 0,red 10px,blue 10px,blue 20px)",
+        "background-position": "0% 0%",
+        "background-size": "auto auto",
+        "background-repeat": "no-repeat",
+        "background-attachment": "scroll",
+        "background-origin": "padding-box",
+        "background-clip": "border-box",
+        "background-color": "transparent",
+      });
+    });
+
+    it("repeating-radial-gradient defaults to no-repeat", () => {
+      const result = backgroundHandler.expand(
+        "repeating-radial-gradient(circle, rgba(0,255,0,0.5) 0, rgba(0,255,0,0.5) 10px, transparent 10px, transparent 20px)"
+      );
+      expect(result).toEqual({
+        "background-image":
+          "repeating-radial-gradient(circle,rgba(0,255,0,0.5)0,rgba(0,255,0,0.5) 10px,transparent 10px,transparent 20px)",
+        "background-position": "0% 0%",
+        "background-size": "auto auto",
+        "background-repeat": "no-repeat",
+        "background-attachment": "scroll",
+        "background-origin": "padding-box",
+        "background-clip": "border-box",
+        "background-color": "transparent",
+      });
+    });
+
+    it("gradient with explicit repeat value honors the explicit value", () => {
+      const result = backgroundHandler.expand("linear-gradient(to right, red, blue) repeat");
+      expect(result).toEqual({
+        "background-image": "linear-gradient(to right,red,blue)",
+        "background-position": "0% 0%",
+        "background-size": "auto auto",
+        "background-repeat": "repeat",
+        "background-attachment": "scroll",
+        "background-origin": "padding-box",
+        "background-clip": "border-box",
+        "background-color": "transparent",
+      });
+    });
+
+    it("mixed layers: gradient (no-repeat), url (repeat), gradient (no-repeat), color", () => {
+      const result = backgroundHandler.expand(
+        "linear-gradient(45deg, rgba(255,0,0,0.7), rgba(0,0,255,0.7)), url('https://www.example.com/your-image.svg') no-repeat center center / 50% 50%, repeating-radial-gradient(circle, rgba(0,255,0,0.5) 0, rgba(0,255,0,0.5) 10px, transparent 10px, transparent 20px), #333"
+      );
+      expect(result).toEqual({
+        "background-image":
+          "linear-gradient(45deg,rgba(255,0,0,0.7),rgba(0,0,255,0.7)), url(https://www.example.com/your-image.svg), repeating-radial-gradient(circle,rgba(0,255,0,0.5)0,rgba(0,255,0,0.5) 10px,transparent 10px,transparent 20px), none",
+        "background-position": "0% 0%, center center, 0% 0%, 0% 0%",
+        "background-size": "auto auto, 50% 50%, auto auto, auto auto",
+        "background-repeat": "no-repeat, no-repeat, no-repeat, repeat",
+        "background-attachment": "scroll, scroll, scroll, scroll",
+        "background-origin": "padding-box, padding-box, padding-box, padding-box",
+        "background-clip": "border-box, border-box, border-box, border-box",
+        "background-color": "#333",
+      });
     });
   });
 });

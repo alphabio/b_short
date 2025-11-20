@@ -18,6 +18,16 @@ export const BACKGROUND_DEFAULTS = {
 } as const;
 
 /**
+ * Checks if a background-image value is a gradient.
+ * Per CSS spec, gradients default to `no-repeat` instead of `repeat`.
+ */
+function isGradient(imageValue: string): boolean {
+  const gradientPattern =
+    /^(linear-gradient|radial-gradient|conic-gradient|repeating-linear-gradient|repeating-radial-gradient|repeating-conic-gradient)\(/;
+  return gradientPattern.test(imageValue.trim());
+}
+
+/**
  * Detects if a background value needs advanced parsing (multi-layer backgrounds)
  */
 export function needsAdvancedParser(value: string): boolean {
@@ -395,11 +405,21 @@ export function reconstructLayers(
   const result: Record<string, string> = {};
 
   // Collect all layer values for each property
+  const backgroundImages = layers.map((l) => l.image || BACKGROUND_DEFAULTS.image);
+
   const properties = {
-    "background-image": layers.map((l) => l.image || BACKGROUND_DEFAULTS.image),
+    "background-image": backgroundImages,
     "background-position": layers.map((l) => l.position || BACKGROUND_DEFAULTS.position),
     "background-size": layers.map((l) => l.size || BACKGROUND_DEFAULTS.size),
-    "background-repeat": layers.map((l) => l.repeat || BACKGROUND_DEFAULTS.repeat),
+    "background-repeat": layers.map((l, index) => {
+      // If repeat was explicitly set, use it
+      if (l.repeat) return l.repeat;
+
+      // Otherwise, check if the background-image is a gradient
+      // Per CSS spec: gradients default to no-repeat, not repeat
+      const imageValue = backgroundImages[index];
+      return isGradient(imageValue) ? "no-repeat" : BACKGROUND_DEFAULTS.repeat;
+    }),
     "background-attachment": layers.map((l) => l.attachment || BACKGROUND_DEFAULTS.attachment),
     "background-origin": layers.map((l) => l.origin || BACKGROUND_DEFAULTS.origin),
     "background-clip": layers.map((l) => l.clip || BACKGROUND_DEFAULTS.clip),
