@@ -23,7 +23,7 @@ export const BACKGROUND_DEFAULTS = {
  */
 function isGradient(imageValue: string): boolean {
   const gradientPattern =
-    /^(linear-gradient|radial-gradient|conic-gradient|repeating-linear-gradient|repeating-radial-gradient|repeating-conic-gradient)\(/;
+    /^(?:linear-gradient|radial-gradient|conic-gradient|repeating-linear-gradient|repeating-radial-gradient|repeating-conic-gradient)\(/i;
   return gradientPattern.test(imageValue.trim());
 }
 
